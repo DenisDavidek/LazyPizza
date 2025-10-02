@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "819666061845",
+    "project_id": "lazypizza-1999a",
+    "storage_bucket": "lazypizza-1999a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:819666061845:android:2b6253b396d98d8e2e9c1c",
+        "android_client_info": {
+          "package_name": "com.lazypizza.lazypizzaapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAPVR8ZmGNNmZhhcHADBjLPcOEpu5prhZc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
