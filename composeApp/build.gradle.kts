@@ -53,6 +53,7 @@ kotlin {
             implementation(libs.navigation.compose)
             implementation(libs.kotlinx.serialization.json)
             implementation(libs.kotlinx.datetime)
+            implementation(libs.adaptive)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
