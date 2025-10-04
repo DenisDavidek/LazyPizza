@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.googleGmsGoogleServices)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ksp)
 }
@@ -89,6 +90,7 @@ android {
 }
 
 dependencies {
+    implementation(libs.firebase.storage)
     debugImplementation(compose.uiTooling)
 }
 
