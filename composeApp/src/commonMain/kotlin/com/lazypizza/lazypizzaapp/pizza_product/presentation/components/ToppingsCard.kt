@@ -45,7 +45,7 @@ fun ToppingsCard(
         Spacer(modifier = Modifier.height(12.dp))
         Image(
             modifier = Modifier.size(56.dp).clip(CircleShape).align(Alignment.CenterHorizontally),
-            painter = painterResource(Res.drawable.hawaiian),
+            painter = toppingsUI.image,
             contentScale = ContentScale.Crop,
             contentDescription = toppingsUI.name
         )
