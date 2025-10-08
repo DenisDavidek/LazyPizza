@@ -24,7 +24,6 @@ fun ListScreen(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .padding(horizontal = 16.dp)
     ) {
         Column(
             modifier = Modifier

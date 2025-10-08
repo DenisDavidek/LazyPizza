@@ -26,11 +26,8 @@ private val LightColors = lightColorScheme(
     outline = Outline
 )
 
-
 @Composable
 fun appTypography(): Typography {
-
-
     val regularFontFamily = FontFamily(Font(Res.font.instrumentsans_regular))
     val mediumFontFamily = FontFamily(Font(Res.font.instrumentsans_medium))
     val semiBoldFontFamily = FontFamily(Font(Res.font.instrumentsans_semibold))
@@ -98,10 +95,6 @@ fun appTypography(): Typography {
         ),
     )
 }
-
-
-
-
 
 // AppTheme composable
 @Composable
