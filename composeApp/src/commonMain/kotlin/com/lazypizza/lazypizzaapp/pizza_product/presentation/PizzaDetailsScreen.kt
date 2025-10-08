@@ -2,10 +2,6 @@ package com.lazypizza.lazypizzaapp.pizza_product.presentation
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -21,17 +17,11 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
-fun DetailScreen(
-    modifier: Modifier = Modifier
-) {
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp),
-    ) {
+fun PizzaDetailsScreen(modifier: Modifier = Modifier) {
+    Column(modifier = modifier) {
         Image(
             modifier = Modifier
-                .align(Alignment.CenterHorizontally)
+                .align(alignment = Alignment.CenterHorizontally)
                 .size(240.dp),
             painter = painterResource(Res.drawable.hawaiian),
             contentDescription = "pizza",
@@ -48,8 +38,6 @@ fun DetailScreen(
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.secondary
         )
-
-        Spacer(modifier = Modifier.height(16.dp))
     }
 }
 
@@ -57,6 +45,6 @@ fun DetailScreen(
 @Composable
 fun ProductDetailsPreview() {
     AppTheme {
-        DetailScreen()
+        PizzaDetailsScreen()
     }
 }
