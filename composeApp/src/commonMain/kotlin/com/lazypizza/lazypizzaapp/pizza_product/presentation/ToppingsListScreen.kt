@@ -4,8 +4,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -55,9 +57,11 @@ fun ToppingsListScreen(
                 color = MaterialTheme.colorScheme.secondary
             )
 
+            Spacer(modifier = Modifier.height(16.dp))
+
             LazyVerticalGrid(
                 columns = GridCells.Fixed(3),
-                contentPadding = PaddingValues(bottom = 80.dp), // To avoid overlapping with the button
+                contentPadding = PaddingValues(bottom = 80.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {

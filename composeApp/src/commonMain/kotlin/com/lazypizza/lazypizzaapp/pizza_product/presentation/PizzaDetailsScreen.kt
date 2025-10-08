@@ -2,6 +2,7 @@ package com.lazypizza.lazypizzaapp.pizza_product.presentation
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -18,7 +19,8 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun PizzaDetailsScreen(modifier: Modifier = Modifier) {
-    Column(modifier = modifier) {
+    Column(modifier = modifier
+        .fillMaxWidth()) {
         Image(
             modifier = Modifier
                 .align(alignment = Alignment.CenterHorizontally)

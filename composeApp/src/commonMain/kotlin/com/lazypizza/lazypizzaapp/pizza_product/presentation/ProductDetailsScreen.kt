@@ -92,6 +92,7 @@ fun ProductDetailScreen(
                 Column(
                     modifier = Modifier
                         .padding(innerPadding)
+                        .padding(horizontal = 16.dp, vertical = 16.dp)
                         .fillMaxSize()
                 ) {
                     PizzaDetailsScreen()
@@ -102,7 +103,6 @@ fun ProductDetailScreen(
                         modifier = Modifier
                             .fillMaxSize()
                             .background(color = Color.White, shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
-                            .padding(horizontal = 16.dp, vertical = 16.dp)
                     ) {
                         ToppingsList(modifier = Modifier.weight(1f))
                     }
