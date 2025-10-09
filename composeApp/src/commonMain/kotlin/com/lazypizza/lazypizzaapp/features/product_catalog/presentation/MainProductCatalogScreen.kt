@@ -21,7 +21,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -47,15 +46,11 @@ fun MainProductCatalogScreen(onNavigateToProductDetail: () -> Unit) {
 
     var selectedCategory by remember { mutableStateOf<ProductCategory?>(null) }
 
-    val selectedCategories = remember {
-        mutableStateListOf<ProductCategory>()
-    }
-
     Column(
         modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)
             .padding(horizontal = 16.dp, vertical = 8.dp).clickable {
-            onNavigateToProductDetail()
-        }, horizontalAlignment = Alignment.CenterHorizontally
+                onNavigateToProductDetail()
+            }, horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
         Image(
@@ -77,7 +72,7 @@ fun MainProductCatalogScreen(onNavigateToProductDetail: () -> Unit) {
                 key = { productCategory -> productCategory.name },
                 itemContent = { productCategory ->
 
-                    val isSelected = selectedCategories.contains(productCategory)
+                    val isSelected = selectedCategory == productCategory
                     val borderColor =
                         if (isSelected) OrangeSelected else MaterialTheme.colorScheme.outline
                     val labelColor =
@@ -87,13 +82,11 @@ fun MainProductCatalogScreen(onNavigateToProductDetail: () -> Unit) {
                     SuggestionChip(
                         onClick = {
 
-                        if (!selectedCategories.contains(productCategory))
-                            selectedCategories.add(productCategory)
-                        else
-                            selectedCategories.remove(productCategory)
-
-
-                    },
+                            if (selectedCategory != productCategory)
+                            selectedCategory = productCategory
+                            else
+                                selectedCategory = null
+                        },
                         label = { Text(productCategory.displayName) },
                         border = BorderStroke(width = 1.dp, color = borderColor),
                         modifier = Modifier.padding(horizontal = 8.dp),
