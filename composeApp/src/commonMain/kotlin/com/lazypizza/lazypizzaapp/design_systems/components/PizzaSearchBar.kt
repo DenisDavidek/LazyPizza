@@ -17,6 +17,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.unit.dp
+import com.lazypizza.lazypizzaapp.design_systems.AppShapes
 import lazypizza.composeapp.generated.resources.Res
 import lazypizza.composeapp.generated.resources.cd_search_for_food
 import lazypizza.composeapp.generated.resources.search_for_delicious_food

@@ -8,7 +8,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
-import com.lazypizza.lazypizzaapp.design_systems.components.AppShapes
 import lazypizza.composeapp.generated.resources.Res
 import lazypizza.composeapp.generated.resources.instrumentsans_medium
 import lazypizza.composeapp.generated.resources.instrumentsans_regular
