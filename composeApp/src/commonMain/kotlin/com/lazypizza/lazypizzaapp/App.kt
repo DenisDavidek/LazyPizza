@@ -10,6 +10,10 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import co.touchlab.kermit.Logger
+import coil3.ImageLoader
+import coil3.PlatformContext
+import coil3.compose.setSingletonImageLoaderFactory
+import coil3.network.ktor3.KtorNetworkFetcherFactory
 import com.lazypizza.lazypizzaapp.core.presentation.MainProductCatalogTopBar
 import com.lazypizza.lazypizzaapp.design_systems.AppTheme
 import com.lazypizza.lazypizzaapp.navigation.AppNavigation
@@ -29,9 +33,11 @@ fun App() {
         Logger.e("isMainProductCatalogScreenVisible $isMainProductCatalogScreenVisible")
     }
 
+    setSingletonImageLoaderFactory { context ->
+        getAsyncImageLoader(context)
+    }
 
     AppTheme {
-
         Scaffold(topBar = {
             if (isMainProductCatalogScreenVisible)
             MainProductCatalogTopBar(modifier = Modifier.fillMaxWidth().wrapContentHeight())
@@ -39,7 +45,13 @@ fun App() {
         }) { padding ->
             AppNavigation(navHostController, modifier = Modifier.padding(padding))
         }
-
     }
+}
 
+fun getAsyncImageLoader(context: PlatformContext): ImageLoader {
+    return ImageLoader.Builder(context)
+        .components {
+            add(KtorNetworkFetcherFactory())
+        }
+        .build()
 }

@@ -50,6 +50,8 @@ kotlin {
             implementation(libs.koin.compose)
             implementation(libs.koin.compose.viewmodel)
             implementation(libs.coil.compose)
+           // implementation(libs.coil.network)
+            implementation("io.coil-kt.coil3:coil-network-ktor3:3.3.0")
             implementation(libs.material.icons.extended)
             implementation(libs.datastore)
             implementation(libs.datastore.preferences)
@@ -57,6 +59,7 @@ kotlin {
             implementation(libs.kotlinx.serialization.json)
             implementation(libs.kotlinx.datetime)
             implementation(libs.adaptive)
+            implementation("dev.gitlive:firebase-storage:2.3.0")
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

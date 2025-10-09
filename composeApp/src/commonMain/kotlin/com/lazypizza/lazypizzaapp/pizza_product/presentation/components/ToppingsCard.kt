@@ -14,13 +14,21 @@ import androidx.compose.material3.FloatingActionButtonDefaults.elevation
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import coil3.compose.SubcomposeAsyncImage
 import com.lazypizza.lazypizzaapp.design_systems.AppTheme
 import com.lazypizza.lazypizzaapp.pizza_product.presentation.models.ToppingsUI
+import dev.gitlive.firebase.Firebase
+import dev.gitlive.firebase.storage.storage
 import lazypizza.composeapp.generated.resources.Res
 import lazypizza.composeapp.generated.resources.hawaiian
 import org.jetbrains.compose.resources.painterResource
@@ -43,12 +51,31 @@ fun ToppingsCard(
         border = BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.outline)
     ) {
         Spacer(modifier = Modifier.height(12.dp))
-        Image(
+
+      /*  val image by remember {
+            mutableStateOf("")
+        }
+        val storage = Firebase.storage
+        val imageRef = storage.getReferenceFromUrl("gs://lazypizza-1999a.firebasestorage.app/drink/7-up.png")
+
+        LaunchedEffect(imageRef) {
+            val image = imageRef.getDownloadUrl()
+        }
+*/
+
+        SubcomposeAsyncImage(
+            model = "https://jooinn.com/images/dog-67.jpg", //"https://firebasestorage.googleapis.com/v0/b/lazypizza-1999a.firebasestorage.app/o/drink%2F7-up.png?alt=media&token=f84505b0-22cf-4340-bd62-90e0b4e6cdd6",
+            modifier = Modifier.size(56.dp).clip(CircleShape).align(Alignment.CenterHorizontally),
+            contentDescription = "",
+            contentScale = ContentScale.Crop
+        )
+
+       /* Image(
             modifier = Modifier.size(56.dp).clip(CircleShape).align(Alignment.CenterHorizontally),
             painter = toppingsUI.image,
             contentScale = ContentScale.Crop,
             contentDescription = toppingsUI.name
-        )
+        )*/
 
         Spacer(modifier = Modifier.height(8.dp))
 
