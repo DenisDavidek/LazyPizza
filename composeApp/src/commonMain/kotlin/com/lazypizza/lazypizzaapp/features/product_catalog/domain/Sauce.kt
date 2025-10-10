@@ -1,6 +1,6 @@
 package com.lazypizza.lazypizzaapp.features.product_catalog.domain
 
-data class Sauce(val id: Int, val name: String, val price: Double)
+import com.lazypizza.lazypizzaapp.features.product_catalog.domain.Product.Sauce
 
 fun getSauces(): List<Sauce> {
     return listOf(

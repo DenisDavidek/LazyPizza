@@ -1,7 +1,6 @@
 package com.lazypizza.lazypizzaapp.features.product_catalog.domain
 
-data class IceCream(val id: Int, val name: String, val price: Double)
-
+import com.lazypizza.lazypizzaapp.features.product_catalog.domain.Product.IceCream
 
 fun getSampleIceCreams(): List<IceCream> {
     return listOf(

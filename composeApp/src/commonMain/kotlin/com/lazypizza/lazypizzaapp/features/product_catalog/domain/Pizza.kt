@@ -1,6 +1,6 @@
 package com.lazypizza.lazypizzaapp.features.product_catalog.domain
 
-data class Pizza(val id: Int, val name: String, val ingredients: List<String>, val price: Double)
+import com.lazypizza.lazypizzaapp.features.product_catalog.domain.Product.Pizza
 
 fun getSamplePizzas(): List<Pizza> {
     return listOf(
@@ -37,31 +37,66 @@ fun getSamplePizzas(): List<Pizza> {
         Pizza(
             id = 6,
             name = "Veggie Delight",
-            ingredients = listOf("Tomato sauce", "mozzarella", "mushrooms", "olives", "bell pepper", "onion", "corn"),
+            ingredients = listOf(
+                "Tomato sauce",
+                "mozzarella",
+                "mushrooms",
+                "olives",
+                "bell pepper",
+                "onion",
+                "corn"
+            ),
             price = 9.79
         ),
         Pizza(
             id = 7,
             name = "Meat Lovers",
-            ingredients = listOf("Tomato sauce", "mozzarella", "pepperoni", "ham", "bacon", "sausage"),
+            ingredients = listOf(
+                "Tomato sauce",
+                "mozzarella",
+                "pepperoni",
+                "ham",
+                "bacon",
+                "sausage"
+            ),
             price = 12.49
         ),
         Pizza(
             id = 8,
             name = "Spicy Inferno",
-            ingredients = listOf("Tomato sauce", "mozzarella", "spicy salami", "jalapeños", "red chili pepper", "garlic"),
+            ingredients = listOf(
+                "Tomato sauce",
+                "mozzarella",
+                "spicy salami",
+                "jalapeños",
+                "red chili pepper",
+                "garlic"
+            ),
             price = 11.29
         ),
         Pizza(
             id = 9,
             name = "Seafood Special",
-            ingredients = listOf("Tomato sauce", "mozzarella", "shrimp", "mussels", "squid", "parsley"),
+            ingredients = listOf(
+                "Tomato sauce",
+                "mozzarella",
+                "shrimp",
+                "mussels",
+                "squid",
+                "parsley"
+            ),
             price = 13.99
         ),
         Pizza(
             id = 10,
             name = "Truffle Mushroom",
-            ingredients = listOf("Cream sauce", "mozzarella", "mushrooms", "truffle oil", "parmesan"),
+            ingredients = listOf(
+                "Cream sauce",
+                "mozzarella",
+                "mushrooms",
+                "truffle oil",
+                "parmesan"
+            ),
             price = 12.99
         )
     )
