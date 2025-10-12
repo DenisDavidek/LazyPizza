@@ -2,6 +2,7 @@ package com.lazypizza.lazypizzaapp.pizza_product.presentation.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -10,6 +11,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButtonDefaults.elevation
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -52,7 +54,7 @@ fun ToppingsCard(
     ) {
         Spacer(modifier = Modifier.height(12.dp))
 
-      /*  val image by remember {
+        val image by remember {
             mutableStateOf("")
         }
         val storage = Firebase.storage
@@ -61,21 +63,31 @@ fun ToppingsCard(
         LaunchedEffect(imageRef) {
             val image = imageRef.getDownloadUrl()
         }
-*/
 
         SubcomposeAsyncImage(
-            model = "https://jooinn.com/images/dog-67.jpg", //"https://firebasestorage.googleapis.com/v0/b/lazypizza-1999a.firebasestorage.app/o/drink%2F7-up.png?alt=media&token=f84505b0-22cf-4340-bd62-90e0b4e6cdd6",
-            modifier = Modifier.size(56.dp).clip(CircleShape).align(Alignment.CenterHorizontally),
-            contentDescription = "",
-            contentScale = ContentScale.Crop
-        )
-
-       /* Image(
-            modifier = Modifier.size(56.dp).clip(CircleShape).align(Alignment.CenterHorizontally),
-            painter = toppingsUI.image,
+            model = image,
+            modifier = Modifier
+                .size(56.dp)
+                .clip(CircleShape)
+                .align(Alignment.CenterHorizontally),
+            contentDescription = toppingsUI.name,
             contentScale = ContentScale.Crop,
-            contentDescription = toppingsUI.name
-        )*/
+            loading = {
+                Box(
+                    modifier = Modifier.size(56.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(24.dp),
+                        strokeWidth = 2.dp
+                    )
+                }
+            },
+            error = {
+                // Fallback to the resource image if network loading fails
+
+            }
+        )
 
         Spacer(modifier = Modifier.height(8.dp))
 
