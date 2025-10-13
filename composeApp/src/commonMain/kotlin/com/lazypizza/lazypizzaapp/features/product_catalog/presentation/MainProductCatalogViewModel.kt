@@ -2,6 +2,8 @@ package com.lazypizza.lazypizzaapp.features.product_catalog.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.lazypizza.lazypizzaapp.features.product_catalog.domain.Product
+import com.lazypizza.lazypizzaapp.features.product_catalog.domain.ProductCategory
 import com.lazypizza.lazypizzaapp.features.product_catalog.domain.getSampleIceCreams
 import com.lazypizza.lazypizzaapp.features.product_catalog.domain.getSamplePizzas
 import com.lazypizza.lazypizzaapp.features.product_catalog.domain.getSauces
@@ -30,6 +32,7 @@ class MainProductCatalogViewModel : ViewModel() {
             started = SharingStarted.WhileSubscribed(5_000L),
             initialValue = MainProductCatalogState()
         )
+    private var products: List<Product> = emptyList()
 
     private fun loadData() {
         viewModelScope.launch {
@@ -37,26 +40,63 @@ class MainProductCatalogViewModel : ViewModel() {
             val iceCreams = getSampleIceCreams()
             val sauces = getSauces()
 
-            _state.update { it.copy(
-                products = pizzas + iceCreams + sauces
-            ) }
+            _state.update {
+                it.copy(
+                    products = pizzas + iceCreams + sauces
+                )
+            }
+
+            products = pizzas + iceCreams + sauces
         }
     }
 
     fun onAction(action: MainProductCatalogAction) {
         when (action) {
             is MainProductCatalogAction.OnCategorySelected -> {
-                if (_state.value.selectedCategory != action.productCategory) {
-                    _state.update {
-                        it.copy(selectedCategory = action.productCategory)
-                    }
-                } else {
-                    _state.update { it.copy(selectedCategory = null) }
+                handleCategorySelection(action.productCategory)
+            }
+
+            is MainProductCatalogAction.OnSearch -> {
+                products.filter { product ->
+                    product.name.lowercase().contains(action.query.lowercase())
+                }.apply {
+                    _state.update { it.copy(products = this) }
                 }
             }
 
-            else -> { }
+            MainProductCatalogAction.OnScrollCompleted -> {
+                _state.update { it.copy(scrollToIndex = null) }
+            }
+
+
+
+            else -> {}
         }
+    }
+
+
+    private fun handleCategorySelection(category: ProductCategory) {
+        val currentProducts = _state.value.products
+
+        val index = findCategoryIndex(currentProducts, category)
+
+        _state.update {
+            it.copy(scrollToIndex = index)
+        }
+    }
+
+    private fun findCategoryIndex(products: List<Product>, category: ProductCategory): Int {
+        val groupedProducts = products.groupBy { it.category }
+
+        var currentIndex = 0
+        for ((cat, productList) in groupedProducts.entries) {
+            if (cat == category) {
+                return currentIndex
+            }
+            currentIndex += 1 + productList.size
+        }
+
+        return 0
     }
 
 }

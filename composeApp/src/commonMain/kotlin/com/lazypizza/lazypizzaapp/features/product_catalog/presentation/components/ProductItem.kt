@@ -153,8 +153,13 @@ fun ProductItem(
                             cartCount++
                         },
                         onDecrement = {
-                            cartCount--
+                            if (cartCount < 1) {
+                                isAddedToCart = false
+                            } else {
+                                cartCount--
+                            }
                         },
+
                         price = product.price * cartCount,
                         originalPrice = product.price,
                         count = cartCount,
@@ -171,7 +176,11 @@ fun ProductItem(
                             cartCount++
                         },
                         onDecrement = {
-                            cartCount--
+                            if (cartCount <= 1) {
+                                isAddedToCart = false
+                            } else {
+                                cartCount--
+                            }
                         },
                         price = product.price * cartCount,
                         originalPrice = product.price,

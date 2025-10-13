@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
@@ -16,10 +17,15 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridScope
-import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.SearchOff
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.SuggestionChipDefaults
@@ -27,20 +33,20 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.window.core.layout.WindowSizeClass
-import co.touchlab.kermit.Logger
 import com.lazypizza.lazypizzaapp.design_systems.AppShapes
 import com.lazypizza.lazypizzaapp.design_systems.AppTheme
-import com.lazypizza.lazypizzaapp.design_systems.OrangeSelected
 import com.lazypizza.lazypizzaapp.design_systems.components.PizzaSearchBar
 import com.lazypizza.lazypizzaapp.features.product_catalog.domain.Product
 import com.lazypizza.lazypizzaapp.features.product_catalog.domain.ProductCategory
@@ -82,6 +88,21 @@ fun MainProductCatalogScreen(
     val isExpanded = adaptiveWindow.windowSizeClass
         .isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND)
 
+
+    val listState = rememberLazyListState()
+    val gridState = rememberLazyGridState()
+
+    LaunchedEffect(state.scrollToIndex) {
+        state.scrollToIndex?.let { index ->
+            if (isExpanded) {
+                gridState.animateScrollToItem(index)
+            } else {
+                listState.animateScrollToItem(index)
+            }
+            onAction(MainProductCatalogAction.OnScrollCompleted)
+        }
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -101,72 +122,100 @@ fun MainProductCatalogScreen(
         )
 
         PizzaSearchBar(
-            modifier = Modifier.fillMaxWidth().minimumInteractiveComponentSize()
-                .padding(vertical = 12.dp), onValueChange = { changedValue ->
-                Logger.e("changedValue $changedValue")
-            })
-
-        LazyRow(
             modifier = Modifier
                 .fillMaxWidth()
-                .wrapContentHeight()
-                .padding(bottom = 8.dp)
-        ) {
-            items(
-                items = ProductCategory.entries,
-                key = { productCategory -> productCategory.name },
-                itemContent = { productCategory ->
+                .minimumInteractiveComponentSize()
+                .padding(vertical = 12.dp),
+            onValueChange = { changedValue ->
+                onAction(MainProductCatalogAction.OnSearch(changedValue))
+            }
+        )
 
-                    val isSelected = state.selectedCategory == productCategory
-
-                    val borderColor =
-                        if (isSelected) OrangeSelected else MaterialTheme.colorScheme.outline
-
-                    val labelColor =
-                        if (isSelected) OrangeSelected else MaterialTheme.colorScheme.onSurface
-
-
-                    SuggestionChip(
-                        onClick = {
-                            onAction(MainProductCatalogAction.OnCategorySelected(productCategory))
-                        },
-                        label = { Text(productCategory.displayName) },
-                        border = BorderStroke(width = 1.dp, color = borderColor),
-                        modifier = Modifier.padding(horizontal = 8.dp),
-                        shape = AppShapes.medium,
-                        colors = SuggestionChipDefaults.suggestionChipColors(
-                            containerColor = Color.Transparent,
-                            // 6. Use the dynamic labelColor
-                            labelColor = labelColor
-                        )
-                    )
-                })
-        }
-
-        if (isExpanded) {
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(2),
-                modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
+        if (state.products.isNotEmpty()) {
+            LazyRow(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .padding(bottom = 8.dp)
             ) {
-                productCatalogGridContent(
-                    products = state.products,
-                    onAction = onAction
-                )
+                items(
+                    items = ProductCategory.entries,
+                    key = { productCategory -> productCategory.name },
+                    itemContent = { productCategory ->
+                        SuggestionChip(
+                            onClick = {
+                                onAction(MainProductCatalogAction.OnCategorySelected(productCategory))
+                            },
+                            label = { Text(productCategory.displayName) },
+                            border = BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.outline),
+                            modifier = Modifier.padding(horizontal = 8.dp),
+                            shape = AppShapes.medium,
+                            colors = SuggestionChipDefaults.suggestionChipColors(
+                                containerColor = Color.Transparent,
+                                labelColor = MaterialTheme.colorScheme.onSurface
+                            )
+                        )
+                    })
+            }
+
+            if (isExpanded) {
+                LazyVerticalGrid(
+                    state = gridState,
+                    columns = GridCells.Fixed(2),
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    productCatalogGridContent(
+                        products = state.products,
+                        onAction = onAction
+                    )
+                }
+            } else {
+                LazyColumn(
+                    state = listState,
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    productCatalogListContent(
+                        products = state.products,
+                        onAction = onAction
+                    )
+                }
             }
         } else {
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                productCatalogListContent(
-                    products = state.products,
-                    onAction = onAction
-                )
-            }
+            EmptyBox()
         }
 
+    }
+}
+
+@Composable
+fun EmptyBox() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth(.7f)
+            .background(MaterialTheme.colorScheme.surface),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        Icon(
+            imageVector = Icons.Default.SearchOff,
+            contentDescription = "Product not found",
+            modifier = Modifier
+                .size(64.dp)
+                .clip(CircleShape)
+                .background(MaterialTheme.colorScheme.primary)
+                .padding(8.dp),
+            tint = MaterialTheme.colorScheme.onPrimary
+        )
+
+        Text(
+            text = "No results found for your query",
+            style = MaterialTheme.typography.titleLarge,
+            textAlign = TextAlign.Center,
+            color = MaterialTheme.colorScheme.onSurface
+        )
     }
 }
 
@@ -193,7 +242,8 @@ fun LazyListScope.productCatalogListContent(
                 product = product,
                 onClick = {
                     onAction(MainProductCatalogAction.OnProductClick)
-                }
+                },
+                modifier = Modifier.animateItem()
             )
         }
     }
@@ -223,7 +273,8 @@ fun LazyGridScope.productCatalogGridContent(
                 product = product,
                 onClick = {
                     onAction(MainProductCatalogAction.OnProductClick)
-                }
+                },
+                modifier = Modifier.animateItem()
             )
         }
     }
