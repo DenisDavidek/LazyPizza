@@ -40,4 +40,14 @@ sealed class Product {
     ) : Product() {
         override val category: ProductCategory = ProductCategory.ICE_CREAM
     }
+
+    @Serializable
+    data class Drink(
+        override val id: Int,
+        override val name: String,
+        override val price: Double,
+        override val imageUrl: String,
+    ) : Product() {
+        override val category: ProductCategory = ProductCategory.DRINKS
+    }
 }

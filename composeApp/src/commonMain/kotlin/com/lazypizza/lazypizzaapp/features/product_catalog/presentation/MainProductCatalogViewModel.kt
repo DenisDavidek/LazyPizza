@@ -4,9 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lazypizza.lazypizzaapp.features.product_catalog.domain.Product
 import com.lazypizza.lazypizzaapp.features.product_catalog.domain.ProductCategory
+import com.lazypizza.lazypizzaapp.features.product_catalog.domain.getSampleDrinks
 import com.lazypizza.lazypizzaapp.features.product_catalog.domain.getSampleIceCreams
 import com.lazypizza.lazypizzaapp.features.product_catalog.domain.getSamplePizzas
-import com.lazypizza.lazypizzaapp.features.product_catalog.domain.getSauces
+import com.lazypizza.lazypizzaapp.features.product_catalog.domain.getSampleSauces
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.onStart
@@ -37,16 +38,17 @@ class MainProductCatalogViewModel : ViewModel() {
     private fun loadData() {
         viewModelScope.launch {
             val pizzas = getSamplePizzas()
+            val drinks = getSampleDrinks()
             val iceCreams = getSampleIceCreams()
-            val sauces = getSauces()
+            val sauces = getSampleSauces()
 
             _state.update {
                 it.copy(
-                    products = pizzas + iceCreams + sauces
+                    products = pizzas + drinks + iceCreams + sauces
                 )
             }
 
-            products = pizzas + iceCreams + sauces
+            products = pizzas + drinks + iceCreams + sauces
         }
     }
 

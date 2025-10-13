@@ -202,6 +202,28 @@ fun ProductItem(
                         }
                     )
                 }
+
+                is Product.Drink -> {
+                    ProductCart(
+                        onIncrement = {
+                            cartCount++
+                        },
+                        onDecrement = {
+                            if (cartCount <= 1) {
+                                isAddedToCart = false
+                            } else {
+                                cartCount--
+                            }
+                        },
+                        price = product.price * cartCount,
+                        originalPrice = product.price,
+                        count = cartCount,
+                        isAddedToCart = isAddedToCart,
+                        onAddToCart = {
+                            isAddedToCart = true
+                        }
+                    )
+                }
             }
         }
     }

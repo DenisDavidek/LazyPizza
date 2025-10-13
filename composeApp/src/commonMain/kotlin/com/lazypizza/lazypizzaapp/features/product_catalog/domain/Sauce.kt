@@ -2,7 +2,7 @@ package com.lazypizza.lazypizzaapp.features.product_catalog.domain
 
 import com.lazypizza.lazypizzaapp.features.product_catalog.domain.Product.Sauce
 
-fun getSauces(): List<Sauce> {
+fun getSampleSauces(): List<Sauce> {
     return listOf(
         Sauce(
             id = 17,
