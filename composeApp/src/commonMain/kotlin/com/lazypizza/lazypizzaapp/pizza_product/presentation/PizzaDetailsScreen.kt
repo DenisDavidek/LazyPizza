@@ -2,7 +2,9 @@ package com.lazypizza.lazypizzaapp.pizza_product.presentation
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -19,26 +21,31 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun PizzaDetailsScreen(modifier: Modifier = Modifier) {
-    Column(modifier = modifier
-        .fillMaxWidth()) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+    ) {
         Image(
             modifier = Modifier
                 .align(alignment = Alignment.CenterHorizontally)
                 .size(240.dp),
             painter = painterResource(Res.drawable.hawaiian),
-            contentDescription = "pizza",
+            contentDescription = null,
             contentScale = ContentScale.Crop
         )
 
         Text(
             text = "Margherita",
             style = MaterialTheme.typography.titleLarge,
-            color = MaterialTheme.colorScheme.primary
+            color = MaterialTheme.colorScheme.onSurface
         )
+
+        Spacer(Modifier.height(4.dp))
+
         Text(
             text = "Tomato source, Mozzarella, Fresh basil, Olive oil",
             style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.secondary
+            color = MaterialTheme.colorScheme.onSurfaceVariant
         )
     }
 }

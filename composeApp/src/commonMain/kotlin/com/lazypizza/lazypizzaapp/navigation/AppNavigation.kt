@@ -25,7 +25,7 @@ fun AppNavigation(navHostController: NavHostController, modifier: Modifier) {
         composable<LazyPizzaScreen.ProductDetail> {
             ProductDetailScreen(
                 onClick = {
-
+                    navHostController.navigateUp()
                 }
             )
         }

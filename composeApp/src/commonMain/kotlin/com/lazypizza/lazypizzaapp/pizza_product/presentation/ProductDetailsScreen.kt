@@ -11,12 +11,16 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -24,15 +28,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.window.core.layout.WindowSizeClass
 import com.lazypizza.lazypizzaapp.design_systems.AppTheme
-import lazypizza.composeapp.generated.resources.Res
-import lazypizza.composeapp.generated.resources.compose_multiplatform
-import org.jetbrains.compose.resources.vectorResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun ProductDetailScreen(
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
 
     val adaptiveWindow = currentWindowAdaptiveInfo()
@@ -44,18 +45,23 @@ fun ProductDetailScreen(
             TopAppBar(
                 navigationIcon = {
                     IconButton(
-                        onClick = onClick
+                        onClick = onClick,
+                        colors = IconButtonDefaults.iconButtonColors(
+                            containerColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = .08f)
+                        ),
+                        modifier = Modifier.padding(horizontal = 16.dp)
                     ) {
                         Icon(
-                            imageVector = vectorResource(Res.drawable.compose_multiplatform),
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back",
-                            tint = Color.Unspecified
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 },
-                title = {
-                    /** no-op */
-                }
+                title = { },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.background
+                )
             )
         },
         content = { innerPadding ->
@@ -63,15 +69,15 @@ fun ProductDetailScreen(
                 .isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND)
 
             if (isExpanded) {
-                println("MODE LANDSCAPE")
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(innerPadding)
                 ) {
-                    Column(modifier = Modifier
-                        .padding(horizontal = 16.dp)
-                        .weight(1f)
+                    Column(
+                        modifier = Modifier
+                            .padding(horizontal = 16.dp)
+                            .weight(1f)
                     ) {
                         PizzaDetailsScreen()
                     }
@@ -85,10 +91,7 @@ fun ProductDetailScreen(
                         ToppingsList(modifier = Modifier.weight(1f))
                     }
                 }
-            }
-            else {
-                println("MODE PORTRAIT")
-
+            } else {
                 Column(
                     modifier = Modifier
                         .padding(innerPadding)
@@ -102,7 +105,10 @@ fun ProductDetailScreen(
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
-                            .background(color = Color.White, shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
+                            .background(
+                                color = Color.White,
+                                shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
+                            )
                     ) {
                         ToppingsList(modifier = Modifier.weight(1f))
                     }
