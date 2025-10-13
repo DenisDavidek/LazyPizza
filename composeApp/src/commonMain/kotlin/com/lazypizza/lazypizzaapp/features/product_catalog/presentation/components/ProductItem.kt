@@ -1,7 +1,6 @@
 package com.lazypizza.lazypizzaapp.features.product_catalog.presentation.components
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -18,6 +17,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Remove
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -35,10 +35,10 @@ import androidx.compose.ui.draw.dropShadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.shadow.Shadow
 import androidx.compose.ui.unit.dp
+import coil3.compose.SubcomposeAsyncImage
 import com.lazypizza.lazypizzaapp.core.presentation.utils.toPrice
 import com.lazypizza.lazypizzaapp.features.product_catalog.domain.Product
 import lazypizza.composeapp.generated.resources.Res
-import lazypizza.composeapp.generated.resources.pepperoni
 import lazypizza.composeapp.generated.resources.trash
 import org.jetbrains.compose.resources.painterResource
 
@@ -59,7 +59,7 @@ fun ProductItem(
         modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(12.dp))
-            .clickable(onClick = onClick)
+            .clickable(onClick = onClick, enabled = product is Product.Pizza)
             .dropShadow(
                 shape = RoundedCornerShape(size = 12.dp),
                 shadow = Shadow(
@@ -81,10 +81,21 @@ fun ProductItem(
                 .background(MaterialTheme.colorScheme.surfaceVariant),
             contentAlignment = Alignment.Center
         ) {
-            Image(
-                painter = painterResource(Res.drawable.pepperoni),
+            SubcomposeAsyncImage(
+                model = product.imageUrl,
                 contentDescription = null,
-                modifier = Modifier.size(108.dp)
+                modifier = Modifier.size(108.dp),
+                loading = {
+                    Box(
+                        modifier = Modifier.size(56.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(24.dp),
+                            strokeWidth = 2.dp
+                        )
+                    }
+                }
             )
         }
 
@@ -153,7 +164,7 @@ fun ProductItem(
                             cartCount++
                         },
                         onDecrement = {
-                            if (cartCount < 1) {
+                            if (cartCount <= 1) {
                                 isAddedToCart = false
                             } else {
                                 cartCount--
@@ -261,11 +272,11 @@ private fun ProductCart(
         }
 
         if (isAddedToCart) {
-            Column (
+            Column(
                 horizontalAlignment = Alignment.End
             ) {
                 Text(
-                    text = price.toPrice(),
+                    text = "$${price.toPrice()}",
                     style = MaterialTheme.typography.titleLarge,
                     color = MaterialTheme.colorScheme.onSurface
                 )

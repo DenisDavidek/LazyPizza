@@ -60,7 +60,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun MainProductCatalogRoot(
-    onNavigateToProductDetails: () -> Unit,
+    onNavigateToProductDetails: (product: Product) -> Unit,
     viewModel: MainProductCatalogViewModel = viewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -69,8 +69,8 @@ fun MainProductCatalogRoot(
         state = state,
         onAction = { action ->
             when (action) {
-                MainProductCatalogAction.OnProductClick -> {
-                    onNavigateToProductDetails()
+                is MainProductCatalogAction.OnProductClick -> {
+                    onNavigateToProductDetails(action.product)
                 }
 
                 else -> viewModel.onAction(action)
@@ -147,7 +147,10 @@ fun MainProductCatalogScreen(
                                 onAction(MainProductCatalogAction.OnCategorySelected(productCategory))
                             },
                             label = { Text(productCategory.displayName) },
-                            border = BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.outline),
+                            border = BorderStroke(
+                                width = 1.dp,
+                                color = MaterialTheme.colorScheme.outline
+                            ),
                             modifier = Modifier.padding(horizontal = 8.dp),
                             shape = AppShapes.medium,
                             colors = SuggestionChipDefaults.suggestionChipColors(
@@ -241,7 +244,7 @@ fun LazyListScope.productCatalogListContent(
             ProductItem(
                 product = product,
                 onClick = {
-                    onAction(MainProductCatalogAction.OnProductClick)
+                    onAction(MainProductCatalogAction.OnProductClick(product))
                 },
                 modifier = Modifier.animateItem()
             )
@@ -272,7 +275,7 @@ fun LazyGridScope.productCatalogGridContent(
             ProductItem(
                 product = product,
                 onClick = {
-                    onAction(MainProductCatalogAction.OnProductClick)
+                    onAction(MainProductCatalogAction.OnProductClick(product))
                 },
                 modifier = Modifier.animateItem()
             )

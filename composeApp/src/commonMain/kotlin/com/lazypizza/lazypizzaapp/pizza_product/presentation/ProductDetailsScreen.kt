@@ -28,10 +28,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.window.core.layout.WindowSizeClass
 import com.lazypizza.lazypizzaapp.design_systems.AppTheme
+import com.lazypizza.lazypizzaapp.features.product_catalog.domain.Product
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun ProductDetailScreen(
+    product: Product,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -79,7 +81,7 @@ fun ProductDetailScreen(
                             .padding(horizontal = 16.dp)
                             .weight(1f)
                     ) {
-                        PizzaDetailsScreen()
+                        PizzaDetailsScreen(product = product)
                     }
 
                     Column(
@@ -98,7 +100,9 @@ fun ProductDetailScreen(
                         .padding(horizontal = 16.dp, vertical = 16.dp)
                         .fillMaxSize()
                 ) {
-                    PizzaDetailsScreen()
+                    PizzaDetailsScreen(
+                        product = product
+                    )
 
                     Spacer(modifier = Modifier.height(16.dp))
 
@@ -131,7 +135,14 @@ private fun ToppingsList(modifier: Modifier = Modifier) {
 private fun ProductCatalogPreview() {
     AppTheme {
         ProductDetailScreen(
-            onClick = {}
+            product = Product.Pizza(
+                id = 0,
+                name = "Pizza",
+                ingredients = listOf(),
+                price = 0.0,
+                imageUrl = ""
+            ),
+            onClick = {},
         )
     }
 }

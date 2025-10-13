@@ -9,7 +9,9 @@ sealed interface LazyPizzaScreen {
     object MainProductCatalog : LazyPizzaScreen
 
     @Serializable
-    object ProductDetail : LazyPizzaScreen
+    data class ProductDetail(
+        val productJson: String,
+    ) : LazyPizzaScreen
 
 
 }
