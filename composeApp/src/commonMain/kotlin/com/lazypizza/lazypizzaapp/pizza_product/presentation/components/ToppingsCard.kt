@@ -21,6 +21,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -54,14 +55,14 @@ fun ToppingsCard(
     ) {
         Spacer(modifier = Modifier.height(12.dp))
 
-        val image by remember {
+        var image by remember {
             mutableStateOf("")
         }
         val storage = Firebase.storage
         val imageRef = storage.getReferenceFromUrl("gs://lazypizza-1999a.firebasestorage.app/drink/7-up.png")
 
         LaunchedEffect(imageRef) {
-            val image = imageRef.getDownloadUrl()
+            image = imageRef.getDownloadUrl()
         }
 
         SubcomposeAsyncImage(
@@ -85,7 +86,7 @@ fun ToppingsCard(
             },
             error = {
                 // Fallback to the resource image if network loading fails
-
+                println(it.result.throwable.message)
             }
         )
 
