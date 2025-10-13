@@ -132,7 +132,7 @@ fun ToppingsCard(
                 }
 
                 Text(
-                    text = count.toString(),
+                    text = "$count",
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onSurface
                 )
