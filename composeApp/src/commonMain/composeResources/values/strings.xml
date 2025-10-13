@@ -1,0 +1,9 @@
+<resources>
+    <string name="lazy_pizza">LazyPizza</string>
+    <string name="cd_lazy_pizza_logo">LazyPizza Logo</string>
+    <string name="cd_contact_phone_number">Contact Phone Number</string>
+    <string name="example_phone_number">+1 (555) 321-7890</string>
+    <string name="cd_main_pizza_background">Main Pizza background</string>
+    <string name="cd_search_for_food">Search for food</string>
+    <string name="search_for_delicious_food">Search for delicious food...</string>
+</resources>
