@@ -1,4 +1,4 @@
-package com.lazypizza.lazypizzaapp.pizza_product.presentation.models
+package com.lazypizza.lazypizzaapp.features.pizza_product.presentation.models
 
 data class ToppingsUI(
     val imageUrl: String,

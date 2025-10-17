@@ -1,6 +1,5 @@
-package com.lazypizza.lazypizzaapp.pizza_product.presentation
+package com.lazypizza.lazypizzaapp.features.pizza_product.presentation
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,9 +11,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,14 +20,16 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.dropShadow
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.shadow.Shadow
 import androidx.compose.ui.unit.dp
 import com.lazypizza.lazypizzaapp.design_systems.AppTheme
-import com.lazypizza.lazypizzaapp.pizza_product.presentation.components.ToppingsCard
-import com.lazypizza.lazypizzaapp.pizza_product.presentation.models.ToppingsUI
+import com.lazypizza.lazypizzaapp.design_systems.PrimaryGradientEnd
+import com.lazypizza.lazypizzaapp.design_systems.PrimaryGradientStart
+import com.lazypizza.lazypizzaapp.design_systems.components.GradientButton
+import com.lazypizza.lazypizzaapp.features.pizza_product.presentation.components.ToppingsCard
+import com.lazypizza.lazypizzaapp.features.pizza_product.presentation.models.ToppingsUI
+import lazypizza.composeapp.generated.resources.Res
+import lazypizza.composeapp.generated.resources.add_to_cart
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
@@ -78,32 +76,21 @@ fun ToppingsListScreen(
             }
         }
 
-        Button(
-            modifier = Modifier
-                .fillMaxWidth()
-                .dropShadow(CircleShape, Shadow(6.dp, Color(0xffF36B50).copy(alpha = .25f)))
-                .background(
-                    brush = Brush.linearGradient(
-                        listOf(
-                            Color(0xffF9966F), Color(0xffF36B50)
-                        )
-                    ),
-                    shape = CircleShape
-                )
-                .align(Alignment.BottomCenter),
+        GradientButton(
             onClick = onAddToCartClick,
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Color.Transparent
-            )
-        ) {
-            Text(
-                text = if (totalPrice == 0.0) {
-                    "Add to Cart"
-                } else "Add to Cart for $$totalPrice",
-                style = MaterialTheme.typography.titleSmall,
-                color = MaterialTheme.colorScheme.onPrimary
-            )
-        }
+            modifier = Modifier.fillMaxWidth().align(Alignment.BottomCenter),
+            buttonText =
+                if (totalPrice == 0.0) {
+                    stringResource(Res.string.add_to_cart)
+                } else {
+                    "Add to Cart for $$totalPrice"
+                },
+            colors = listOf(
+                PrimaryGradientStart, PrimaryGradientEnd
+            ),
+            shadowColor = PrimaryGradientEnd
+        )
+
     }
 }
 

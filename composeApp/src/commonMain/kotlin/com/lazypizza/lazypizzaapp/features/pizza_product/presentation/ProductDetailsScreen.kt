@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalMaterial3Api::class)
 
-package com.lazypizza.lazypizzaapp.pizza_product.presentation
+package com.lazypizza.lazypizzaapp.features.pizza_product.presentation
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column

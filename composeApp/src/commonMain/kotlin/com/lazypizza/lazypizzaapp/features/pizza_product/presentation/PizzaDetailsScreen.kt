@@ -1,6 +1,5 @@
-package com.lazypizza.lazypizzaapp.pizza_product.presentation
+package com.lazypizza.lazypizzaapp.features.pizza_product.presentation
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -18,9 +17,6 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.SubcomposeAsyncImage
 import com.lazypizza.lazypizzaapp.design_systems.AppTheme
 import com.lazypizza.lazypizzaapp.features.product_catalog.domain.Product
-import lazypizza.composeapp.generated.resources.Res
-import lazypizza.composeapp.generated.resources.hawaiian
-import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable

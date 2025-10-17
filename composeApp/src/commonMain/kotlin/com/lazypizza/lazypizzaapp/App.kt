@@ -23,6 +23,7 @@ import coil3.PlatformContext
 import coil3.compose.setSingletonImageLoaderFactory
 import coil3.network.ktor3.KtorNetworkFetcherFactory
 import com.lazypizza.lazypizzaapp.core.presentation.MainProductCatalogTopBar
+import com.lazypizza.lazypizzaapp.core.presentation.TitleTopBar
 import com.lazypizza.lazypizzaapp.design_systems.AppTheme
 import com.lazypizza.lazypizzaapp.navigation.AppNavigation
 import com.lazypizza.lazypizzaapp.navigation.LazyPizzaScreen
@@ -34,6 +35,8 @@ import lazypizza.composeapp.generated.resources.Res
 import lazypizza.composeapp.generated.resources.ic_cart
 import lazypizza.composeapp.generated.resources.ic_history
 import lazypizza.composeapp.generated.resources.ic_menu
+import lazypizza.composeapp.generated.resources.order_history
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
@@ -56,12 +59,13 @@ fun App() {
         NavItem(
             title = "History",
             icon = Res.drawable.ic_history,
-            screen = LazyPizzaScreen.MainProductCatalog,
+            screen = LazyPizzaScreen.OrderHistory,
             selected = false
         ),
     )
     val navBarAllowedScreens = listOf(
-        LazyPizzaScreen.MainProductCatalog
+        LazyPizzaScreen.MainProductCatalog,
+                LazyPizzaScreen.OrderHistory
     )
 
     val navHostController = rememberNavController()
@@ -69,6 +73,10 @@ fun App() {
 
     val isMainProductCatalogScreenVisible =
         backStackEntry.value?.destination?.route == LazyPizzaScreen.MainProductCatalog::class.qualifiedName
+
+    val shouldDisplayTitleTopBar =
+        backStackEntry.value?.destination?.route == LazyPizzaScreen.OrderHistory::class.qualifiedName
+
 
     setSingletonImageLoaderFactory { context ->
         getAsyncImageLoader(context)
@@ -104,6 +112,8 @@ fun App() {
                                 .fillMaxWidth()
                                 .wrapContentHeight()
                         )
+                    } else if (shouldDisplayTitleTopBar) {
+                        TitleTopBar(screenTitle = stringResource(Res.string.order_history))
                     }
                 },
                 bottomBar = {

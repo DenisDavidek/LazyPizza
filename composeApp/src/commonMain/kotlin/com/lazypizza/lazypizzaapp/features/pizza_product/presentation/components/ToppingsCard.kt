@@ -1,4 +1,4 @@
-package com.lazypizza.lazypizzaapp.pizza_product.presentation.components
+package com.lazypizza.lazypizzaapp.features.pizza_product.presentation.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
@@ -33,7 +33,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil3.compose.SubcomposeAsyncImage
 import com.lazypizza.lazypizzaapp.design_systems.AppTheme
-import com.lazypizza.lazypizzaapp.pizza_product.presentation.models.ToppingsUI
+import com.lazypizza.lazypizzaapp.features.pizza_product.presentation.models.ToppingsUI
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable

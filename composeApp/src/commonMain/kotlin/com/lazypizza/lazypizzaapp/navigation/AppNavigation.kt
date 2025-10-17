@@ -6,9 +6,10 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
+import com.lazypizza.lazypizzaapp.features.order_history.presentation.OrderHistoryScreen
+import com.lazypizza.lazypizzaapp.features.pizza_product.presentation.ProductDetailScreen
 import com.lazypizza.lazypizzaapp.features.product_catalog.domain.Product
 import com.lazypizza.lazypizzaapp.features.product_catalog.presentation.MainProductCatalogRoot
-import com.lazypizza.lazypizzaapp.pizza_product.presentation.ProductDetailScreen
 import kotlinx.serialization.json.Json
 
 @Composable
@@ -41,6 +42,11 @@ fun AppNavigation(
                     navHostController.navigateUp()
                 },
             )
+        }
+
+        composable<LazyPizzaScreen.OrderHistory>{
+
+            OrderHistoryScreen(onSignInClick = {})
         }
     }
 }
