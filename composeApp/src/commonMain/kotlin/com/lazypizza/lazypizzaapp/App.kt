@@ -32,6 +32,7 @@ import com.lazypizza.lazypizzaapp.navigation.model.NavItem
 import com.lazypizza.lazypizzaapp.navigation.nav_bars.BottomNavBar
 import com.lazypizza.lazypizzaapp.navigation.nav_bars.RailNavBar
 import lazypizza.composeapp.generated.resources.Res
+import lazypizza.composeapp.generated.resources.cart
 import lazypizza.composeapp.generated.resources.ic_cart
 import lazypizza.composeapp.generated.resources.ic_history
 import lazypizza.composeapp.generated.resources.ic_menu
@@ -42,6 +43,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 @Composable
 @Preview
 fun App() {
+
     var navItems = listOf(
         NavItem(
             title = "Menu",
@@ -52,7 +54,7 @@ fun App() {
         NavItem(
             title = "Cart",
             icon = Res.drawable.ic_cart,
-            screen = LazyPizzaScreen.MainProductCatalog,
+            screen = LazyPizzaScreen.Cart,
             badge = "4",
             selected = false
         ),
@@ -65,7 +67,8 @@ fun App() {
     )
     val navBarAllowedScreens = listOf(
         LazyPizzaScreen.MainProductCatalog,
-                LazyPizzaScreen.OrderHistory
+        LazyPizzaScreen.OrderHistory,
+        LazyPizzaScreen.Cart
     )
 
     val navHostController = rememberNavController()
@@ -75,7 +78,7 @@ fun App() {
         backStackEntry.value?.destination?.route == LazyPizzaScreen.MainProductCatalog::class.qualifiedName
 
     val shouldDisplayTitleTopBar =
-        backStackEntry.value?.destination?.route == LazyPizzaScreen.OrderHistory::class.qualifiedName
+        backStackEntry.value?.destination?.route == LazyPizzaScreen.OrderHistory::class.qualifiedName || backStackEntry.value?.destination?.route == LazyPizzaScreen.Cart::class.qualifiedName
 
 
     setSingletonImageLoaderFactory { context ->
@@ -113,7 +116,7 @@ fun App() {
                                 .wrapContentHeight()
                         )
                     } else if (shouldDisplayTitleTopBar) {
-                        TitleTopBar(screenTitle = stringResource(Res.string.order_history))
+                        TitleTopBar(screenTitle = getToolbarTitle(backStackEntry.value?.destination?.route.toString()))
                     }
                 },
                 bottomBar = {
@@ -157,4 +160,14 @@ fun getAsyncImageLoader(context: PlatformContext): ImageLoader {
             add(KtorNetworkFetcherFactory())
         }
         .build()
+}
+
+@Composable
+fun getToolbarTitle(currentDestination: String): String {
+   return if( currentDestination == LazyPizzaScreen.OrderHistory::class.qualifiedName){
+        stringResource(Res.string.order_history)
+    } else
+        stringResource(Res.string.cart)
+
+
 }

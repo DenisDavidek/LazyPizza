@@ -16,4 +16,7 @@ sealed interface LazyPizzaScreen {
     @Serializable
     object OrderHistory: LazyPizzaScreen
 
+    @Serializable
+    object Cart: LazyPizzaScreen
+
 }

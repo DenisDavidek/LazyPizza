@@ -15,7 +15,13 @@ import androidx.compose.ui.graphics.shadow.Shadow
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun GradientButton(onClick: () -> Unit, modifier: Modifier = Modifier, buttonText: String, colors: List<Color>, shadowColor: Color ){
+fun GradientButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    buttonText: String,
+    colors: List<Color>,
+    shadowColor: Color
+) {
     Button(
         modifier = modifier
             .dropShadow(CircleShape, Shadow(6.dp, shadowColor.copy(alpha = .25f)))
@@ -25,7 +31,7 @@ fun GradientButton(onClick: () -> Unit, modifier: Modifier = Modifier, buttonTex
                 ),
                 shape = CircleShape
             ),
-                   onClick = onClick,
+        onClick = onClick,
         colors = ButtonDefaults.buttonColors(
             containerColor = Color.Transparent
         )
