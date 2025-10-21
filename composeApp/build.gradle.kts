@@ -35,6 +35,8 @@ kotlin {
             implementation(libs.koin.compose)
             implementation(libs.androidx.core.splashscreen)
             implementation(libs.ktor.client.okhttp)
+            implementation(project.dependencies.platform("com.google.firebase:firebase-bom:32.7.0"))
+            implementation("com.google.firebase:firebase-database-ktx")
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -59,6 +61,9 @@ kotlin {
             implementation(libs.kotlinx.datetime)
             implementation(libs.adaptive)
             implementation("dev.gitlive:firebase-storage:2.3.0")
+            implementation("dev.gitlive:firebase-app:1.12.0")
+            implementation("dev.gitlive:firebase-database:2.3.0")
+
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

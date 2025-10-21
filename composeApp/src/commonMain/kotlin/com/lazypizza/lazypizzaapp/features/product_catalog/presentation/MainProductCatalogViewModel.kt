@@ -8,23 +8,27 @@ import com.lazypizza.lazypizzaapp.features.product_catalog.domain.getSampleDrink
 import com.lazypizza.lazypizzaapp.features.product_catalog.domain.getSampleIceCreams
 import com.lazypizza.lazypizzaapp.features.product_catalog.domain.getSamplePizzas
 import com.lazypizza.lazypizzaapp.features.product_catalog.domain.getSampleSauces
+import dev.gitlive.firebase.Firebase
+import dev.gitlive.firebase.database.FirebaseDatabase
+import dev.gitlive.firebase.database.database
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class MainProductCatalogViewModel : ViewModel() {
+class MainProductCatalogViewModel() : ViewModel() {
 
     private var hasLoadedInitialData = false
-
+    private var database: FirebaseDatabase = Firebase.database("https://lazypizza-1999a-default-rtdb.europe-west1.firebasedatabase.app/")
     private val _state = MutableStateFlow(MainProductCatalogState())
     val state = _state
         .onStart {
             if (!hasLoadedInitialData) {
                 loadData()
-
+                getRemoteData()
                 hasLoadedInitialData = true
             }
         }
@@ -34,6 +38,22 @@ class MainProductCatalogViewModel : ViewModel() {
             initialValue = MainProductCatalogState()
         )
     private var products: List<Product> = emptyList()
+
+
+    private fun getRemoteData() {
+        println("Starting Firebase connection test...")
+        viewModelScope.launch {
+            try {
+                println("About to call first()...")
+                val snapshot = database.reference("pizza").valueEvents.first()
+                println("Got snapshot!")
+                println("Value: ${snapshot.value}")
+            } catch (e: Exception) {
+                println("Error: ${e.message}")
+                e.printStackTrace()
+            }
+        }
+    }
 
     private fun loadData() {
         viewModelScope.launch {
