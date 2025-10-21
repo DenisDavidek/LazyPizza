@@ -12,12 +12,15 @@ import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.window.core.layout.WindowSizeClass
+import co.touchlab.kermit.Logger
 import coil3.ImageLoader
 import coil3.PlatformContext
 import coil3.compose.setSingletonImageLoaderFactory
@@ -39,32 +42,35 @@ import lazypizza.composeapp.generated.resources.ic_menu
 import lazypizza.composeapp.generated.resources.order_history
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import kotlin.collections.listOf
 
 @Composable
 @Preview
 fun App() {
 
-    var navItems = listOf(
-        NavItem(
-            title = "Menu",
-            icon = Res.drawable.ic_menu,
-            screen = LazyPizzaScreen.MainProductCatalog,
-            selected = true
-        ),
-        NavItem(
-            title = "Cart",
-            icon = Res.drawable.ic_cart,
-            screen = LazyPizzaScreen.Cart,
-            badge = "4",
-            selected = false
-        ),
-        NavItem(
-            title = "History",
-            icon = Res.drawable.ic_history,
-            screen = LazyPizzaScreen.OrderHistory,
-            selected = false
-        ),
-    )
+    val navItems = remember {
+        mutableStateListOf(
+            NavItem(
+                title = "Menu",
+                icon = Res.drawable.ic_menu,
+                screen = LazyPizzaScreen.MainProductCatalog,
+                selected = true
+            ),
+            NavItem(
+                title = "Cart",
+                icon = Res.drawable.ic_cart,
+                screen = LazyPizzaScreen.Cart,
+                badge = "4",
+                selected = false
+            ),
+            NavItem(
+                title = "History",
+                icon = Res.drawable.ic_history,
+                screen = LazyPizzaScreen.OrderHistory,
+                selected = false
+            ),
+        )
+    }
     val navBarAllowedScreens = listOf(
         LazyPizzaScreen.MainProductCatalog,
         LazyPizzaScreen.OrderHistory,
@@ -85,16 +91,21 @@ fun App() {
         getAsyncImageLoader(context)
     }
 
-    LaunchedEffect(backStackEntry) {
-        val activeScreenIdx =
-            navItems.indexOfFirst { it.screen::class.qualifiedName == backStackEntry.value?.destination?.route }
+    LaunchedEffect(backStackEntry.value?.destination) {
+        Logger.d { "Triggered" }
 
-        navItems = navItems.mapIndexed { index, item ->
-            if (activeScreenIdx == index) {
-                item.copy(selected = true)
-            } else item
+        val activeScreenIdx =
+            navItems.indexOfLast { it.screen::class.qualifiedName == backStackEntry.value?.destination?.route }
+
+        if (activeScreenIdx != -1) {
+            navItems.forEachIndexed { index, item ->
+                navItems[index] = item.copy(selected = false)
+            }
+
+            navItems[activeScreenIdx] = navItems[activeScreenIdx].copy(selected = true)
         }
     }
+
 
     val adaptiveWindow = currentWindowAdaptiveInfo()
     val isExpanded = adaptiveWindow.windowSizeClass
@@ -164,7 +175,7 @@ fun getAsyncImageLoader(context: PlatformContext): ImageLoader {
 
 @Composable
 fun getToolbarTitle(currentDestination: String): String {
-   return if( currentDestination == LazyPizzaScreen.OrderHistory::class.qualifiedName){
+    return if (currentDestination == LazyPizzaScreen.OrderHistory::class.qualifiedName) {
         stringResource(Res.string.order_history)
     } else
         stringResource(Res.string.cart)
