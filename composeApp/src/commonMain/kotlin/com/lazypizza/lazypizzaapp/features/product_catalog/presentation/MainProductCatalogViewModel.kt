@@ -45,7 +45,7 @@ class MainProductCatalogViewModel() : ViewModel() {
         viewModelScope.launch {
             try {
                 println("About to call first()...")
-                val snapshot = database.reference("pizza").valueEvents.first()
+                val snapshot = database.reference("pizzas").valueEvents.first()
                 println("Got snapshot!")
                 println("Value: ${snapshot.value}")
             } catch (e: Exception) {
