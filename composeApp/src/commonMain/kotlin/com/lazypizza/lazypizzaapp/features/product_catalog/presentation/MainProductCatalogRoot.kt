@@ -239,7 +239,7 @@ fun LazyListScope.productCatalogListContent(
 
         items(
             items = products,
-            key = { it.id }
+           // key = { it.id } // TODO have to use another id to make each item unique, as some products are using the same id
         ) { product ->
             ProductItem(
                 product = product,

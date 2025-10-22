@@ -12,6 +12,8 @@ import dev.gitlive.firebase.database.FirebaseDatabase
 import dev.gitlive.firebase.database.database
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -43,17 +45,22 @@ class MainProductCatalogViewModel() : ViewModel() {
         viewModelScope.launch {
             try {
                 println("About to call first()...")
-                database.reference("pizzas").valueEvents.collect { snapshot ->
-                    println("Got snapshot!")
-                    val pizzas = snapshot.children.map {
+
+                combine(database.reference("pizzas").valueEvents, database.reference("pizzas").valueEvents) { pizzas, drinks ->
+                    val drinksList = drinks.children.map {
+                        it.value<Product.Drink>()
+                    }
+
+                    val pizzasList = pizzas.children.map {
                         it.value<Product.Pizza>()
                     }
+
                     _state.update {
                         it.copy(
-                            products = pizzas
+                            products = pizzasList + drinksList
                         )
                     }
-                }
+                }.launchIn(viewModelScope)
             } catch (e: Exception) {
                 println("Error: ${e.message}")
                 e.printStackTrace()
@@ -64,17 +71,17 @@ class MainProductCatalogViewModel() : ViewModel() {
     private fun loadData() {
         viewModelScope.launch {
           //  val pizzas = getSamplePizzas()
-            val drinks = getSampleDrinks()
+          //  val drinks = getSampleDrinks()
             val iceCreams = getSampleIceCreams()
             val sauces = getSampleSauces()
-
-            _state.update {
+            // TODO load these from the realtime database
+         /*   _state.update {
                 it.copy(
-                    products = drinks + iceCreams + sauces
+                    products = iceCreams + sauces
                 )
             }
-
-            products = drinks + iceCreams + sauces
+*/
+            products = iceCreams + sauces
         }
     }
 
