@@ -6,14 +6,12 @@ import com.lazypizza.lazypizzaapp.features.product_catalog.domain.Product
 import com.lazypizza.lazypizzaapp.features.product_catalog.domain.ProductCategory
 import com.lazypizza.lazypizzaapp.features.product_catalog.domain.getSampleDrinks
 import com.lazypizza.lazypizzaapp.features.product_catalog.domain.getSampleIceCreams
-import com.lazypizza.lazypizzaapp.features.product_catalog.domain.getSamplePizzas
 import com.lazypizza.lazypizzaapp.features.product_catalog.domain.getSampleSauces
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.database.FirebaseDatabase
 import dev.gitlive.firebase.database.database
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -45,9 +43,17 @@ class MainProductCatalogViewModel() : ViewModel() {
         viewModelScope.launch {
             try {
                 println("About to call first()...")
-                val snapshot = database.reference("pizzas").valueEvents.first()
-                println("Got snapshot!")
-                println("Value: ${snapshot.value}")
+                database.reference("pizzas").valueEvents.collect { snapshot ->
+                    println("Got snapshot!")
+                    val pizzas = snapshot.children.map {
+                        it.value<Product.Pizza>()
+                    }
+                    _state.update {
+                        it.copy(
+                            products = pizzas
+                        )
+                    }
+                }
             } catch (e: Exception) {
                 println("Error: ${e.message}")
                 e.printStackTrace()
@@ -57,18 +63,18 @@ class MainProductCatalogViewModel() : ViewModel() {
 
     private fun loadData() {
         viewModelScope.launch {
-            val pizzas = getSamplePizzas()
+          //  val pizzas = getSamplePizzas()
             val drinks = getSampleDrinks()
             val iceCreams = getSampleIceCreams()
             val sauces = getSampleSauces()
 
             _state.update {
                 it.copy(
-                    products = pizzas + drinks + iceCreams + sauces
+                    products = drinks + iceCreams + sauces
                 )
             }
 
-            products = pizzas + drinks + iceCreams + sauces
+            products = drinks + iceCreams + sauces
         }
     }
 
