@@ -12,11 +12,13 @@ import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.window.core.layout.WindowSizeClass
@@ -28,6 +30,7 @@ import coil3.network.ktor3.KtorNetworkFetcherFactory
 import com.lazypizza.lazypizzaapp.core.presentation.MainProductCatalogTopBar
 import com.lazypizza.lazypizzaapp.core.presentation.TitleTopBar
 import com.lazypizza.lazypizzaapp.design_systems.AppTheme
+import com.lazypizza.lazypizzaapp.features.cart.presentation.CartViewModel
 import com.lazypizza.lazypizzaapp.navigation.AppNavigation
 import com.lazypizza.lazypizzaapp.navigation.LazyPizzaScreen
 import com.lazypizza.lazypizzaapp.navigation.locals.LocalLazyPizzaNavItems
@@ -42,11 +45,14 @@ import lazypizza.composeapp.generated.resources.ic_menu
 import lazypizza.composeapp.generated.resources.order_history
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import kotlin.collections.listOf
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 @Preview
 fun App() {
+
+    val cartViewModel : CartViewModel = koinViewModel()
+    val cartState by cartViewModel.cartState.collectAsStateWithLifecycle()
 
     val navItems = remember {
         mutableStateListOf(
@@ -60,7 +66,7 @@ fun App() {
                 title = "Cart",
                 icon = Res.drawable.ic_cart,
                 screen = LazyPizzaScreen.Cart,
-                badge = "4",
+                badge = "0",
                 selected = false
             ),
             NavItem(
@@ -71,6 +77,21 @@ fun App() {
             ),
         )
     }
+
+    LaunchedEffect(cartState.items.size) {
+        val cartItemIndex = navItems.indexOfFirst { it.screen == LazyPizzaScreen.Cart }
+        if (cartItemIndex != -1) {
+            val newBadgeValue = if (cartState.items.isNotEmpty()) {
+                cartState.items.size.toString()
+            } else {
+                // Return an empty string or null to hide the badge when cart is empty
+                "0"
+            }
+            navItems[cartItemIndex] = navItems[cartItemIndex].copy(badge = newBadgeValue)
+        }
+    }
+
+
     val navBarAllowedScreens = listOf(
         LazyPizzaScreen.MainProductCatalog,
         LazyPizzaScreen.OrderHistory,
@@ -113,6 +134,8 @@ fun App() {
 
     val isNavBarAllowed =
         navBarAllowedScreens.any { it::class.qualifiedName == backStackEntry.value?.destination?.route }
+
+
 
     AppTheme {
         CompositionLocalProvider(
@@ -158,7 +181,8 @@ fun App() {
 
                 AppNavigation(
                     navHostController = navHostController,
-                    modifier = Modifier.padding(padding)
+                    modifier = Modifier.padding(padding),
+                    cartViewModel = cartViewModel
                 )
             }
         }

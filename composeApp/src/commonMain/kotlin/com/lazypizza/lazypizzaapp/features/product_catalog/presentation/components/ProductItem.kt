@@ -24,6 +24,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedIconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -47,12 +48,19 @@ fun ProductItem(
     product: Product,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    onAddToCartClick: () -> Unit
 ) {
     var isAddedToCart by rememberSaveable {
         mutableStateOf(false)
     }
     var cartCount by rememberSaveable {
         mutableStateOf(1)
+    }
+
+    LaunchedEffect(isAddedToCart){
+        if (isAddedToCart){
+            onAddToCartClick()
+        }
     }
 
     Row(

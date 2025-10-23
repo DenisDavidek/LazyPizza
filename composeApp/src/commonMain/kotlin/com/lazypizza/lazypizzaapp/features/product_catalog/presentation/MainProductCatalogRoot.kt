@@ -43,11 +43,12 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.window.core.layout.WindowSizeClass
 import com.lazypizza.lazypizzaapp.design_systems.AppShapes
 import com.lazypizza.lazypizzaapp.design_systems.AppTheme
 import com.lazypizza.lazypizzaapp.design_systems.components.PizzaSearchBar
+import com.lazypizza.lazypizzaapp.features.cart.presentation.CartAction
+import com.lazypizza.lazypizzaapp.features.cart.presentation.CartViewModel
 import com.lazypizza.lazypizzaapp.features.product_catalog.domain.Product
 import com.lazypizza.lazypizzaapp.features.product_catalog.domain.ProductCategory
 import com.lazypizza.lazypizzaapp.features.product_catalog.presentation.components.ProductItem
@@ -61,7 +62,8 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 @Composable
 fun MainProductCatalogRoot(
     onNavigateToProductDetails: (product: Product) -> Unit,
-    viewModel: MainProductCatalogViewModel = viewModel(),
+    viewModel: MainProductCatalogViewModel,
+    cartViewModel: CartViewModel
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -75,6 +77,9 @@ fun MainProductCatalogRoot(
 
                 else -> viewModel.onAction(action)
             }
+        },
+        onCartAction = { cartAction ->
+            cartViewModel.onAction(cartAction)
         }
     )
 }
@@ -83,6 +88,7 @@ fun MainProductCatalogRoot(
 fun MainProductCatalogScreen(
     state: MainProductCatalogState,
     onAction: (MainProductCatalogAction) -> Unit,
+    onCartAction: (CartAction) -> Unit
 ) {
     val adaptiveWindow = currentWindowAdaptiveInfo()
     val isExpanded = adaptiveWindow.windowSizeClass
@@ -171,7 +177,8 @@ fun MainProductCatalogScreen(
                 ) {
                     productCatalogGridContent(
                         products = state.products,
-                        onAction = onAction
+                        onAction = onAction,
+                        onCartAction = onCartAction
                     )
                 }
             } else {
@@ -182,7 +189,8 @@ fun MainProductCatalogScreen(
                 ) {
                     productCatalogListContent(
                         products = state.products,
-                        onAction = onAction
+                        onAction = onAction,
+                        onCartAction = onCartAction
                     )
                 }
             }
@@ -225,6 +233,7 @@ fun EmptyBox() {
 fun LazyListScope.productCatalogListContent(
     products: List<Product>,
     onAction: (MainProductCatalogAction) -> Unit,
+    onCartAction: (CartAction) -> Unit
 ) {
     products.groupBy { it.category }.entries.forEach { (category, products) ->
         item {
@@ -239,14 +248,17 @@ fun LazyListScope.productCatalogListContent(
 
         items(
             items = products,
-           // key = { it.id } // TODO have to use another id to make each item unique, as some products are using the same id
+            // key = { it.id } // TODO have to use another id to make each item unique, as some products are using the same id
         ) { product ->
             ProductItem(
                 product = product,
                 onClick = {
                     onAction(MainProductCatalogAction.OnProductClick(product))
                 },
-                modifier = Modifier.animateItem()
+                modifier = Modifier.animateItem(),
+                onAddToCartClick = {
+                    onCartAction(CartAction.OnAddToCart(product))
+                }
             )
         }
     }
@@ -256,6 +268,7 @@ fun LazyListScope.productCatalogListContent(
 fun LazyGridScope.productCatalogGridContent(
     products: List<Product>,
     onAction: (MainProductCatalogAction) -> Unit,
+    onCartAction: (CartAction) -> Unit
 ) {
     products.groupBy { it.category }.entries.forEach { (category, products) ->
         item(span = { GridItemSpan(maxLineSpan) }) {
@@ -277,7 +290,10 @@ fun LazyGridScope.productCatalogGridContent(
                 onClick = {
                     onAction(MainProductCatalogAction.OnProductClick(product))
                 },
-                modifier = Modifier.animateItem()
+                modifier = Modifier.animateItem(),
+                onAddToCartClick = {
+                    onCartAction(CartAction.OnAddToCart(product))
+                }
             )
         }
     }
@@ -289,7 +305,8 @@ private fun Preview() {
     AppTheme {
         MainProductCatalogScreen(
             state = MainProductCatalogState(),
-            onAction = {}
+            onAction = {},
+            onCartAction = {}
         )
     }
 }

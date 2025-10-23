@@ -1,0 +1,21 @@
+package com.lazypizza.lazypizzaapp.features.cart.presentation
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import com.lazypizza.lazypizzaapp.features.cart.presentation.components.CartItem
+
+@Composable
+fun CartScreen(state: CartState, modifier: Modifier, onAction: (CartAction) -> Unit) {
+
+    LazyColumn(modifier = modifier.background(MaterialTheme.colorScheme.background)) {
+        items(state.items, key = { product -> product.id }, itemContent = { product ->
+
+            CartItem(modifier = Modifier.animateItem(), product = product)
+        })
+
+    }
+}
