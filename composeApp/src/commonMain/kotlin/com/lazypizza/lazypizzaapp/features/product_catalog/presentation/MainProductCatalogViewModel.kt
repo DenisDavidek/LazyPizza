@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lazypizza.lazypizzaapp.features.product_catalog.domain.Product
 import com.lazypizza.lazypizzaapp.features.product_catalog.domain.ProductCategory
-import com.lazypizza.lazypizzaapp.features.product_catalog.domain.getSampleDrinks
 import com.lazypizza.lazypizzaapp.features.product_catalog.domain.getSampleIceCreams
 import com.lazypizza.lazypizzaapp.features.product_catalog.domain.getSampleSauces
 import dev.gitlive.firebase.Firebase
@@ -48,9 +47,13 @@ class MainProductCatalogViewModel() : ViewModel() {
                 println("About to call first()...")
 
                 combine(
-                    flow = database.reference("pizzas").valueEvents,
-                    flow2 = database.reference("drinks").valueEvents,
-                ) { pizzas, drinks ->
+                    database.reference("pizzas").valueEvents,
+                    database.reference("drinks").valueEvents,
+                    database.reference("icecream").valueEvents,
+                    database.reference("sources").valueEvents,
+                    database.reference("toppings").valueEvents,
+
+                ) { pizzas, drinks, icecream, source, toppings ->
                     val drinksList = drinks.children.map {
                         it.value<Product.Drink>()
                     }
@@ -59,9 +62,17 @@ class MainProductCatalogViewModel() : ViewModel() {
                         it.value<Product.Pizza>()
                     }
 
+                    val icecreamList = icecream.children.map {
+                        it.value<Product.Pizza>()
+                    }
+
+                    val sourcesList = source.children.map {
+                        it.value<Product.Pizza>()
+                    }
+
                     _state.update {
                         it.copy(
-                            products = pizzasList + drinksList
+                            products = pizzasList + drinksList + icecreamList + sourcesList
                         )
                     }
                 }.launchIn(viewModelScope)
