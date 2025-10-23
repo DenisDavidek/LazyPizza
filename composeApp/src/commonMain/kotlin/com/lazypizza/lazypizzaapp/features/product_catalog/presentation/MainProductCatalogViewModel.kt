@@ -50,7 +50,7 @@ class MainProductCatalogViewModel() : ViewModel() {
                     database.reference("pizzas").valueEvents,
                     database.reference("drinks").valueEvents,
                     database.reference("icecream").valueEvents,
-                    database.reference("sources").valueEvents,
+                    database.reference("sauces").valueEvents,
                     database.reference("toppings").valueEvents,
 
                 ) { pizzas, drinks, icecream, source, toppings ->
