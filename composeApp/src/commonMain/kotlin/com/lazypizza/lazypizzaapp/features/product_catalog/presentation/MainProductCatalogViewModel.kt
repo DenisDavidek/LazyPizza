@@ -22,7 +22,8 @@ import kotlinx.coroutines.launch
 class MainProductCatalogViewModel() : ViewModel() {
 
     private var hasLoadedInitialData = false
-    private var database: FirebaseDatabase = Firebase.database("https://lazypizza-1999a-default-rtdb.europe-west1.firebasedatabase.app/")
+    private var database: FirebaseDatabase =
+        Firebase.database("https://lazypizza-1999a-default-rtdb.europe-west1.firebasedatabase.app/")
     private val _state = MutableStateFlow(MainProductCatalogState())
     val state = _state
         .onStart {
@@ -46,7 +47,10 @@ class MainProductCatalogViewModel() : ViewModel() {
             try {
                 println("About to call first()...")
 
-                combine(database.reference("pizzas").valueEvents, database.reference("pizzas").valueEvents) { pizzas, drinks ->
+                combine(
+                    flow = database.reference("pizzas").valueEvents,
+                    flow2 = database.reference("drinks").valueEvents,
+                ) { pizzas, drinks ->
                     val drinksList = drinks.children.map {
                         it.value<Product.Drink>()
                     }
@@ -70,17 +74,17 @@ class MainProductCatalogViewModel() : ViewModel() {
 
     private fun loadData() {
         viewModelScope.launch {
-          //  val pizzas = getSamplePizzas()
-          //  val drinks = getSampleDrinks()
+            //  val pizzas = getSamplePizzas()
+            //  val drinks = getSampleDrinks()
             val iceCreams = getSampleIceCreams()
             val sauces = getSampleSauces()
             // TODO load these from the realtime database
-         /*   _state.update {
-                it.copy(
-                    products = iceCreams + sauces
-                )
-            }
-*/
+            /*   _state.update {
+                   it.copy(
+                       products = iceCreams + sauces
+                   )
+               }
+   */
             products = iceCreams + sauces
         }
     }
@@ -102,7 +106,6 @@ class MainProductCatalogViewModel() : ViewModel() {
             MainProductCatalogAction.OnScrollCompleted -> {
                 _state.update { it.copy(scrollToIndex = null) }
             }
-
 
 
             else -> {}
