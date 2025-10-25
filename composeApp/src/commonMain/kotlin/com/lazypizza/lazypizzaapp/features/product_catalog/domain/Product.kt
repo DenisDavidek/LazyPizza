@@ -9,6 +9,7 @@ sealed class Product {
     abstract val price: Double
     abstract val category: ProductCategory
     abstract val imageUrl: String
+    abstract val quantity: Int
 
     @Serializable
     data class Pizza(
@@ -17,6 +18,7 @@ sealed class Product {
         val ingredients: List<String>,
         override val price: Double,
         override val imageUrl: String,
+        override val quantity: Int = 0,
     ) : Product() {
         override val category: ProductCategory = ProductCategory.PIZZA
     }
@@ -27,6 +29,7 @@ sealed class Product {
         override val name: String,
         override val price: Double,
         override val imageUrl: String,
+        override val quantity: Int = 0,
     ) : Product() {
         override val category: ProductCategory = ProductCategory.SAUCES
     }
@@ -37,6 +40,7 @@ sealed class Product {
         override val name: String,
         override val price: Double,
         override val imageUrl: String,
+        override val quantity: Int = 0,
     ) : Product() {
         override val category: ProductCategory = ProductCategory.ICE_CREAM
     }
@@ -47,6 +51,7 @@ sealed class Product {
         override val name: String,
         override val price: Double,
         override val imageUrl: String,
+        override val quantity: Int = 0,
     ) : Product() {
         override val category: ProductCategory = ProductCategory.DRINKS
     }
