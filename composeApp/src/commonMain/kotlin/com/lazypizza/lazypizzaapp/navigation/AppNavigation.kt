@@ -21,10 +21,11 @@ import org.koin.compose.viewmodel.koinViewModel
 fun AppNavigation(
     navHostController: NavHostController,
     modifier: Modifier,
-    cartViewModel: CartViewModel
+    cartViewModel: CartViewModel,
+    onShowSnackBar: (product: Product) -> Unit,
 ) {
 
-    val mainProductCatalogViewModel : MainProductCatalogViewModel = koinViewModel()
+    val mainProductCatalogViewModel: MainProductCatalogViewModel = koinViewModel()
 
 
     NavHost(
@@ -43,6 +44,9 @@ fun AppNavigation(
                 },
                 viewModel = mainProductCatalogViewModel,
                 cartViewModel = cartViewModel,
+                onShowSnackBar = { product ->
+                    onShowSnackBar(product)
+                }
             )
         }
         composable<LazyPizzaScreen.ProductDetail> { backStackEntry ->
@@ -63,7 +67,8 @@ fun AppNavigation(
         }
 
         composable<LazyPizzaScreen.Cart> {
-            CartRootScreen(onBackToMenuClick = { navHostController.navigate(LazyPizzaScreen.MainProductCatalog)
+            CartRootScreen(onBackToMenuClick = {
+                navHostController.navigate(LazyPizzaScreen.MainProductCatalog)
 
                 Logger.e("Back to menu click")
             }, mainProductCatalogViewModel = mainProductCatalogViewModel, viewModel = cartViewModel)

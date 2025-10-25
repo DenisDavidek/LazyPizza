@@ -11,6 +11,8 @@ sealed class Product {
     abstract val imageUrl: String
     abstract val quantity: Int
 
+    abstract fun copyNewQuantity(newQuantity: Int): Product
+
     @Serializable
     data class Pizza(
         override val id: Int,
@@ -18,9 +20,13 @@ sealed class Product {
         val ingredients: List<String>,
         override val price: Double,
         override val imageUrl: String,
-        override val quantity: Int = 0,
+        override val quantity: Int = 1,
     ) : Product() {
         override val category: ProductCategory = ProductCategory.PIZZA
+
+        override fun copyNewQuantity(newQuantity: Int): Product {
+            return this.copy(quantity = newQuantity)
+        }
     }
 
     @Serializable
@@ -29,9 +35,13 @@ sealed class Product {
         override val name: String,
         override val price: Double,
         override val imageUrl: String,
-        override val quantity: Int = 0,
+        override val quantity: Int = 1,
     ) : Product() {
         override val category: ProductCategory = ProductCategory.SAUCES
+
+        override fun copyNewQuantity(newQuantity: Int): Product {
+            return this.copy(quantity = newQuantity)
+        }
     }
 
     @Serializable
@@ -40,9 +50,13 @@ sealed class Product {
         override val name: String,
         override val price: Double,
         override val imageUrl: String,
-        override val quantity: Int = 0,
+        override val quantity: Int = 1,
     ) : Product() {
         override val category: ProductCategory = ProductCategory.ICE_CREAM
+
+        override fun copyNewQuantity(newQuantity: Int): Product {
+            return this.copy(quantity = newQuantity)
+        }
     }
 
     @Serializable
@@ -51,8 +65,12 @@ sealed class Product {
         override val name: String,
         override val price: Double,
         override val imageUrl: String,
-        override val quantity: Int = 0,
+        override val quantity: Int = 1,
     ) : Product() {
         override val category: ProductCategory = ProductCategory.DRINKS
+
+        override fun copyNewQuantity(newQuantity: Int): Product {
+            return this.copy(quantity = newQuantity)
+        }
     }
 }

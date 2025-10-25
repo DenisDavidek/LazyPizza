@@ -14,7 +14,19 @@ fun CartScreen(state: CartState, modifier: Modifier, onAction: (CartAction) -> U
     LazyColumn(modifier = modifier.background(MaterialTheme.colorScheme.background)) {
         items(state.items, key = { product -> product.id }, itemContent = { product ->
 
-            CartItem(modifier = Modifier.animateItem(), product = product)
+            CartItem(
+                modifier = Modifier.animateItem(),
+                product = product,
+                onCartItemDeleteClick = { product ->
+                    onAction(CartAction.OnDeleteProductFromCart(product))
+
+                },
+                onIncrement = { product ->
+                    onAction(CartAction.OnIncreaseQuantity(product))
+                },
+                onDecrement = { product ->
+                    onAction(CartAction.OnDecreaseQuantity(product))
+                })
         })
 
     }

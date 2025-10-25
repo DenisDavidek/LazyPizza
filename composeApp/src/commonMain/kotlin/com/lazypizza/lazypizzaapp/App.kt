@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -15,6 +17,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
@@ -29,6 +32,7 @@ import coil3.compose.setSingletonImageLoaderFactory
 import coil3.network.ktor3.KtorNetworkFetcherFactory
 import com.lazypizza.lazypizzaapp.core.presentation.MainProductCatalogTopBar
 import com.lazypizza.lazypizzaapp.core.presentation.TitleTopBar
+import com.lazypizza.lazypizzaapp.core.utils.showSnackBar
 import com.lazypizza.lazypizzaapp.design_systems.AppTheme
 import com.lazypizza.lazypizzaapp.features.cart.presentation.CartViewModel
 import com.lazypizza.lazypizzaapp.navigation.AppNavigation
@@ -51,7 +55,7 @@ import org.koin.compose.viewmodel.koinViewModel
 @Preview
 fun App() {
 
-    val cartViewModel : CartViewModel = koinViewModel()
+    val cartViewModel: CartViewModel = koinViewModel()
     val cartState by cartViewModel.cartState.collectAsStateWithLifecycle()
 
     val navItems = remember {
@@ -135,13 +139,15 @@ fun App() {
     val isNavBarAllowed =
         navBarAllowedScreens.any { it::class.qualifiedName == backStackEntry.value?.destination?.route }
 
-
+    val snackBarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
 
     AppTheme {
         CompositionLocalProvider(
             LocalLazyPizzaNavItems provides navItems
         ) {
             Scaffold(
+                snackbarHost = { SnackbarHost(hostState = snackBarHostState) },
                 topBar = {
                     if (isMainProductCatalogScreenVisible) {
                         MainProductCatalogTopBar(
@@ -182,7 +188,13 @@ fun App() {
                 AppNavigation(
                     navHostController = navHostController,
                     modifier = Modifier.padding(padding),
-                    cartViewModel = cartViewModel
+                    cartViewModel = cartViewModel,
+                    onShowSnackBar = { product ->
+                        scope.showSnackBar(
+                            snackBarHostState = snackBarHostState,
+                            message = "The ${product.name} has been successfully added into your cart"
+                        )
+                    }
                 )
             }
         }

@@ -44,7 +44,7 @@ fun BottomNavBar(
                         painter = painterResource(item.icon),
                         contentDescription = "${item.title} icon",
                         modifier = Modifier
-                            .size(28.dp)
+                            .size(32.dp)
                             .clip(CircleShape)
                             .background(
                                 color = if (item.selected) {

@@ -44,6 +44,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.window.core.layout.WindowSizeClass
+import co.touchlab.kermit.Logger
 import com.lazypizza.lazypizzaapp.design_systems.AppShapes
 import com.lazypizza.lazypizzaapp.design_systems.AppTheme
 import com.lazypizza.lazypizzaapp.design_systems.components.PizzaSearchBar
@@ -54,6 +55,7 @@ import com.lazypizza.lazypizzaapp.features.product_catalog.domain.ProductCategor
 import com.lazypizza.lazypizzaapp.features.product_catalog.presentation.components.ProductItem
 import lazypizza.composeapp.generated.resources.Res
 import lazypizza.composeapp.generated.resources.cd_main_pizza_background
+import lazypizza.composeapp.generated.resources.no_query_results
 import lazypizza.composeapp.generated.resources.pizza
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -63,7 +65,8 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 fun MainProductCatalogRoot(
     onNavigateToProductDetails: (product: Product) -> Unit,
     viewModel: MainProductCatalogViewModel,
-    cartViewModel: CartViewModel
+    cartViewModel: CartViewModel,
+    onShowSnackBar: (product: Product) -> Unit,
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -80,6 +83,10 @@ fun MainProductCatalogRoot(
         },
         onCartAction = { cartAction ->
             cartViewModel.onAction(cartAction)
+            Logger.e("cartAction $cartAction")
+            if (cartAction is CartAction.OnAddToCart) {
+                onShowSnackBar(cartAction.product)
+            }
         }
     )
 }
@@ -222,7 +229,7 @@ fun EmptyBox() {
         )
 
         Text(
-            text = "No results found for your query",
+            text = stringResource(Res.string.no_query_results),
             style = MaterialTheme.typography.titleLarge,
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.onSurface

@@ -1,14 +1,22 @@
 package com.lazypizza.lazypizzaapp.features.cart.presentation.components
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedIconButton
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -18,10 +26,23 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.shadow.Shadow
 import androidx.compose.ui.unit.dp
 import coil3.compose.SubcomposeAsyncImage
+import com.lazypizza.lazypizzaapp.core.utils.toPrice
+import com.lazypizza.lazypizzaapp.design_systems.components.IncrementDecrementCounter
 import com.lazypizza.lazypizzaapp.features.product_catalog.domain.Product
+import lazypizza.composeapp.generated.resources.Res
+import lazypizza.composeapp.generated.resources.cd_delete_from_cart
+import lazypizza.composeapp.generated.resources.trash
+import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
-fun CartItem(modifier: Modifier = Modifier, product: Product) {
+fun CartItem(
+    modifier: Modifier = Modifier,
+    product: Product,
+    onCartItemDeleteClick: (product: Product) -> Unit,
+    onIncrement: (product: Product) -> Unit,
+    onDecrement: (product: Product) -> Unit
+) {
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -64,5 +85,78 @@ fun CartItem(modifier: Modifier = Modifier, product: Product) {
                 }
             )
         }
+        Column(
+            modifier = Modifier
+                .defaultMinSize(minHeight = 120.dp)
+                .padding(vertical = 12.dp, horizontal = 16.dp)
+        ) {
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = product.name,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+
+
+                OutlinedIconButton(
+                    onClick = {
+                        onCartItemDeleteClick(product)
+                    },
+                    border = BorderStroke(
+                        width = 1.dp, color = MaterialTheme.colorScheme.outlineVariant
+                    ),
+                    shape = RoundedCornerShape(8.dp),
+                    modifier = Modifier.size(32.dp)
+                ) {
+                    Icon(
+                        painter = painterResource(Res.drawable.trash),
+                        contentDescription = stringResource(Res.string.cd_delete_from_cart),
+                        modifier = Modifier.size(18.dp),
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                }
+
+            }
+
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(top = 12.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+
+                IncrementDecrementCounter(
+                    product = product,
+                    onIncrement = { product ->
+                        onIncrement(product)
+                    },
+                    onDecrement = { product ->
+                        onDecrement(product)
+                    }
+                )
+
+                Column(
+                    horizontalAlignment = Alignment.End,
+                ) {
+                    Text(
+                        text = "$${product.price.times(product.quantity).toPrice()}",
+                        style = MaterialTheme.typography.titleLarge,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+
+                    Text(
+                        text = "${product.quantity} x $${product.price}",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+
+        }
+
     }
 }

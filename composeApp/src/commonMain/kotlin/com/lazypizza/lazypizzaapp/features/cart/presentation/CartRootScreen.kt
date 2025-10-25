@@ -12,8 +12,6 @@ import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -41,9 +39,6 @@ fun CartRootScreen(
     val isExpanded = adaptiveWindow.windowSizeClass
         .isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND)
 
-    val isCartEmpty by remember {
-        mutableStateOf(false)
-    }
 
     val state by viewModel.cartState.collectAsStateWithLifecycle()
 
@@ -57,7 +52,7 @@ fun CartRootScreen(
     Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
 
 
-        if (isCartEmpty) {
+        if (state.items.isEmpty()) {
 
             DefaultInfo(
                 modifier = Modifier.fillMaxWidth().wrapContentHeight().align(
@@ -74,10 +69,12 @@ fun CartRootScreen(
             if (isExpanded) {
 
                 Row(modifier = Modifier.fillMaxSize()) {
+
                     CartScreen(
                         state = state,
                         modifier = Modifier.fillMaxSize().weight(1f),
-                        onAction = {})
+                        onAction = { action -> viewModel.onAction(action)})
+
                     RecommendedAddonsScreen(
                         Modifier.fillMaxSize().weight(1f).background(Color.Yellow)
                     )
@@ -86,10 +83,12 @@ fun CartRootScreen(
             } else {
 
                 Column {
+
                     CartScreen(
                         state = state,
                         modifier = Modifier.fillMaxSize().weight(1f),
-                        onAction = {})
+                        onAction = { action -> viewModel.onAction(action)})
+
                     RecommendedAddonsScreen(
                         Modifier.fillMaxSize().weight(1f).background(Color.Green)
                     )
