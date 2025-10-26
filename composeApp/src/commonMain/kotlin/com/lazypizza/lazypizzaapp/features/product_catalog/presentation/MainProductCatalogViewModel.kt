@@ -4,8 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lazypizza.lazypizzaapp.features.product_catalog.domain.Product
 import com.lazypizza.lazypizzaapp.features.product_catalog.domain.ProductCategory
-import com.lazypizza.lazypizzaapp.features.product_catalog.domain.getSampleIceCreams
-import com.lazypizza.lazypizzaapp.features.product_catalog.domain.getSampleSauces
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.database.FirebaseDatabase
 import dev.gitlive.firebase.database.database
@@ -28,7 +26,6 @@ class MainProductCatalogViewModel() : ViewModel() {
     val state = _state
         .onStart {
             if (!hasLoadedInitialData) {
-                loadData()
                 getRemoteData()
                 hasLoadedInitialData = true
             }
@@ -91,6 +88,8 @@ class MainProductCatalogViewModel() : ViewModel() {
                         )
                     }
 
+                    products = pizzasList + drinksList + iceCreamList + saucesList
+
 
                     val allAddons = saucesList + drinksList
 
@@ -105,23 +104,6 @@ class MainProductCatalogViewModel() : ViewModel() {
                 println("Error: ${e.message}")
                 e.printStackTrace()
             }
-        }
-    }
-
-    private fun loadData() {
-        viewModelScope.launch {
-            //  val pizzas = getSamplePizzas()
-            //  val drinks = getSampleDrinks()
-            val iceCreams = getSampleIceCreams()
-            val sauces = getSampleSauces()
-            // TODO load these from the realtime database
-            /*   _state.update {
-                   it.copy(
-                       products = iceCreams + sauces
-                   )
-               }
-   */
-            products = iceCreams + sauces
         }
     }
 
