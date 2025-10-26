@@ -23,22 +23,34 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.window.core.layout.WindowSizeClass
-import com.lazypizza.lazypizzaapp.design_systems.AppTheme
+import com.lazypizza.lazypizzaapp.features.cart.presentation.CartAction
+import com.lazypizza.lazypizzaapp.features.cart.presentation.CartViewModel
 import com.lazypizza.lazypizzaapp.features.product_catalog.domain.Product
-import org.jetbrains.compose.ui.tooling.preview.Preview
+import com.lazypizza.lazypizzaapp.features.product_catalog.presentation.MainProductCatalogViewModel
 
 @Composable
 fun ProductDetailScreen(
     product: Product,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    viewModel: CartViewModel,
+    mainProductCatalogViewModel: MainProductCatalogViewModel
 ) {
 
     val adaptiveWindow = currentWindowAdaptiveInfo()
+
+    val toppings by mainProductCatalogViewModel.toppings.collectAsStateWithLifecycle()
+
+    LaunchedEffect(toppings){
+        co.touchlab.kermit.Logger.e("Toppings: ${toppings.size}")
+    }
 
     Scaffold(
         modifier = modifier,
@@ -90,7 +102,9 @@ fun ProductDetailScreen(
                             .background(color = Color.White, shape = RoundedCornerShape(16.dp))
                             .padding(horizontal = 16.dp, vertical = 16.dp)
                     ) {
-                        ToppingsList(modifier = Modifier.weight(1f))
+                        ToppingsList(modifier = Modifier.weight(1f), onAddToCartClick = {
+                            viewModel.onAction(CartAction.OnAddToCart(product = product))
+                        }, toppings = toppings)
                     }
                 }
             } else {
@@ -114,7 +128,13 @@ fun ProductDetailScreen(
                                 shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
                             )
                     ) {
-                        ToppingsList(modifier = Modifier.weight(1f))
+                        ToppingsList(modifier = Modifier.weight(1f), onAddToCartClick = {
+                            viewModel.onAction(
+                                CartAction.OnAddToCart(product = product)
+
+                            )
+                            onClick()
+                        }, toppings = toppings)
                     }
                 }
             }
@@ -123,26 +143,10 @@ fun ProductDetailScreen(
 }
 
 @Composable
-private fun ToppingsList(modifier: Modifier = Modifier) {
+private fun ToppingsList(toppings: List<Product>,modifier: Modifier = Modifier, onAddToCartClick: () -> Unit) {
     ToppingsListScreen(
         modifier = modifier,
-        onAddToCartClick = {}
+        onAddToCartClick = onAddToCartClick,
+        toppings = toppings
     )
-}
-
-@Preview
-@Composable
-private fun ProductCatalogPreview() {
-    AppTheme {
-        ProductDetailScreen(
-            product = Product.Pizza(
-                id = 0,
-                name = "Pizza",
-                ingredients = listOf(),
-                price = 0.0,
-                imageUrl = ""
-            ),
-            onClick = {},
-        )
-    }
 }

@@ -27,6 +27,7 @@ import com.lazypizza.lazypizzaapp.design_systems.PrimaryGradientStart
 import com.lazypizza.lazypizzaapp.design_systems.components.GradientButton
 import com.lazypizza.lazypizzaapp.features.pizza_product.presentation.components.ToppingsCard
 import com.lazypizza.lazypizzaapp.features.pizza_product.presentation.models.ToppingsUI
+import com.lazypizza.lazypizzaapp.features.product_catalog.domain.Product
 import lazypizza.composeapp.generated.resources.Res
 import lazypizza.composeapp.generated.resources.add_to_cart
 import org.jetbrains.compose.resources.stringResource
@@ -36,8 +37,10 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 fun ToppingsListScreen(
     onAddToCartClick: () -> Unit,
     modifier: Modifier = Modifier,
+    toppings: List<Product>
 ) {
-    val toppings = addToppings
+  /*  val toppings = addToppings*/
+
     var totalPrice by rememberSaveable { mutableStateOf(0.0) }
 
     Box(
@@ -98,7 +101,7 @@ fun ToppingsListScreen(
 @Composable
 fun ProductListPreview() {
     AppTheme {
-        ToppingsListScreen(onAddToCartClick = {})
+        ToppingsListScreen(onAddToCartClick = {}, toppings = emptyList())
     }
 }
 

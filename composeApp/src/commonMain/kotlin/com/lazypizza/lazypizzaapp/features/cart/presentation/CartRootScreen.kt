@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
@@ -14,12 +15,14 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.window.core.layout.WindowSizeClass
 import co.touchlab.kermit.Logger
 import com.lazypizza.lazypizzaapp.core.domain.DefaultInfoItem
+import com.lazypizza.lazypizzaapp.core.utils.countOverallPrice
 import com.lazypizza.lazypizzaapp.design_systems.components.DefaultInfo
+import com.lazypizza.lazypizzaapp.features.product_catalog.presentation.MainProductCatalogAction
 import com.lazypizza.lazypizzaapp.features.product_catalog.presentation.MainProductCatalogViewModel
 import lazypizza.composeapp.generated.resources.Res
 import lazypizza.composeapp.generated.resources.back_to_menu
@@ -31,7 +34,7 @@ import org.jetbrains.compose.resources.stringResource
 fun CartRootScreen(
     onBackToMenuClick: () -> Unit,
     mainProductCatalogViewModel: MainProductCatalogViewModel,
-    viewModel: CartViewModel
+    viewModel: CartViewModel,
 ) {
 
     val adaptiveWindow = currentWindowAdaptiveInfo()
@@ -48,6 +51,8 @@ fun CartRootScreen(
         Logger.e("mainProductCatalogState: $mainProductCatalogState size ${mainProductCatalogState.products.size}")
 
     }
+
+    val recommendedAddons by mainProductCatalogViewModel.recommendedAddons.collectAsStateWithLifecycle()
 
     Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
 
@@ -73,10 +78,20 @@ fun CartRootScreen(
                     CartScreen(
                         state = state,
                         modifier = Modifier.fillMaxSize().weight(1f),
-                        onAction = { action -> viewModel.onAction(action)})
+                        onAction = { action -> viewModel.onAction(action) },
+                        onMainProductCatalogAction = {action ->
+                            mainProductCatalogViewModel.onAction(action)
+                        })
 
                     RecommendedAddonsScreen(
-                        Modifier.fillMaxSize().weight(1f).background(Color.Yellow)
+                        modifier = Modifier.fillMaxWidth().wrapContentHeight().weight(1f).background(MaterialTheme.colorScheme.surface,
+                            RoundedCornerShape(16.dp)),
+                        products = recommendedAddons,
+                        totalPrice = state.items.countOverallPrice(),
+                        onProductAddClick = { product ->
+                            viewModel.onAction(CartAction.OnAddToCart(product))
+                            mainProductCatalogViewModel.onAction(MainProductCatalogAction.OnRemoveRecommendedAddon(product))
+                        }
                     )
                 }
 
@@ -87,10 +102,20 @@ fun CartRootScreen(
                     CartScreen(
                         state = state,
                         modifier = Modifier.fillMaxSize().weight(1f),
-                        onAction = { action -> viewModel.onAction(action)})
+                        onAction = { action -> viewModel.onAction(action) },
+                        onMainProductCatalogAction = {action ->
+                            mainProductCatalogViewModel.onAction(action)
+                        })
 
                     RecommendedAddonsScreen(
-                        Modifier.fillMaxSize().weight(1f).background(Color.Green)
+                        modifier = Modifier.fillMaxSize().weight(1f),
+                        products = recommendedAddons,
+                        totalPrice = state.items.countOverallPrice(),
+                        onProductAddClick = { product ->
+                            viewModel.onAction(CartAction.OnAddToCart(product))
+                            mainProductCatalogViewModel.onAction(MainProductCatalogAction.OnRemoveRecommendedAddon(product))
+
+                        }
                     )
 
                 }

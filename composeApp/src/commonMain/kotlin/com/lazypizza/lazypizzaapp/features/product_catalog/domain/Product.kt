@@ -21,6 +21,7 @@ sealed class Product {
         override val price: Double,
         override val imageUrl: String,
         override val quantity: Int = 1,
+        val toppings: List<Topping> = emptyList(),
     ) : Product() {
         override val category: ProductCategory = ProductCategory.PIZZA
 
@@ -28,6 +29,7 @@ sealed class Product {
             return this.copy(quantity = newQuantity)
         }
     }
+
 
     @Serializable
     data class Sauce(
@@ -73,4 +75,20 @@ sealed class Product {
             return this.copy(quantity = newQuantity)
         }
     }
+
+    @Serializable
+    data class Topping(
+        override val id: Int,
+        override val name: String,
+        override val price: Double,
+        override val imageUrl: String,
+        override val quantity: Int = 1,
+    ) : Product() {
+        override val category: ProductCategory = ProductCategory.DRINKS
+
+        override fun copyNewQuantity(newQuantity: Int): Product {
+            return this.copy(quantity = newQuantity)
+        }
+    }
+
 }

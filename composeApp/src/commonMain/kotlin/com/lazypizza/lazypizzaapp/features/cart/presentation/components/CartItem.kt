@@ -45,7 +45,7 @@ fun CartItem(
 ) {
     Row(
         modifier = modifier
-            .fillMaxWidth()
+            .fillMaxWidth().padding(horizontal = 8.dp, vertical = 8.dp)
             .clip(RoundedCornerShape(12.dp))
             .dropShadow(
                 shape = RoundedCornerShape(size = 12.dp),
@@ -121,6 +121,23 @@ fun CartItem(
                     )
                 }
 
+            }
+
+            if (product is Product.Pizza) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    product.toppings.forEach { topping ->
+                        Text(
+                            text = "${topping.quantity} x ${topping.name}",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+
+                }
             }
 
             Row(

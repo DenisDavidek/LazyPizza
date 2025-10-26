@@ -232,6 +232,7 @@ fun ProductItem(
                         }
                     )
                 }
+                else -> {}
             }
         }
     }

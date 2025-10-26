@@ -33,4 +33,11 @@
     <string name="product_added_to_cart">The %1$s has been successfully added into your cart</string>
 
 
+    <!--RecommendedAddonsScreen-->
+    <string name="recommended_to_add_to_your_order">Recommended to add to your order</string>
+    <string name="cd_add_addon_to_cart">Add addon to cart</string>
+
+
+
+
 </resources>

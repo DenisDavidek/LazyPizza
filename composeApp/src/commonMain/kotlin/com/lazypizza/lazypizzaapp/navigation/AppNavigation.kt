@@ -6,7 +6,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
-import co.touchlab.kermit.Logger
 import com.lazypizza.lazypizzaapp.features.cart.presentation.CartRootScreen
 import com.lazypizza.lazypizzaapp.features.cart.presentation.CartViewModel
 import com.lazypizza.lazypizzaapp.features.order_history.presentation.OrderHistoryScreen
@@ -58,7 +57,8 @@ fun AppNavigation(
                 product = product,
                 onClick = {
                     navHostController.navigateUp()
-                },
+                }, viewModel = cartViewModel,
+                mainProductCatalogViewModel = mainProductCatalogViewModel
             )
         }
 
@@ -70,7 +70,6 @@ fun AppNavigation(
             CartRootScreen(onBackToMenuClick = {
                 navHostController.navigate(LazyPizzaScreen.MainProductCatalog)
 
-                Logger.e("Back to menu click")
             }, mainProductCatalogViewModel = mainProductCatalogViewModel, viewModel = cartViewModel)
         }
     }

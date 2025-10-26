@@ -11,6 +11,7 @@ import dev.gitlive.firebase.database.FirebaseDatabase
 import dev.gitlive.firebase.database.database
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onStart
@@ -37,6 +38,15 @@ class MainProductCatalogViewModel() : ViewModel() {
             started = SharingStarted.WhileSubscribed(5_000L),
             initialValue = MainProductCatalogState()
         )
+
+    private val _toppings = MutableStateFlow<List<Product>>(emptyList())
+    val toppings = _toppings.asStateFlow()
+
+
+    private val _recommendedAddons = MutableStateFlow<List<Product>>(emptyList())
+    val recommendedAddons = _recommendedAddons.asStateFlow()
+
+
     private var products: List<Product> = emptyList()
 
 
@@ -53,7 +63,7 @@ class MainProductCatalogViewModel() : ViewModel() {
                     database.reference("sauces").valueEvents,
                     database.reference("toppings").valueEvents,
 
-                ) { pizzas, drinks, icecream, source, toppings ->
+                    ) { pizzas, drinks, icecream, source, toppings ->
                     val drinksList = drinks.children.map {
                         it.value<Product.Drink>()
                     }
@@ -62,19 +72,34 @@ class MainProductCatalogViewModel() : ViewModel() {
                         it.value<Product.Pizza>()
                     }
 
-                    val icecreamList = icecream.children.map {
-                        it.value<Product.Pizza>()
+                    val iceCreamList = icecream.children.map {
+                        it.value<Product.IceCream>()
                     }
 
-                    val sourcesList = source.children.map {
-                        it.value<Product.Pizza>()
+                    val saucesList = source.children.map {
+                        it.value<Product.Sauce>()
                     }
+                    val toppingsList = toppings.children.map {
+                        it.value<Product.Topping>()
+                    }
+
+                    _toppings.value = toppingsList
 
                     _state.update {
                         it.copy(
-                            products = pizzasList + drinksList + icecreamList + sourcesList
+                            products = pizzasList + drinksList + iceCreamList + saucesList
                         )
                     }
+
+
+                    val allAddons = saucesList + drinksList
+
+                    if (allAddons.isNotEmpty()) {
+
+                        _recommendedAddons.value = allAddons.shuffled().take(6)
+                    }
+
+
                 }.launchIn(viewModelScope)
             } catch (e: Exception) {
                 println("Error: ${e.message}")
@@ -118,6 +143,14 @@ class MainProductCatalogViewModel() : ViewModel() {
                 _state.update { it.copy(scrollToIndex = null) }
             }
 
+            is MainProductCatalogAction.OnRemoveRecommendedAddon -> {
+                val newList = recommendedAddons.value.filter { it.id != action.product.id }
+                _recommendedAddons.value = newList
+            }
+            is MainProductCatalogAction.OnAddRemovedRecommendedAddon -> {
+                val newList = recommendedAddons.value + action.product
+                _recommendedAddons.value = newList
+            }
 
             else -> {}
         }
@@ -148,4 +181,4 @@ class MainProductCatalogViewModel() : ViewModel() {
         return 0
     }
 
-}
+                            }

@@ -32,14 +32,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil3.compose.SubcomposeAsyncImage
-import com.lazypizza.lazypizzaapp.design_systems.AppTheme
-import com.lazypizza.lazypizzaapp.features.pizza_product.presentation.models.ToppingsUI
-import org.jetbrains.compose.ui.tooling.preview.Preview
+import com.lazypizza.lazypizzaapp.features.product_catalog.domain.Product
 
 @Composable
 fun ToppingsCard(
     modifier: Modifier = Modifier,
-    toppingsUI: ToppingsUI,
+    toppingsUI: Product,
     increaseClick: () -> Unit,
     decreaseClick: () -> Unit,
 ) {
@@ -173,6 +171,7 @@ fun ToppingsCard(
     }
 }
 
+/*
 @Preview
 @Composable
 fun ToppingsCardPreview() {
@@ -187,4 +186,4 @@ fun ToppingsCardPreview() {
             decreaseClick = {}
         )
     }
-}
+}*/
