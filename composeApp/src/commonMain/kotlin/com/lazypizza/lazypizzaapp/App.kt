@@ -70,7 +70,7 @@ fun App() {
                 title = "Cart",
                 icon = Res.drawable.ic_cart,
                 screen = LazyPizzaScreen.Cart,
-                badge = "0",
+                badge = null,
                 selected = false
             ),
             NavItem(
@@ -89,7 +89,7 @@ fun App() {
                 cartState.items.size.toString()
             } else {
                 // Return an empty string or null to hide the badge when cart is empty
-                "0"
+               null
             }
             navItems[cartItemIndex] = navItems[cartItemIndex].copy(badge = newBadgeValue)
         }

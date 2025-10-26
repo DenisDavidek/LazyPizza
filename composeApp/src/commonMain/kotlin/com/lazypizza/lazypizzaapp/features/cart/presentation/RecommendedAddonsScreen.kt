@@ -47,7 +47,7 @@ fun RecommendedAddonsScreen(
                 modifier = Modifier.fillMaxWidth()
                     .padding(start = 12.dp, end = 12.dp, top = 0.dp, bottom = 20.dp)
             ) {
-                items(items = products, key = { product -> product.id }, itemContent = { product ->
+                items(items = products, key = { product -> product.cartItemId }, itemContent = { product ->
                     AddonItem(
                         modifier = Modifier.width(180.dp).wrapContentHeight(),
                         product = product,

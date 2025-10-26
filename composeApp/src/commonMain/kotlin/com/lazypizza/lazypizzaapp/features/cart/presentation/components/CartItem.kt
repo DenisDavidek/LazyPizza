@@ -161,12 +161,19 @@ fun CartItem(
                 ) {
 
                     val totalPrice = if (product is Product.Pizza) {
-
-                        "$${product.price.times(product.quantity).plus(product.toppings.sumOf { it.price.times(it.quantity) }).toPrice()}"
-
+                        "$${product.price.plus(product.toppings.sumOf { it.price.times(it.quantity) }).times(product.quantity).toPrice()}"
                     } else {
                         "$${product.price.times(product.quantity).toPrice()}"
                     }
+
+                    val unitPrice = if (product is Product.Pizza) {
+                        "$${product.price.plus(product.toppings.sumOf { it.price.times(it.quantity) }).toPrice()}"
+                    } else {
+                        "$${product.price.toPrice()}"
+                    }
+
+
+
                     Text(
                         text = totalPrice,
                         style = MaterialTheme.typography.titleLarge,
@@ -174,7 +181,7 @@ fun CartItem(
                     )
 
                     Text(
-                        text = "${product.quantity} x $${product.price}",
+                        text = "${product.quantity} x $unitPrice",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )

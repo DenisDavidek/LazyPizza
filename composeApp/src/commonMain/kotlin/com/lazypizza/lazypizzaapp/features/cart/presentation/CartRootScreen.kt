@@ -101,14 +101,14 @@ fun CartRootScreen(
 
                     CartScreen(
                         state = state,
-                        modifier = Modifier.fillMaxSize().weight(1f),
+                        modifier = Modifier.fillMaxSize().weight(0.75f),
                         onAction = { action -> viewModel.onAction(action) },
                         onMainProductCatalogAction = {action ->
                             mainProductCatalogViewModel.onAction(action)
                         })
 
                     RecommendedAddonsScreen(
-                        modifier = Modifier.fillMaxSize().weight(1f),
+                        modifier = Modifier.fillMaxSize().weight(1.25f),
                         products = recommendedAddons,
                         totalPrice = state.items.countOverallPrice(),
                         onProductAddClick = { product ->
