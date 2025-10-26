@@ -14,34 +14,32 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.lazypizza.lazypizzaapp.design_systems.AppTheme
+import com.lazypizza.lazypizzaapp.core.utils.toPrice
 import com.lazypizza.lazypizzaapp.design_systems.PrimaryGradientEnd
 import com.lazypizza.lazypizzaapp.design_systems.PrimaryGradientStart
 import com.lazypizza.lazypizzaapp.design_systems.components.GradientButton
+import com.lazypizza.lazypizzaapp.features.pizza_product.ToppingsState
 import com.lazypizza.lazypizzaapp.features.pizza_product.presentation.components.ToppingsCard
-import com.lazypizza.lazypizzaapp.features.pizza_product.presentation.models.ToppingsUI
 import com.lazypizza.lazypizzaapp.features.product_catalog.domain.Product
 import lazypizza.composeapp.generated.resources.Res
+import lazypizza.composeapp.generated.resources.add_extra_toppings
 import lazypizza.composeapp.generated.resources.add_to_cart
 import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun ToppingsListScreen(
     onAddToCartClick: () -> Unit,
     modifier: Modifier = Modifier,
-    toppings: List<Product>
+    state: ToppingsState,
+    pizza: Product,
+    onIncreaseClick: (Product) -> Unit,
+    onDecreaseClick: (Product) -> Unit
 ) {
-  /*  val toppings = addToppings*/
 
-    var totalPrice by rememberSaveable { mutableStateOf(0.0) }
+    val totalPrice = pizza.price + state.selectedToppings.sumOf { it.price * it.quantity }
 
     Box(
         modifier = modifier.fillMaxSize()
@@ -52,7 +50,7 @@ fun ToppingsListScreen(
         ) {
 
             Text(
-                text = "ADD EXTRA TOPPINGS",
+                text = stringResource(Res.string.add_extra_toppings),
                 style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -65,14 +63,14 @@ fun ToppingsListScreen(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                items(toppings) { topping ->
+                items(state.toppings) { topping ->
                     ToppingsCard(
-                        toppingsUI = topping,
+                        topping = topping,
                         increaseClick = {
-                            totalPrice += topping.price
+                            onIncreaseClick(topping)
                         },
                         decreaseClick = {
-                            totalPrice -= topping.price
+                            onDecreaseClick(topping)
                         }
                     )
                 }
@@ -86,7 +84,7 @@ fun ToppingsListScreen(
                 if (totalPrice == 0.0) {
                     stringResource(Res.string.add_to_cart)
                 } else {
-                    "Add to Cart for $$totalPrice"
+                    "Add to Cart for $${totalPrice.toPrice()}"
                 },
             colors = listOf(
                 PrimaryGradientStart, PrimaryGradientEnd
@@ -96,78 +94,3 @@ fun ToppingsListScreen(
 
     }
 }
-
-@Preview
-@Composable
-fun ProductListPreview() {
-    AppTheme {
-        ToppingsListScreen(onAddToCartClick = {}, toppings = emptyList())
-    }
-}
-
-val addToppings: List<ToppingsUI>
-    @Composable
-    get() {
-        return listOf(
-            ToppingsUI(
-                imageUrl = "https://firebasestorage.googleapis.com/v0/b/lazypizza-1999a.firebasestorage.app/o/toppings%2Fbacon.png?alt=media&token=b7ba25c6-d157-42fa-834c-7a5e4cc2dabd",
-                name = "Bacon",
-                price = 1.50
-            ),
-            ToppingsUI(
-                imageUrl = "https://firebasestorage.googleapis.com/v0/b/lazypizza-1999a.firebasestorage.app/o/toppings%2Fcheese.png?alt=media&token=e5613461-b8af-457f-8be1-eafdeb8e6f77",
-                name = "Extra Cheese",
-                price = 1.00
-            ),
-            ToppingsUI(
-                imageUrl = "https://firebasestorage.googleapis.com/v0/b/lazypizza-1999a.firebasestorage.app/o/toppings%2Fcorn.png?alt=media&token=8b1f9da8-d601-429e-9de7-c275f2223246",
-                name = "Corn",
-                price = 0.75
-            ),
-            ToppingsUI(
-                imageUrl = "https://firebasestorage.googleapis.com/v0/b/lazypizza-1999a.firebasestorage.app/o/toppings%2Ftomato.png?alt=media&token=21b9d2e9-0bce-4043-9ba3-cbd20ce19c6b",
-                name = "Tomato ",
-                price = 2.00
-            ),
-            ToppingsUI(
-                imageUrl = "https://firebasestorage.googleapis.com/v0/b/lazypizza-1999a.firebasestorage.app/o/toppings%2Folive.png?alt=media&token=726ed2fb-e71d-423a-b9a5-cfec7c685cba",
-                name = "Olives ",
-                price = 2.25
-            ),
-            ToppingsUI(
-                imageUrl = "https://firebasestorage.googleapis.com/v0/b/lazypizza-1999a.firebasestorage.app/o/toppings%2Fpepperoni.png?alt=media&token=3b131b22-5f67-46fc-a390-3d7274eb3e60",
-                name = "Pepperoni ",
-                price = 1.25
-            ),
-            ToppingsUI(
-                imageUrl = "https://firebasestorage.googleapis.com/v0/b/lazypizza-1999a.firebasestorage.app/o/toppings%2Fmashroom.png?alt=media&token=49a95ad7-a0ac-4a22-87d4-52c02fa68d09",
-                name = "Mushrooms ",
-                price = 1.50
-            ),
-            ToppingsUI(
-                imageUrl = "https://firebasestorage.googleapis.com/v0/b/lazypizza-1999a.firebasestorage.app/o/toppings%2Fbasil.png?alt=media&token=113685df-07b1-4d3f-bbb9-acb5580f6e81",
-                name = "Basil ",
-                price = 1.00
-            ),
-            ToppingsUI(
-                imageUrl = "https://firebasestorage.googleapis.com/v0/b/lazypizza-1999a.firebasestorage.app/o/toppings%2Fpineapple.png?alt=media&token=15d85115-143c-4448-ad82-651df3175267",
-                name = "Pineapple ",
-                price = 0.75
-            ),
-            ToppingsUI(
-                imageUrl = "https://firebasestorage.googleapis.com/v0/b/lazypizza-1999a.firebasestorage.app/o/toppings%2Fonion.png?alt=media&token=a34b29ac-c316-4f3c-b1d3-612c99aa5803",
-                name = "Onion ",
-                price = 2.00
-            ),
-            ToppingsUI(
-                imageUrl = "https://firebasestorage.googleapis.com/v0/b/lazypizza-1999a.firebasestorage.app/o/toppings%2Fchilli.png?alt=media&token=a8754fcd-5bf9-488b-af32-56d5019f3841",
-                name = "Chili Peppers ",
-                price = 2.25
-            ),
-            ToppingsUI(
-                imageUrl = "https://firebasestorage.googleapis.com/v0/b/lazypizza-1999a.firebasestorage.app/o/toppings%2Fspinach.png?alt=media&token=2db5c8d1-7254-4714-be42-fe09ac3abb88",
-                name = "Spinach",
-                price = 1.25
-            ),
-        )
-    }

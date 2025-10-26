@@ -124,10 +124,10 @@ fun CartItem(
             }
 
             if (product is Product.Pizza) {
-                Row(
+                Column (
                     modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
+                    horizontalAlignment = Alignment.Start,
+                    verticalArrangement = Arrangement.SpaceBetween
                 ) {
                     product.toppings.forEach { topping ->
                         Text(
@@ -159,8 +159,16 @@ fun CartItem(
                 Column(
                     horizontalAlignment = Alignment.End,
                 ) {
+
+                    val totalPrice = if (product is Product.Pizza) {
+
+                        "$${product.price.times(product.quantity).plus(product.toppings.sumOf { it.price.times(it.quantity) }).toPrice()}"
+
+                    } else {
+                        "$${product.price.times(product.quantity).toPrice()}"
+                    }
                     Text(
-                        text = "$${product.price.times(product.quantity).toPrice()}",
+                        text = totalPrice,
                         style = MaterialTheme.typography.titleLarge,
                         color = MaterialTheme.colorScheme.onSurface
                     )

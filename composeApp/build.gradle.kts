@@ -35,8 +35,8 @@ kotlin {
             implementation(libs.koin.compose)
             implementation(libs.androidx.core.splashscreen)
             implementation(libs.ktor.client.okhttp)
-            implementation(project.dependencies.platform("com.google.firebase:firebase-bom:32.7.0"))
-            implementation("com.google.firebase:firebase-database-ktx")
+            implementation(project.dependencies.platform("com.google.firebase:firebase-bom:34.4.0"))
+            implementation(libs.firebase.database.google)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -61,10 +61,10 @@ kotlin {
             implementation(libs.kotlinx.serialization.json)
             implementation(libs.kotlinx.datetime)
             implementation(libs.adaptive)
-            implementation("dev.gitlive:firebase-storage:2.3.0")
-            implementation("dev.gitlive:firebase-app:1.12.0")
-            implementation("dev.gitlive:firebase-database:2.3.0")
-
+            implementation(libs.gitlive.firebase.storage)
+            implementation(libs.firebase.app)
+            implementation(libs.firebase.database)
+            implementation(libs.uuid)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

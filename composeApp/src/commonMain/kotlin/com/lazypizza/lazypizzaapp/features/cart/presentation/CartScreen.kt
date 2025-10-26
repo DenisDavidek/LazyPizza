@@ -18,16 +18,16 @@ fun CartScreen(
 ) {
 
     LazyColumn(modifier = modifier.background(MaterialTheme.colorScheme.background)) {
-        items(state.items, key = { product -> product.id }, itemContent = { product ->
+        items(state.items, key = { product -> product.cartItemId }, itemContent = { product ->
 
             CartItem(
                 modifier = Modifier.animateItem(),
                 product = product,
                 onCartItemDeleteClick = { product ->
                     onAction(CartAction.OnDeleteProductFromCart(product))
-                    onMainProductCatalogAction(MainProductCatalogAction.OnAddRemovedRecommendedAddon(product)
+                    onMainProductCatalogAction(
+                        MainProductCatalogAction.OnAddRemovedRecommendedAddon(product)
                     )
-
                 },
                 onIncrement = { product ->
                     onAction(CartAction.OnIncreaseQuantity(product))

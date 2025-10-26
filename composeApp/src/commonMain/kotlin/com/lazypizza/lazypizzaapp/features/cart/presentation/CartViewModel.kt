@@ -1,6 +1,8 @@
 package com.lazypizza.lazypizzaapp.features.cart.presentation
 
 import androidx.lifecycle.ViewModel
+import com.benasher44.uuid.uuid4
+import com.lazypizza.lazypizzaapp.features.product_catalog.domain.Product
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -19,35 +21,35 @@ class CartViewModel : ViewModel() {
 
                 _cartState.update { currentState ->
 
-                    val existingItem = currentState.items.find { it.id == productToAdd.id }
+                    val existingIdenticalItem = currentState.items.find {
+                        it.id == productToAdd.id && (it as? Product.Pizza)?.toppings == (productToAdd as? Product.Pizza)?.toppings
+                    }
 
-                    val updatedCartItems = if (existingItem == null) {
-                        currentState.items + productToAdd
+                    val updatedCartItems = if (existingIdenticalItem == null) {
+
+                        val newCartItem = productToAdd.copyNewQuantity(1)
+                            .copyCartItemId(newCartItemId = uuid4().toString())
+                        currentState.items + newCartItem
                     } else {
                         currentState.items.map { item ->
-                            if (item.id == existingItem.id) {
-
-                                item.copyNewQuantity(newQuantity = item.quantity + 1)
+                            if (item.cartItemId == existingIdenticalItem.cartItemId) {
+                                item.copyNewQuantity(item.quantity + 1)
                             } else {
-                                // This is a different item, leave it as is.
                                 item
                             }
                         }
                     }
                     currentState.copy(items = updatedCartItems)
                 }
-
             }
 
             is CartAction.OnDeleteProductFromCart -> {
 
                 val productToDelete = action.product
-
                 _cartState.update { currentState ->
-
+                    // Use the unique cartItemId to delete
                     val updatedCartItems =
-                        currentState.items.filterNot { it.id == productToDelete.id }
-
+                        currentState.items.filterNot { it.cartItemId == productToDelete.cartItemId }
                     currentState.copy(items = updatedCartItems)
                 }
             }
@@ -55,42 +57,37 @@ class CartViewModel : ViewModel() {
             is CartAction.OnIncreaseQuantity -> {
 
                 val productToIncrease = action.product
-
                 _cartState.update { currentState ->
                     val updatedCartItems = currentState.items.map { item ->
-
-                        if (item.id == productToIncrease.id) {
-                            item.copyNewQuantity(newQuantity = item.quantity + 1)
+                        // Use the unique cartItemId to find the item
+                        if (item.cartItemId == productToIncrease.cartItemId) {
+                            item.copyNewQuantity(item.quantity + 1)
                         } else {
                             item
                         }
                     }
-
                     currentState.copy(items = updatedCartItems)
                 }
+
             }
 
             is CartAction.OnDecreaseQuantity -> {
 
                 val productToDecrease = action.product
-
                 _cartState.update { currentState ->
                     val updatedCartItems = currentState.items.map { item ->
-
-                        if (item.id == productToDecrease.id) {
-
+                        if (item.cartItemId == productToDecrease.cartItemId) {
                             if (item.quantity > 1) {
-
-                                item.copyNewQuantity(newQuantity = item.quantity - 1)
+                                item.copyNewQuantity(item.quantity - 1)
                             } else {
+                                // If quantity is 1, it remains 1, do nothing.
+                                // Deletion is handled by OnDeleteProductFromCart.
                                 item
                             }
                         } else {
-
                             item
                         }
                     }
-
                     currentState.copy(items = updatedCartItems)
                 }
             }

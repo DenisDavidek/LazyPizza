@@ -37,7 +37,7 @@ import com.lazypizza.lazypizzaapp.features.product_catalog.domain.Product
 @Composable
 fun ToppingsCard(
     modifier: Modifier = Modifier,
-    toppingsUI: Product,
+    topping: Product,
     increaseClick: () -> Unit,
     decreaseClick: () -> Unit,
 ) {
@@ -66,12 +66,12 @@ fun ToppingsCard(
         Spacer(modifier = Modifier.height(12.dp))
 
         SubcomposeAsyncImage(
-            model = toppingsUI.imageUrl,
+            model = topping.imageUrl,
             modifier = Modifier
                 .size(56.dp)
                 .clip(CircleShape)
                 .align(Alignment.CenterHorizontally),
-            contentDescription = toppingsUI.name,
+            contentDescription = topping.name,
             contentScale = ContentScale.Crop,
             loading = {
                 Box(
@@ -89,7 +89,7 @@ fun ToppingsCard(
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
-            text = toppingsUI.name,
+            text = topping.name,
             modifier = Modifier.align(alignment = Alignment.CenterHorizontally),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -160,7 +160,7 @@ fun ToppingsCard(
             }
         } else {
             Text(
-                text = "$${toppingsUI.price}",
+                text = "$${topping.price}",
                 modifier = Modifier.align(alignment = Alignment.CenterHorizontally),
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurface
@@ -169,21 +169,9 @@ fun ToppingsCard(
 
         Spacer(modifier = Modifier.height(12.dp))
     }
+
+
+
+
 }
 
-/*
-@Preview
-@Composable
-fun ToppingsCardPreview() {
-    AppTheme {
-        ToppingsCard(
-            toppingsUI = ToppingsUI(
-                imageUrl = "",
-                name = "Hawaiian",
-                price = 10.99
-            ),
-            increaseClick = {},
-            decreaseClick = {}
-        )
-    }
-}*/

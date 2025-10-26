@@ -2,6 +2,7 @@ package com.lazypizza.lazypizzaapp.features.product_catalog.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.lazypizza.lazypizzaapp.features.pizza_product.ToppingsState
 import com.lazypizza.lazypizzaapp.features.product_catalog.domain.Product
 import com.lazypizza.lazypizzaapp.features.product_catalog.domain.ProductCategory
 import dev.gitlive.firebase.Firebase
@@ -36,8 +37,9 @@ class MainProductCatalogViewModel() : ViewModel() {
             initialValue = MainProductCatalogState()
         )
 
-    private val _toppings = MutableStateFlow<List<Product>>(emptyList())
-    val toppings = _toppings.asStateFlow()
+
+    private val _toppingsState = MutableStateFlow(ToppingsState())
+    val toppingsState = _toppingsState.asStateFlow()
 
 
     private val _recommendedAddons = MutableStateFlow<List<Product>>(emptyList())
@@ -45,6 +47,62 @@ class MainProductCatalogViewModel() : ViewModel() {
 
 
     private var products: List<Product> = emptyList()
+
+
+    fun loadToppings(toppings: List<Product>) {
+        _toppingsState.value = ToppingsState(toppings = toppings)
+    }
+
+    fun clearSelectedToppings() {
+        _toppingsState.update { currentState ->
+
+            val currentToppings = currentState.toppings
+
+            // 4. Update the state with the new list where all quantities are 0
+            currentState.copy(toppings = currentToppings, selectedToppings = emptyList())
+        }
+
+    }
+
+    // 3. The logic to increase quantity. It's the exact same .map logic.
+    fun increaseToppingQuantity(topping: Product) {
+        _toppingsState.update { currentState ->
+            val selectedList = currentState.selectedToppings
+            val existingItem = selectedList.find { it.id == topping.id }
+
+            val newSelectedList = if (existingItem == null) {
+                // Item is being added for the first time (quantity becomes 1)
+                selectedList + topping.copyNewQuantity(1)
+            } else {
+                // Item already exists, just update its quantity
+                selectedList.map {
+                    if (it.id == topping.id) it.copyNewQuantity(it.quantity + 1) else it
+                }
+            }
+            currentState.copy(selectedToppings = newSelectedList)
+        }
+    }
+
+
+    // 4. The logic to decrease quantity.
+    fun decreaseToppingQuantity(topping: Product) {
+        _toppingsState.update { currentState ->
+            val selectedList = currentState.selectedToppings
+            val itemToDecrease = selectedList.find { it.id == topping.id } ?: return@update currentState
+
+            val newSelectedList = if (itemToDecrease.quantity > 1) {
+                // Quantity is > 1, so just decrease it
+                selectedList.map {
+                    if (it.id == topping.id) it.copyNewQuantity(it.quantity - 1) else it
+                }
+            } else {
+                // Quantity is 1, so remove the item from the selected list entirely
+                selectedList.filterNot { it.id == topping.id }
+            }
+            currentState.copy(selectedToppings = newSelectedList)
+        }
+    }
+
 
 
     private fun getRemoteData() {
@@ -80,7 +138,7 @@ class MainProductCatalogViewModel() : ViewModel() {
                         it.value<Product.Topping>()
                     }
 
-                    _toppings.value = toppingsList
+                    loadToppings(toppings = toppingsList)
 
                     _state.update {
                         it.copy(

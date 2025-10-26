@@ -30,6 +30,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.window.core.layout.WindowSizeClass
+import co.touchlab.kermit.Logger
 import com.lazypizza.lazypizzaapp.features.cart.presentation.CartAction
 import com.lazypizza.lazypizzaapp.features.cart.presentation.CartViewModel
 import com.lazypizza.lazypizzaapp.features.product_catalog.domain.Product
@@ -42,14 +43,15 @@ fun ProductDetailScreen(
     modifier: Modifier = Modifier,
     viewModel: CartViewModel,
     mainProductCatalogViewModel: MainProductCatalogViewModel
+
 ) {
 
     val adaptiveWindow = currentWindowAdaptiveInfo()
 
-    val toppings by mainProductCatalogViewModel.toppings.collectAsStateWithLifecycle()
+    val toppingsState by mainProductCatalogViewModel.toppingsState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(toppings){
-        co.touchlab.kermit.Logger.e("Toppings: ${toppings.size}")
+    LaunchedEffect(toppingsState) {
+        Logger.e("Toppings: ${toppingsState.toppings.size}")
     }
 
     Scaffold(
@@ -102,9 +104,32 @@ fun ProductDetailScreen(
                             .background(color = Color.White, shape = RoundedCornerShape(16.dp))
                             .padding(horizontal = 16.dp, vertical = 16.dp)
                     ) {
-                        ToppingsList(modifier = Modifier.weight(1f), onAddToCartClick = {
-                            viewModel.onAction(CartAction.OnAddToCart(product = product))
-                        }, toppings = toppings)
+
+                        ToppingsListScreen(
+                            modifier = Modifier.weight(1f),
+                            onAddToCartClick = {
+
+                                val pizzaWithToppings = (product as Product.Pizza).copy(
+                                    toppings = toppingsState.selectedToppings,
+
+                                    )
+                                viewModel.onAction(CartAction.OnAddToCart(product = pizzaWithToppings))
+                                onClick()
+
+
+//                                viewModel.onAction(CartAction.OnAddToCart(product = product))
+                            },
+                            state = toppingsState,
+                            pizza = product,
+                            onIncreaseClick = { topping ->
+                                mainProductCatalogViewModel.increaseToppingQuantity(topping)
+                            },
+                            onDecreaseClick = { topping ->
+                                mainProductCatalogViewModel.decreaseToppingQuantity(topping)
+                            }
+                        )
+
+
                     }
                 }
             } else {
@@ -128,13 +153,29 @@ fun ProductDetailScreen(
                                 shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
                             )
                     ) {
-                        ToppingsList(modifier = Modifier.weight(1f), onAddToCartClick = {
-                            viewModel.onAction(
-                                CartAction.OnAddToCart(product = product)
 
-                            )
-                            onClick()
-                        }, toppings = toppings)
+
+                        ToppingsListScreen(
+                            modifier = Modifier.weight(1f),
+                            onAddToCartClick = {
+
+                                val pizzaWithToppings = (product as Product.Pizza).copy(
+                                    toppings = toppingsState.selectedToppings,
+
+                                    )
+                                viewModel.onAction(CartAction.OnAddToCart(product = pizzaWithToppings))
+
+                                onClick()
+                            },
+                            state = toppingsState,
+                            pizza = product,
+                            onIncreaseClick = { topping ->
+                                mainProductCatalogViewModel.increaseToppingQuantity(topping)
+                            },
+                            onDecreaseClick = { topping ->
+                                mainProductCatalogViewModel.decreaseToppingQuantity(topping)
+                            }
+                        )
                     }
                 }
             }
@@ -142,11 +183,3 @@ fun ProductDetailScreen(
     )
 }
 
-@Composable
-private fun ToppingsList(toppings: List<Product>,modifier: Modifier = Modifier, onAddToCartClick: () -> Unit) {
-    ToppingsListScreen(
-        modifier = modifier,
-        onAddToCartClick = onAddToCartClick,
-        toppings = toppings
-    )
-}

@@ -42,6 +42,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.window.core.layout.WindowSizeClass
 import co.touchlab.kermit.Logger
@@ -69,6 +70,11 @@ fun MainProductCatalogRoot(
     onShowSnackBar: (product: Product) -> Unit,
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    LaunchedEffect(lifecycleOwner){
+        viewModel.clearSelectedToppings()
+    }
 
     MainProductCatalogScreen(
         state = state,
@@ -255,7 +261,7 @@ fun LazyListScope.productCatalogListContent(
 
         items(
             items = products,
-            // key = { it.id } // TODO have to use another id to make each item unique, as some products are using the same id
+            key = { it -> it.id }
         ) { product ->
             ProductItem(
                 product = product,
@@ -290,7 +296,7 @@ fun LazyGridScope.productCatalogGridContent(
 
         items(
             items = products,
-            key = { it.id }
+            key = { it -> it.id }
         ) { product ->
             ProductItem(
                 product = product,
