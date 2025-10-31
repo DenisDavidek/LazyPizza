@@ -82,11 +82,13 @@ fun App() {
         )
     }
 
+/*
     LaunchedEffect(cartState.items.size) {
         val cartItemIndex = navItems.indexOfFirst { it.screen == LazyPizzaScreen.Cart }
         if (cartItemIndex != -1) {
             val newBadgeValue = if (cartState.items.isNotEmpty()) {
-                cartState.items.size.toString()
+                cartState.items.sumOf { it.quantity }.toString()
+
             } else {
                 // Return an empty string or null to hide the badge when cart is empty
                null
@@ -94,7 +96,22 @@ fun App() {
             navItems[cartItemIndex] = navItems[cartItemIndex].copy(badge = newBadgeValue)
         }
     }
+*/
 
+    LaunchedEffect(cartState.items.sumOf { it.quantity }) {
+        val cartItemIndex = navItems.indexOfFirst { it.screen == LazyPizzaScreen.Cart }
+        if (cartItemIndex != -1) {
+            val totalQuantity = cartState.items.sumOf { it.quantity }
+            val newBadgeValue = if (totalQuantity > 0) {
+                // Use the calculated total quantity for the badge value
+                totalQuantity.toString()
+            } else {
+                // Return null to hide the badge when the cart is empty
+                null
+            }
+            navItems[cartItemIndex] = navItems[cartItemIndex].copy(badge = newBadgeValue)
+        }
+    }
 
     val navBarAllowedScreens = listOf(
         LazyPizzaScreen.MainProductCatalog,
