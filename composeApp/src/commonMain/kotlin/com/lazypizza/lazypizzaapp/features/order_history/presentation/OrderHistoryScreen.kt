@@ -9,7 +9,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.lazypizza.lazypizzaapp.core.domain.DefaultInfoItem
+import com.lazypizza.lazypizzaapp.core.domain.model.DefaultInfoItem
 import com.lazypizza.lazypizzaapp.design_systems.components.DefaultInfo
 import lazypizza.composeapp.generated.resources.Res
 import lazypizza.composeapp.generated.resources.not_signed_in

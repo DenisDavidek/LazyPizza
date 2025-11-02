@@ -30,6 +30,7 @@ import coil3.ImageLoader
 import coil3.PlatformContext
 import coil3.compose.setSingletonImageLoaderFactory
 import coil3.network.ktor3.KtorNetworkFetcherFactory
+import com.lazypizza.lazypizzaapp.core.domain.model.User
 import com.lazypizza.lazypizzaapp.core.presentation.MainProductCatalogTopBar
 import com.lazypizza.lazypizzaapp.core.presentation.TitleTopBar
 import com.lazypizza.lazypizzaapp.core.utils.showSnackBar
@@ -37,7 +38,8 @@ import com.lazypizza.lazypizzaapp.design_systems.AppTheme
 import com.lazypizza.lazypizzaapp.features.cart.presentation.CartViewModel
 import com.lazypizza.lazypizzaapp.navigation.AppNavigation
 import com.lazypizza.lazypizzaapp.navigation.LazyPizzaScreen
-import com.lazypizza.lazypizzaapp.navigation.locals.LocalLazyPizzaNavItems
+import com.lazypizza.lazypizzaapp.core.presentation.locals.LocalLazyPizzaNavItems
+import com.lazypizza.lazypizzaapp.core.presentation.locals.LocalUser
 import com.lazypizza.lazypizzaapp.navigation.model.NavItem
 import com.lazypizza.lazypizzaapp.navigation.nav_bars.BottomNavBar
 import com.lazypizza.lazypizzaapp.navigation.nav_bars.RailNavBar
@@ -57,6 +59,7 @@ fun App() {
 
     val cartViewModel: CartViewModel = koinViewModel()
     val cartState by cartViewModel.cartState.collectAsStateWithLifecycle()
+    val sampleUser = remember { User("+134567312") }
 
     val navItems = remember {
         mutableStateListOf(
@@ -81,22 +84,6 @@ fun App() {
             ),
         )
     }
-
-/*
-    LaunchedEffect(cartState.items.size) {
-        val cartItemIndex = navItems.indexOfFirst { it.screen == LazyPizzaScreen.Cart }
-        if (cartItemIndex != -1) {
-            val newBadgeValue = if (cartState.items.isNotEmpty()) {
-                cartState.items.sumOf { it.quantity }.toString()
-
-            } else {
-                // Return an empty string or null to hide the badge when cart is empty
-               null
-            }
-            navItems[cartItemIndex] = navItems[cartItemIndex].copy(badge = newBadgeValue)
-        }
-    }
-*/
 
     LaunchedEffect(cartState.items.sumOf { it.quantity }) {
         val cartItemIndex = navItems.indexOfFirst { it.screen == LazyPizzaScreen.Cart }
@@ -163,56 +150,68 @@ fun App() {
         CompositionLocalProvider(
             LocalLazyPizzaNavItems provides navItems
         ) {
-            Scaffold(
-                snackbarHost = { SnackbarHost(hostState = snackBarHostState) },
-                topBar = {
-                    if (isMainProductCatalogScreenVisible) {
-                        MainProductCatalogTopBar(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .wrapContentHeight()
-                        )
-                    } else if (shouldDisplayTitleTopBar) {
-                        TitleTopBar(screenTitle = getToolbarTitle(backStackEntry.value?.destination?.route.toString()))
+            // TODO, Pass actual user
+            CompositionLocalProvider(
+                LocalUser provides sampleUser
+            ) {
+                Scaffold(
+                    snackbarHost = { SnackbarHost(hostState = snackBarHostState) },
+                    topBar = {
+                        if (isMainProductCatalogScreenVisible) {
+                            MainProductCatalogTopBar(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .wrapContentHeight(),
+                                // TODO, Implement actions
+                                onAuthenticateClick = {
+
+                                },
+                                onLogoutClick = {
+
+                                }
+                            )
+                        } else if (shouldDisplayTitleTopBar) {
+                            TitleTopBar(screenTitle = getToolbarTitle(backStackEntry.value?.destination?.route.toString()))
+                        }
+                    },
+                    bottomBar = {
+                        if (!isExpanded && isNavBarAllowed) {
+                            BottomNavBar(
+                                navHostController = navHostController
+                            )
+                        }
                     }
-                },
-                bottomBar = {
-                    if (!isExpanded && isNavBarAllowed) {
-                        BottomNavBar(
+                ) { padding ->
+                    var padding = padding
+
+                    if (isExpanded && isNavBarAllowed) {
+                        val railWidth = 78.dp
+
+                        padding = PaddingValues(
+                            top = padding.calculateTopPadding(),
+                            bottom = padding.calculateBottomPadding(),
+                            start = padding.calculateStartPadding(LayoutDirection.Ltr) + railWidth,
+                            end = padding.calculateEndPadding(LayoutDirection.Ltr),
+                        )
+
+                        RailNavBar(
+                            modifier = Modifier.width(railWidth),
                             navHostController = navHostController
                         )
                     }
-                }
-            ) { padding ->
-                var padding = padding
 
-                if (isExpanded && isNavBarAllowed) {
-                    val railWidth = 78.dp
-
-                    padding = PaddingValues(
-                        top = padding.calculateTopPadding(),
-                        bottom = padding.calculateBottomPadding(),
-                        start = padding.calculateStartPadding(LayoutDirection.Ltr) + railWidth,
-                        end = padding.calculateEndPadding(LayoutDirection.Ltr),
-                    )
-
-                    RailNavBar(
-                        modifier = Modifier.width(railWidth),
-                        navHostController = navHostController
+                    AppNavigation(
+                        navHostController = navHostController,
+                        modifier = Modifier.padding(padding),
+                        cartViewModel = cartViewModel,
+                        onShowSnackBar = { product ->
+                            scope.showSnackBar(
+                                snackBarHostState = snackBarHostState,
+                                message = "The ${product.name} has been successfully added into your cart"
+                            )
+                        }
                     )
                 }
-
-                AppNavigation(
-                    navHostController = navHostController,
-                    modifier = Modifier.padding(padding),
-                    cartViewModel = cartViewModel,
-                    onShowSnackBar = { product ->
-                        scope.showSnackBar(
-                            snackBarHostState = snackBarHostState,
-                            message = "The ${product.name} has been successfully added into your cart"
-                        )
-                    }
-                )
             }
         }
     }

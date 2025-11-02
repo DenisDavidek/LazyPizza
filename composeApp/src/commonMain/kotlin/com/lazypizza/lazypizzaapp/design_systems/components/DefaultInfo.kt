@@ -11,7 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.lazypizza.lazypizzaapp.core.domain.DefaultInfoItem
+import com.lazypizza.lazypizzaapp.core.domain.model.DefaultInfoItem
 import com.lazypizza.lazypizzaapp.design_systems.PrimaryGradientEnd
 import com.lazypizza.lazypizzaapp.design_systems.PrimaryGradientStart
 

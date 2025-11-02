@@ -23,7 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.lazypizza.lazypizzaapp.navigation.components.NavigationRailItem
-import com.lazypizza.lazypizzaapp.navigation.locals.LocalLazyPizzaNavItems
+import com.lazypizza.lazypizzaapp.core.presentation.locals.LocalLazyPizzaNavItems
 import org.jetbrains.compose.resources.painterResource
 
 @Composable
