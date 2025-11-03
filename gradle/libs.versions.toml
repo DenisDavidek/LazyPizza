@@ -4,6 +4,7 @@ agp = "8.13.0"
 android-compileSdk = "36"
 android-minSdk = "24"
 android-targetSdk = "36"
+firebaseAuth = "2.4.0"
 firebaseStorageVersion = "2.3.0"
 ktor = "3.3.1"
 androidx-activity = "1.11.0"
@@ -34,6 +35,7 @@ adaptive = { module = "org.jetbrains.compose.material3.adaptive:adaptive", versi
 coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coilCompose" }
 coil-network = {module = "io.coil-kt.coil3:coil-network-ktor3", version.ref = "coilCompose" }
 firebase-app = { module = "dev.gitlive:firebase-app", version.ref = "firebaseStorageVersion" }
+firebase-auth = { module = "dev.gitlive:firebase-auth", version.ref = "firebaseAuth" }
 firebase-database = { module = "dev.gitlive:firebase-database", version.ref = "firebaseStorageVersion" }
 firebase-database-google = { module = "com.google.firebase:firebase-database" }
 gitlive-firebase-storage = { module = "dev.gitlive:firebase-storage", version.ref = "firebaseStorageVersion" }

@@ -64,6 +64,7 @@ kotlin {
             implementation(libs.gitlive.firebase.storage)
             implementation(libs.firebase.app)
             implementation(libs.firebase.database)
+            implementation(libs.firebase.auth)
             implementation(libs.uuid)
         }
         commonTest.dependencies {
