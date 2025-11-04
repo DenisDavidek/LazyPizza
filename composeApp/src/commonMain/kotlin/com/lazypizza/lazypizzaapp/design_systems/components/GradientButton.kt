@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.dropShadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.shadow.Shadow
 import androidx.compose.ui.unit.dp
 
@@ -20,26 +21,36 @@ fun GradientButton(
     modifier: Modifier = Modifier,
     buttonText: String,
     colors: List<Color>,
-    shadowColor: Color
+    shadowColor: Color,
+    enabled: Boolean = true
 ) {
     Button(
         modifier = modifier
-            .dropShadow(CircleShape, Shadow(6.dp, shadowColor.copy(alpha = .25f)))
+            .then(
+                if(enabled) {
+                    Modifier.dropShadow(CircleShape, Shadow(6.dp, shadowColor.copy(alpha = .25f)))
+                } else Modifier
+            )
             .background(
-                brush = Brush.linearGradient(
-                    colors
-                ),
+                brush = if (enabled) {
+                    Brush.linearGradient(
+                        colors
+                    )
+                } else SolidColor(Color(0xffebeded)),
                 shape = CircleShape
             ),
         onClick = onClick,
         colors = ButtonDefaults.buttonColors(
-            containerColor = Color.Transparent
-        )
+            containerColor = Color.Transparent,
+            contentColor = MaterialTheme.colorScheme.onPrimary,
+            disabledContainerColor = Color.Transparent,
+            disabledContentColor = MaterialTheme.colorScheme.onSurface.copy(.4f)
+        ),
+        enabled = enabled
     ) {
         Text(
             text = buttonText,
             style = MaterialTheme.typography.titleSmall,
-            color = MaterialTheme.colorScheme.onPrimary
         )
     }
 }

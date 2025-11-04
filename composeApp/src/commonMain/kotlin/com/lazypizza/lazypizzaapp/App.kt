@@ -152,7 +152,7 @@ fun App() {
         ) {
             // TODO, Pass actual user
             CompositionLocalProvider(
-                LocalUser provides sampleUser
+                LocalUser provides null
             ) {
                 Scaffold(
                     snackbarHost = { SnackbarHost(hostState = snackBarHostState) },
@@ -164,7 +164,7 @@ fun App() {
                                     .wrapContentHeight(),
                                 // TODO, Implement actions
                                 onAuthenticateClick = {
-
+                                    navHostController.navigate(LazyPizzaScreen.Authentication)
                                 },
                                 onLogoutClick = {
 
@@ -181,24 +181,21 @@ fun App() {
                             )
                         }
                     }
-                ) { padding ->
-                    var padding = padding
-
-                    if (isExpanded && isNavBarAllowed) {
+                ) { innerPadding ->
+                    val padding = if (isExpanded && isNavBarAllowed) {
                         val railWidth = 78.dp
-
-                        padding = PaddingValues(
-                            top = padding.calculateTopPadding(),
-                            bottom = padding.calculateBottomPadding(),
-                            start = padding.calculateStartPadding(LayoutDirection.Ltr) + railWidth,
-                            end = padding.calculateEndPadding(LayoutDirection.Ltr),
-                        )
-
                         RailNavBar(
                             modifier = Modifier.width(railWidth),
                             navHostController = navHostController
                         )
-                    }
+
+                        PaddingValues(
+                            top = innerPadding.calculateTopPadding(),
+                            bottom = innerPadding.calculateBottomPadding(),
+                            start = innerPadding.calculateStartPadding(LayoutDirection.Ltr) + railWidth,
+                            end = innerPadding.calculateEndPadding(LayoutDirection.Ltr),
+                        )
+                    } else innerPadding
 
                     AppNavigation(
                         navHostController = navHostController,

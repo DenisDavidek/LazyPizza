@@ -6,6 +6,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
+import com.lazypizza.lazypizzaapp.features.authentication.presentation.AuthenticationRoot
 import com.lazypizza.lazypizzaapp.features.cart.presentation.CartRootScreen
 import com.lazypizza.lazypizzaapp.features.cart.presentation.CartViewModel
 import com.lazypizza.lazypizzaapp.features.order_history.presentation.OrderHistoryScreen
@@ -63,7 +64,19 @@ fun AppNavigation(
         }
 
         composable<LazyPizzaScreen.OrderHistory> {
-            OrderHistoryScreen(onSignInClick = {})
+            OrderHistoryScreen(
+                onSignInClick = { }
+            )
+        }
+
+        composable<LazyPizzaScreen.Authentication> {
+            AuthenticationRoot(
+                onNavigateToMain = {
+                    navHostController.navigate(LazyPizzaScreen.MainProductCatalog) {
+                        popUpTo(0)
+                    }
+                }
+            )
         }
 
         composable<LazyPizzaScreen.Cart> {
