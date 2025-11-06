@@ -17,6 +17,10 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
@@ -25,6 +29,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
@@ -47,32 +52,58 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.lazypizza.lazypizzaapp.core.presentation.utils.ObserveAsEvents
 import com.lazypizza.lazypizzaapp.design_systems.AppTheme
 import com.lazypizza.lazypizzaapp.design_systems.components.GradientButton
 import com.lazypizza.lazypizzaapp.design_systems.utils.PhoneVisualTransformation
 import com.lazypizza.lazypizzaapp.features.authentication.presentation.model.AuthStage
 import com.lazypizza.lazypizzaapp.features.authentication.presentation.model.ResendCodeState
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun AuthenticationRoot(
     onNavigateToMain: () -> Unit,
-    viewModel: AuthenticationViewModel = viewModel()
+    viewModel: AuthenticationViewModel = koinViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val snackbarHostState = remember { SnackbarHostState() }
+    val coroutineScope = rememberCoroutineScope()
 
-    AuthenticationScreen(
-        state = state,
-        onAction = { action ->
-            when (action) {
-                AuthenticationAction.OnContinueWithoutSigningClick -> {
-                    onNavigateToMain()
+    ObserveAsEvents(viewModel.events) { event ->
+        when (event) {
+            is AuthenticationEvents.OnMessage -> {
+                coroutineScope.launch {
+                    snackbarHostState.showSnackbar(
+                        message = event.message,
+                        duration = SnackbarDuration.Short
+                    )
                 }
-
-                else -> viewModel.onAction(action)
             }
+
+            AuthenticationEvents.OnNavigateBack -> onNavigateToMain()
         }
-    )
+    }
+
+    Scaffold(
+        snackbarHost = {
+            SnackbarHost(snackbarHostState)
+        }
+    ) {
+        AuthenticationScreen(
+            state = state,
+            onAction = { action ->
+                when (action) {
+                    AuthenticationAction.OnContinueWithoutSigningClick -> {
+                        onNavigateToMain()
+                    }
+
+                    else -> viewModel.onAction(action)
+                }
+            }
+        )
+    }
 }
 
 @Composable
@@ -145,7 +176,8 @@ fun AuthenticationScreen(
         if (state.currentStage == AuthStage.Verification) {
             Spacer(Modifier.height(12.dp))
 
-            val focusRequesters = remember { List(state.verificationDigits.size) { FocusRequester() } }
+            val focusRequesters =
+                remember { List(state.verificationDigits.size) { FocusRequester() } }
             val focusManager = LocalFocusManager.current
 
             LaunchedEffect(state.currentStage) {
@@ -170,16 +202,23 @@ fun AuthenticationScreen(
                                     digits.forEachIndexed { offset, char ->
                                         val targetIndex = index + offset
                                         if (targetIndex < state.verificationDigits.size) {
-                                            onAction(AuthenticationAction.OnCodeDigitEnter(targetIndex, char.toString()))
+                                            onAction(
+                                                AuthenticationAction.OnCodeDigitEnter(
+                                                    targetIndex,
+                                                    char.toString()
+                                                )
+                                            )
                                         }
                                     }
-                                    val nextEmptyIndex = state.verificationDigits.indexOfFirst { it.isEmpty() }
+                                    val nextEmptyIndex =
+                                        state.verificationDigits.indexOfFirst { it.isEmpty() }
                                     if (nextEmptyIndex != -1) {
                                         focusRequesters[nextEmptyIndex].requestFocus()
                                     } else {
                                         focusManager.clearFocus()
                                     }
                                 }
+
                                 value.length == 1 && value.all(Char::isDigit) -> {
                                     onAction(AuthenticationAction.OnCodeDigitEnter(index, value))
                                     if (index < state.verificationDigits.size - 1) {
@@ -188,6 +227,7 @@ fun AuthenticationScreen(
                                         focusManager.clearFocus()
                                     }
                                 }
+
                                 value.isEmpty() && digit.isNotEmpty() -> {
                                     onAction(AuthenticationAction.OnDeleteDigit(index))
                                 }

@@ -11,9 +11,13 @@ data class AuthenticationState(
     val confirmEnabled: Boolean = false,
     val isLoading: Boolean = false,
     val resendCodeState: ResendCodeState = ResendCodeState.Ready,
-    val errors: Map<String, String> = mapOf() // KEY - ERROR MESSAGE
+    val currentVerificationId: String? = null,
+    val errors: Map<String, String> = emptyMap()
 ) {
     companion object {
         const val ERROR_INCORRECT_CODE = "incorrect_code"
+        const val ERROR_SEND_CODE = "send_code_error"
+        const val ERROR_INVALID_PHONE = "invalid_phone"
+        const val ERROR_VERIFICATION_FAILED = "verification_failed"
     }
 }
