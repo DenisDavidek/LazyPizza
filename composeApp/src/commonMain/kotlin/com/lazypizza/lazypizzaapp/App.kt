@@ -59,7 +59,7 @@ fun App() {
 
     val cartViewModel: CartViewModel = koinViewModel()
     val cartState by cartViewModel.cartState.collectAsStateWithLifecycle()
-    val sampleUser = remember { User("+134567312") }
+    val currentUser = rememberUser()
 
     val navItems = remember {
         mutableStateListOf(
@@ -90,10 +90,8 @@ fun App() {
         if (cartItemIndex != -1) {
             val totalQuantity = cartState.items.sumOf { it.quantity }
             val newBadgeValue = if (totalQuantity > 0) {
-                // Use the calculated total quantity for the badge value
                 totalQuantity.toString()
             } else {
-                // Return null to hide the badge when the cart is empty
                 null
             }
             navItems[cartItemIndex] = navItems[cartItemIndex].copy(badge = newBadgeValue)
@@ -150,9 +148,8 @@ fun App() {
         CompositionLocalProvider(
             LocalLazyPizzaNavItems provides navItems
         ) {
-            // TODO, Pass actual user
             CompositionLocalProvider(
-                LocalUser provides null
+                LocalUser provides currentUser
             ) {
                 Scaffold(
                     snackbarHost = { SnackbarHost(hostState = snackBarHostState) },
