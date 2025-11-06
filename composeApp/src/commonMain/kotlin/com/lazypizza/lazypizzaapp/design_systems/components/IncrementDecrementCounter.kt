@@ -16,24 +16,24 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.lazypizza.lazypizzaapp.features.product_catalog.domain.Product
+import com.lazypizza.lazypizzaapp.features.cart.presentation.domain.ShoppingCartItem
 
 @Composable
 fun IncrementDecrementCounter(
-    product: Product,
-    onIncrement: (product: Product) -> Unit,
-    onDecrement: (product: Product) -> Unit
+    shoppingCartItem: ShoppingCartItem,
+    onIncrement: (shoppingCartItem: ShoppingCartItem) -> Unit,
+    onDecrement: (shoppingCartItem: ShoppingCartItem) -> Unit
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterHorizontally)
     ) {
         OutlinedIconButton(
-            onClick = { onDecrement(product) },
+            onClick = { onDecrement(shoppingCartItem) },
             border = BorderStroke(
                 width = 1.dp, color = MaterialTheme.colorScheme.outlineVariant
             ),
-            enabled = product.quantity > 1,
+            enabled = shoppingCartItem.quantity > 1,
             shape = RoundedCornerShape(8.dp),
             modifier = Modifier.size(32.dp)
         ) {
@@ -45,13 +45,13 @@ fun IncrementDecrementCounter(
         }
 
         Text(
-            text = product.quantity.toString(),
+            text = shoppingCartItem.quantity.toString(),
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onSurface
         )
 
         OutlinedIconButton(
-            onClick = { onIncrement(product) },
+            onClick = { onIncrement(shoppingCartItem) },
             border = BorderStroke(
                 width = 1.dp, color = MaterialTheme.colorScheme.outlineVariant
             ),

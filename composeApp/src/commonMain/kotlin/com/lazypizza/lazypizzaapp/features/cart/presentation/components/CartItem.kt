@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.SubcomposeAsyncImage
 import com.lazypizza.lazypizzaapp.core.utils.toPrice
 import com.lazypizza.lazypizzaapp.design_systems.components.IncrementDecrementCounter
+import com.lazypizza.lazypizzaapp.features.cart.presentation.domain.ShoppingCartItem
 import com.lazypizza.lazypizzaapp.features.product_catalog.domain.Product
 import lazypizza.composeapp.generated.resources.Res
 import lazypizza.composeapp.generated.resources.cd_delete_from_cart
@@ -38,10 +39,10 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun CartItem(
     modifier: Modifier = Modifier,
-    product: Product,
-    onCartItemDeleteClick: (product: Product) -> Unit,
-    onIncrement: (product: Product) -> Unit,
-    onDecrement: (product: Product) -> Unit
+    shoppingCartItem: ShoppingCartItem,
+    onCartItemDeleteClick: (shoppingCartItem: ShoppingCartItem) -> Unit,
+    onIncrement: (shoppingCartItem: ShoppingCartItem) -> Unit,
+    onDecrement: (shoppingCartItem: ShoppingCartItem) -> Unit
 ) {
     Row(
         modifier = modifier
@@ -69,7 +70,7 @@ fun CartItem(
             contentAlignment = Alignment.Center
         ) {
             SubcomposeAsyncImage(
-                model = product.imageUrl,
+                model = shoppingCartItem.product.imageUrl,
                 contentDescription = null,
                 modifier = Modifier.size(108.dp),
                 loading = {
@@ -97,7 +98,7 @@ fun CartItem(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = product.name,
+                    text = shoppingCartItem.product.name,
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurface
                 )
@@ -105,7 +106,7 @@ fun CartItem(
 
                 OutlinedIconButton(
                     onClick = {
-                        onCartItemDeleteClick(product)
+                        onCartItemDeleteClick(shoppingCartItem)
                     },
                     border = BorderStroke(
                         width = 1.dp, color = MaterialTheme.colorScheme.outlineVariant
@@ -123,13 +124,13 @@ fun CartItem(
 
             }
 
-            if (product is Product.Pizza) {
+            if (shoppingCartItem.product is Product.Pizza) {
                 Column (
                     modifier = Modifier.fillMaxWidth(),
                     horizontalAlignment = Alignment.Start,
                     verticalArrangement = Arrangement.SpaceBetween
                 ) {
-                    product.toppings.forEach { topping ->
+                    shoppingCartItem.product.toppings.forEach { topping ->
                         Text(
                             text = "${topping.quantity} x ${topping.name}",
                             style = MaterialTheme.typography.bodySmall,
@@ -147,7 +148,7 @@ fun CartItem(
             ) {
 
                 IncrementDecrementCounter(
-                    product = product,
+                    shoppingCartItem = shoppingCartItem,
                     onIncrement = { product ->
                         onIncrement(product)
                     },
@@ -160,16 +161,16 @@ fun CartItem(
                     horizontalAlignment = Alignment.End,
                 ) {
 
-                    val totalPrice = if (product is Product.Pizza) {
-                        "$${product.price.plus(product.toppings.sumOf { it.price.times(it.quantity) }).times(product.quantity).toPrice()}"
+                    val totalPrice = if (shoppingCartItem.product is Product.Pizza) {
+                        "$${shoppingCartItem.product.price.plus(shoppingCartItem.product.toppings.sumOf { it.price.times(it.quantity) }).times(shoppingCartItem.quantity).toPrice()}"
                     } else {
-                        "$${product.price.times(product.quantity).toPrice()}"
+                        "$${shoppingCartItem.product.price.times(shoppingCartItem.quantity).toPrice()}"
                     }
 
-                    val unitPrice = if (product is Product.Pizza) {
-                        "$${product.price.plus(product.toppings.sumOf { it.price.times(it.quantity) }).toPrice()}"
+                    val unitPrice = if (shoppingCartItem.product is Product.Pizza) {
+                        "$${shoppingCartItem.product.price.plus(shoppingCartItem.product.toppings.sumOf { it.price.times(it.quantity) }).toPrice()}"
                     } else {
-                        "$${product.price.toPrice()}"
+                        "$${shoppingCartItem.product.price.toPrice()}"
                     }
 
 
@@ -181,7 +182,7 @@ fun CartItem(
                     )
 
                     Text(
-                        text = "${product.quantity} x $unitPrice",
+                        text = "${shoppingCartItem.quantity} x $unitPrice",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
