@@ -16,8 +16,11 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
@@ -30,9 +33,9 @@ import coil3.ImageLoader
 import coil3.PlatformContext
 import coil3.compose.setSingletonImageLoaderFactory
 import coil3.network.ktor3.KtorNetworkFetcherFactory
-import com.lazypizza.lazypizzaapp.core.domain.model.User
-import com.lazypizza.lazypizzaapp.core.presentation.MainProductCatalogTopBar
-import com.lazypizza.lazypizzaapp.core.presentation.TitleTopBar
+import com.lazypizza.lazypizzaapp.core.presentation.components.LogoutDialog
+import com.lazypizza.lazypizzaapp.core.presentation.components.MainProductCatalogTopBar
+import com.lazypizza.lazypizzaapp.core.presentation.components.TitleTopBar
 import com.lazypizza.lazypizzaapp.core.utils.showSnackBar
 import com.lazypizza.lazypizzaapp.design_systems.AppTheme
 import com.lazypizza.lazypizzaapp.features.cart.presentation.CartViewModel
@@ -60,6 +63,7 @@ fun App() {
     val cartViewModel: CartViewModel = koinViewModel()
     val cartState by cartViewModel.cartState.collectAsStateWithLifecycle()
     val currentUser = rememberUser()
+    var isLogoutVisible by rememberSaveable { mutableStateOf(false) }
 
     val navItems = remember {
         mutableStateListOf(
@@ -159,12 +163,11 @@ fun App() {
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .wrapContentHeight(),
-                                // TODO, Implement actions
                                 onAuthenticateClick = {
                                     navHostController.navigate(LazyPizzaScreen.Authentication)
                                 },
                                 onLogoutClick = {
-
+                                    isLogoutVisible = true
                                 }
                             )
                         } else if (shouldDisplayTitleTopBar) {
@@ -203,6 +206,19 @@ fun App() {
                                 snackBarHostState = snackBarHostState,
                                 message = "The ${product.name} has been successfully added into your cart"
                             )
+                        }
+                    )
+                }
+
+                if (isLogoutVisible) {
+                    LogoutDialog(
+                        onLogoutClick = {
+                            logoutUser()
+
+                            isLogoutVisible = false
+                        },
+                        onDismissRequest = {
+                            isLogoutVisible = false
                         }
                     )
                 }

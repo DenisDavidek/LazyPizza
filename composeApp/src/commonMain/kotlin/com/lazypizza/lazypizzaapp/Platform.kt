@@ -11,3 +11,5 @@ expect fun getPhoneAuthService(): PhoneAuthService
 
 @Composable
 expect fun rememberUser(): User?
+
+expect fun logoutUser()

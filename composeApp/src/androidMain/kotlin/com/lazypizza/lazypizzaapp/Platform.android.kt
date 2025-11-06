@@ -50,3 +50,7 @@ actual fun rememberUser(): User? {
         }
     }
 }
+
+actual fun logoutUser() {
+    Firebase.auth.signOut()
+}
