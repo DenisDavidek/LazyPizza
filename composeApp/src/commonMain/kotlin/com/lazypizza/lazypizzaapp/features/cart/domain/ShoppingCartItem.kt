@@ -1,4 +1,4 @@
-package com.lazypizza.lazypizzaapp.features.cart.presentation.domain
+package com.lazypizza.lazypizzaapp.features.cart.domain
 
 import com.benasher44.uuid.uuid4
 import com.lazypizza.lazypizzaapp.features.product_catalog.domain.Product

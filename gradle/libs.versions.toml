@@ -1,11 +1,11 @@
 [versions]
-adaptive = "1.2.0-beta01"
+adaptive = "1.2.0"
 agp = "8.13.0"
 android-compileSdk = "36"
 android-minSdk = "24"
 android-targetSdk = "36"
 firebaseAuth = "2.4.0"
-firebaseStorageVersion = "2.3.0"
+firebaseStorageVersion = "2.4.0"
 ktor = "3.3.1"
 androidx-activity = "1.11.0"
 androidx-appcompat = "1.7.1"
@@ -14,7 +14,7 @@ androidx-espresso = "3.7.0"
 androidx-lifecycle = "2.9.5"
 androidx-testExt = "1.3.0"
 coilCompose = "3.3.0"
-composeMultiplatform = "1.9.1"
+composeMultiplatform = "1.9.2"
 junit = "4.13.2"
 kotlin = "2.2.21"
 koin = "4.1.1"
@@ -25,13 +25,17 @@ kotlinxDatetime = "0.7.1"
 kotlinxSerializationJson = "1.9.0"
 navigationCompose = "2.9.1"
 materialIconsExtended = "1.7.3"
-coreSplashscreen = "1.0.1"
+coreSplashscreen = "1.2.0"
 googleGmsGoogleServices = "4.4.4"
 firebaseStorage = "22.0.1"
+room = "2.8.3"
 uuid = "0.8.4"
+sqlite = "2.6.1"
 
 [libraries]
 adaptive = { module = "org.jetbrains.compose.material3.adaptive:adaptive", version.ref = "adaptive" }
+androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
+androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
 coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coilCompose" }
 coil-network = {module = "io.coil-kt.coil3:coil-network-ktor3", version.ref = "coilCompose" }
 firebase-app = { module = "dev.gitlive:firebase-app", version.ref = "firebaseStorageVersion" }
@@ -64,6 +68,10 @@ material-icons-extended = { module = "org.jetbrains.compose.material:material-ic
 androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreen" }
 koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
 uuid = {module = "com.benasher44:uuid", version.ref = "uuid"}
+room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
+room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
+sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled", version.ref = "sqlite" }
+
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
@@ -74,3 +82,4 @@ kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref =
 googleGmsGoogleServices = { id = "com.google.gms.google-services", version.ref = "googleGmsGoogleServices" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+room = { id = "androidx.room", version.ref = "room" }

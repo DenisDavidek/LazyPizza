@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.SubcomposeAsyncImage
 import com.lazypizza.lazypizzaapp.core.utils.toPrice
 import com.lazypizza.lazypizzaapp.design_systems.components.IncrementDecrementCounter
-import com.lazypizza.lazypizzaapp.features.cart.presentation.domain.ShoppingCartItem
+import com.lazypizza.lazypizzaapp.features.cart.domain.ShoppingCartItem
 import com.lazypizza.lazypizzaapp.features.product_catalog.domain.Product
 import lazypizza.composeapp.generated.resources.Res
 import lazypizza.composeapp.generated.resources.cd_delete_from_cart

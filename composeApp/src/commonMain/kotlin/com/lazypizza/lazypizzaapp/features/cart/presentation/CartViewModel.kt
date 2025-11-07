@@ -1,95 +1,89 @@
 package com.lazypizza.lazypizzaapp.features.cart.presentation
 
 import androidx.lifecycle.ViewModel
-import com.lazypizza.lazypizzaapp.features.cart.presentation.domain.ShoppingCartItem
+import androidx.lifecycle.viewModelScope
+import com.lazypizza.lazypizzaapp.features.cart.domain.CartRepository
+import com.lazypizza.lazypizzaapp.features.cart.domain.ShoppingCartItem
+import com.lazypizza.lazypizzaapp.features.cart.domain.toDomain
 import com.lazypizza.lazypizzaapp.features.product_catalog.domain.Product
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
-class CartViewModel : ViewModel() {
+
+class CartViewModel(private val cartRepository: CartRepository) : ViewModel() {
 
     private val _cartState = MutableStateFlow(CartState())
     val cartState = _cartState.asStateFlow()
 
+    private val cartItems = cartRepository.allCartItems.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000L),
+        initialValue = emptyList()
+    )
+
+    init {
+
+        cartItems.onEach { items ->
+            _cartState.update { it.copy(items = items.toDomain()) }
+        }.launchIn(viewModelScope)
+    }
+
     fun onAction(action: CartAction) {
-        when (action) {
-            is CartAction.OnAddToCart -> {
+        viewModelScope.launch {
+            when (action) {
+                is CartAction.OnAddToCart -> {
+                    val productToAdd = action.product
 
-                val productToAdd = action.product
-
-                _cartState.update { currentState ->
                     // Find if an identical product configuration already exists.
-                    val existingIdenticalItem = currentState.items.find {
-                        // It must be the same base product
+                    val existingIdenticalItem = cartItems.value.find {
                         it.product.id == productToAdd.id &&
-                                // And if it's a pizza, the toppings must also match
                                 (it.product as? Product.Pizza)?.toppings == (productToAdd as? Product.Pizza)?.toppings
                     }
 
-                    val updatedCartItems = if (existingIdenticalItem == null) {
-                        // If the item is new, add it to the list.
-                        // The unique cartItemId is now generated automatically by the ShoppingCartItem constructor.
+                    if (existingIdenticalItem == null) {
+
                         val newCartItem = ShoppingCartItem(
                             product = productToAdd,
                             quantity = 1
                         )
-                        currentState.items + newCartItem
+                        cartRepository.upsertCartItem(newCartItem)
                     } else {
-                        // If an identical item exists, we update its quantity.
-                        currentState.items.map { item ->
-                            if (item.cartItemId == existingIdenticalItem.cartItemId) {
-                                item.copy(quantity = item.quantity + 1)
-                            } else {
-                                item
-                            }
-                        }
+                        // If it exists, create a new item with the updated quantity and upsert it.
+                        val updatedItem = existingIdenticalItem.copy(quantity = existingIdenticalItem.quantity + 1)
+                        cartRepository.upsertCartItem(updatedItem.toDomain())
                     }
-                    currentState.copy(items = updatedCartItems)
                 }
-            }
 
-            is CartAction.OnDeleteProductFromCart -> {
-
-                val itemToDelete = action.item
-                _cartState.update { currentState ->
-                    val updatedCartItems =
-                        currentState.items.filterNot { it.cartItemId == itemToDelete.cartItemId }
-                    currentState.copy(items = updatedCartItems)
+                is CartAction.OnDeleteProductFromCart -> {
+                    cartRepository.deleteItem(action.item)
                 }
-            }
 
-            is CartAction.OnIncreaseQuantity -> {
-                val itemToIncrease = action.item
-                _cartState.update { currentState ->
-                    val updatedCartItems = currentState.items.map { item ->
-                        if (item.cartItemId == itemToIncrease.cartItemId) {
-                            item.copy(quantity = item.quantity + 1)
-                        } else {
-                            item
-                        }
+                is CartAction.OnIncreaseQuantity -> {
+                    val itemToIncrease = action.item
+                    val updatedItem = itemToIncrease.copy(quantity = itemToIncrease.quantity + 1)
+
+                    cartRepository.upsertCartItem(updatedItem)
+                }
+
+                is CartAction.OnDecreaseQuantity -> {
+                    val itemToDecrease = action.item
+                    if (itemToDecrease.quantity > 1) {
+
+                        val updatedItem = itemToDecrease.copy(quantity = itemToDecrease.quantity - 1)
+                        cartRepository.upsertCartItem(updatedItem)
+                    } else {
+                        cartRepository.deleteItem(itemToDecrease)
                     }
-                    currentState.copy(items = updatedCartItems)
-                }
-            }
-
-            is CartAction.OnDecreaseQuantity -> {
-                val itemToDecrease = action.item
-                _cartState.update { currentState ->
-                    val updatedCartItems = currentState.items.mapNotNull { item ->
-                        if (item.cartItemId == itemToDecrease.cartItemId) {
-                            if (item.quantity > 1) {
-                                item.copy(quantity = item.quantity - 1)
-                            } else {
-                                null
-                            }
-                        } else {
-                            item
-                        }
-                    }
-                    currentState.copy(items = updatedCartItems)
                 }
             }
         }
     }
 }
+
+

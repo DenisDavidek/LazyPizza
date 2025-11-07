@@ -18,7 +18,7 @@ fun CartScreen(
 ) {
 
     LazyColumn(modifier = modifier.background(MaterialTheme.colorScheme.background)) {
-        items(state.items, key = { product -> product.product.cartItemId }, itemContent = { shoppingCartItem ->
+        items(state.items, key = { cartItem -> cartItem.cartItemId }, itemContent = { shoppingCartItem ->
 
             CartItem(
                 modifier = Modifier.animateItem(),
