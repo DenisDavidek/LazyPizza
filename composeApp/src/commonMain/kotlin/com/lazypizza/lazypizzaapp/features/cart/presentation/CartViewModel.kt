@@ -81,6 +81,9 @@ class CartViewModel(private val cartRepository: CartRepository) : ViewModel() {
                         cartRepository.deleteItem(itemToDecrease)
                     }
                 }
+                is CartAction.OnClearCart -> {
+                    cartRepository.clearCart()
+                }
             }
         }
     }

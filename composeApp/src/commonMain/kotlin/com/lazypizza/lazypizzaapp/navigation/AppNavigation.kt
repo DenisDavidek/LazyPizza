@@ -7,6 +7,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.lazypizza.lazypizzaapp.features.authentication.presentation.AuthenticationRoot
+import com.lazypizza.lazypizzaapp.features.authentication.presentation.AuthenticationViewModel
 import com.lazypizza.lazypizzaapp.features.cart.presentation.CartRootScreen
 import com.lazypizza.lazypizzaapp.features.cart.presentation.CartViewModel
 import com.lazypizza.lazypizzaapp.features.order_history.presentation.OrderHistoryScreen
@@ -22,6 +23,7 @@ fun AppNavigation(
     navHostController: NavHostController,
     modifier: Modifier,
     cartViewModel: CartViewModel,
+    authenticationViewModel: AuthenticationViewModel,
     onShowSnackBar: (product: Product) -> Unit,
 ) {
 
@@ -65,7 +67,9 @@ fun AppNavigation(
 
         composable<LazyPizzaScreen.OrderHistory> {
             OrderHistoryScreen(
-                onSignInClick = { }
+                authenticationViewModel = authenticationViewModel,
+                onSignInClick = { navHostController.navigate(LazyPizzaScreen.Authentication) },
+                onGoToMenuClick = { navHostController.popBackStack<LazyPizzaScreen.MainProductCatalog>(false)}
             )
         }
 

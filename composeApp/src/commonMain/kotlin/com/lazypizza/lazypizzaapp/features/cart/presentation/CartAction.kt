@@ -9,4 +9,5 @@ sealed interface CartAction {
     data class OnIncreaseQuantity(val item: ShoppingCartItem) : CartAction
     data class OnDecreaseQuantity(val item: ShoppingCartItem) : CartAction
     data class OnDeleteProductFromCart(val item: ShoppingCartItem) : CartAction
+    class OnClearCart(): CartAction
 }

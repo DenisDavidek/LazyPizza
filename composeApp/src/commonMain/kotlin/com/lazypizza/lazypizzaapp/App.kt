@@ -36,13 +36,15 @@ import coil3.network.ktor3.KtorNetworkFetcherFactory
 import com.lazypizza.lazypizzaapp.core.presentation.components.LogoutDialog
 import com.lazypizza.lazypizzaapp.core.presentation.components.MainProductCatalogTopBar
 import com.lazypizza.lazypizzaapp.core.presentation.components.TitleTopBar
+import com.lazypizza.lazypizzaapp.core.presentation.locals.LocalLazyPizzaNavItems
+import com.lazypizza.lazypizzaapp.core.presentation.locals.LocalUser
 import com.lazypizza.lazypizzaapp.core.utils.showSnackBar
 import com.lazypizza.lazypizzaapp.design_systems.AppTheme
+import com.lazypizza.lazypizzaapp.features.authentication.presentation.AuthenticationViewModel
+import com.lazypizza.lazypizzaapp.features.cart.presentation.CartAction
 import com.lazypizza.lazypizzaapp.features.cart.presentation.CartViewModel
 import com.lazypizza.lazypizzaapp.navigation.AppNavigation
 import com.lazypizza.lazypizzaapp.navigation.LazyPizzaScreen
-import com.lazypizza.lazypizzaapp.core.presentation.locals.LocalLazyPizzaNavItems
-import com.lazypizza.lazypizzaapp.core.presentation.locals.LocalUser
 import com.lazypizza.lazypizzaapp.navigation.model.NavItem
 import com.lazypizza.lazypizzaapp.navigation.nav_bars.BottomNavBar
 import com.lazypizza.lazypizzaapp.navigation.nav_bars.RailNavBar
@@ -148,6 +150,8 @@ fun App() {
     val snackBarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
+    val authenticationViewModel: AuthenticationViewModel = koinViewModel()
+
     AppTheme {
         CompositionLocalProvider(
             LocalLazyPizzaNavItems provides navItems
@@ -201,6 +205,7 @@ fun App() {
                         navHostController = navHostController,
                         modifier = Modifier.padding(padding),
                         cartViewModel = cartViewModel,
+                        authenticationViewModel = authenticationViewModel,
                         onShowSnackBar = { product ->
                             scope.showSnackBar(
                                 snackBarHostState = snackBarHostState,
@@ -214,6 +219,7 @@ fun App() {
                     LogoutDialog(
                         onLogoutClick = {
                             logoutUser()
+                            cartViewModel.onAction(CartAction.OnClearCart())
 
                             isLogoutVisible = false
                         },
