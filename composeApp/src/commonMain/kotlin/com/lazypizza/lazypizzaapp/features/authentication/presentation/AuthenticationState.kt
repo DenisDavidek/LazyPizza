@@ -5,7 +5,7 @@ import com.lazypizza.lazypizzaapp.features.authentication.presentation.model.Res
 
 data class AuthenticationState(
     val phoneNumber: String = "",
-    val verificationDigits: List<String> = List(4) { "" },
+    val verificationDigits: List<String> = List(6) { "" },
     val currentStage: AuthStage = AuthStage.EnterPhone,
     val continueEnabled: Boolean = false,
     val confirmEnabled: Boolean = false,
