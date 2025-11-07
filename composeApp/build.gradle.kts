@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.googleGmsGoogleServices)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.room)
 }
 
 kotlin {
@@ -26,7 +27,12 @@ kotlin {
             isStatic = true
         }
     }
-    
+
+    room{
+        schemaDirectory("${projectDir}/schemas")
+    }
+
+
     sourceSets {
         androidMain.dependencies {
             implementation(compose.preview)
@@ -66,11 +72,22 @@ kotlin {
             implementation(libs.firebase.database)
             implementation(libs.firebase.auth)
             implementation(libs.uuid)
+
+
+            implementation(libs.room.runtime)
+            implementation(libs.sqlite.bundled)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
         }
+
     }
+}
+
+dependencies {
+    // KSP support for Room Compiler.
+    ksp(libs.room.compiler)
+
 }
 
 android {
@@ -103,5 +120,6 @@ android {
 dependencies {
     implementation(libs.firebase.storage)
     debugImplementation(compose.uiTooling)
+    ksp(libs.room.compiler)
 }
 

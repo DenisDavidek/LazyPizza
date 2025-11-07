@@ -1,6 +1,6 @@
 package com.lazypizza.lazypizzaapp.features.cart.presentation
 
-import com.lazypizza.lazypizzaapp.features.cart.presentation.domain.ShoppingCartItem
+import com.lazypizza.lazypizzaapp.features.cart.domain.ShoppingCartItem
 import com.lazypizza.lazypizzaapp.features.product_catalog.domain.Product
 
 sealed interface CartAction {
