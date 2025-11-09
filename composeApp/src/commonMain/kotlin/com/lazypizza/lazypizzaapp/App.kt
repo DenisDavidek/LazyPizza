@@ -40,9 +40,9 @@ import com.lazypizza.lazypizzaapp.core.presentation.locals.LocalLazyPizzaNavItem
 import com.lazypizza.lazypizzaapp.core.presentation.locals.LocalUser
 import com.lazypizza.lazypizzaapp.core.utils.showSnackBar
 import com.lazypizza.lazypizzaapp.design_systems.AppTheme
-import com.lazypizza.lazypizzaapp.features.authentication.presentation.AuthenticationViewModel
 import com.lazypizza.lazypizzaapp.features.cart.presentation.CartAction
 import com.lazypizza.lazypizzaapp.features.cart.presentation.CartViewModel
+import com.lazypizza.lazypizzaapp.features.order_history.presentation.OrderViewModel
 import com.lazypizza.lazypizzaapp.navigation.AppNavigation
 import com.lazypizza.lazypizzaapp.navigation.LazyPizzaScreen
 import com.lazypizza.lazypizzaapp.navigation.model.NavItem
@@ -150,7 +150,7 @@ fun App() {
     val snackBarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
-    val authenticationViewModel: AuthenticationViewModel = koinViewModel()
+    val orderViewModel: OrderViewModel = koinViewModel()
 
     AppTheme {
         CompositionLocalProvider(
@@ -205,7 +205,7 @@ fun App() {
                         navHostController = navHostController,
                         modifier = Modifier.padding(padding),
                         cartViewModel = cartViewModel,
-                        authenticationViewModel = authenticationViewModel,
+                        orderViewModel = orderViewModel,
                         onShowSnackBar = { product ->
                             scope.showSnackBar(
                                 snackBarHostState = snackBarHostState,

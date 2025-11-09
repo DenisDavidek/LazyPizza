@@ -6,11 +6,12 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
+import co.touchlab.kermit.Logger
 import com.lazypizza.lazypizzaapp.features.authentication.presentation.AuthenticationRoot
-import com.lazypizza.lazypizzaapp.features.authentication.presentation.AuthenticationViewModel
 import com.lazypizza.lazypizzaapp.features.cart.presentation.CartRootScreen
 import com.lazypizza.lazypizzaapp.features.cart.presentation.CartViewModel
-import com.lazypizza.lazypizzaapp.features.order_history.presentation.OrderHistoryScreen
+import com.lazypizza.lazypizzaapp.features.order_history.presentation.OrderHistoryRootScreen
+import com.lazypizza.lazypizzaapp.features.order_history.presentation.OrderViewModel
 import com.lazypizza.lazypizzaapp.features.pizza_product.presentation.ProductDetailScreen
 import com.lazypizza.lazypizzaapp.features.product_catalog.domain.Product
 import com.lazypizza.lazypizzaapp.features.product_catalog.presentation.MainProductCatalogRoot
@@ -23,7 +24,7 @@ fun AppNavigation(
     navHostController: NavHostController,
     modifier: Modifier,
     cartViewModel: CartViewModel,
-    authenticationViewModel: AuthenticationViewModel,
+    orderViewModel: OrderViewModel,
     onShowSnackBar: (product: Product) -> Unit,
 ) {
 
@@ -66,11 +67,15 @@ fun AppNavigation(
         }
 
         composable<LazyPizzaScreen.OrderHistory> {
-            OrderHistoryScreen(
-                authenticationViewModel = authenticationViewModel,
+            OrderHistoryRootScreen(
+                orderViewModel = orderViewModel,
                 onSignInClick = { navHostController.navigate(LazyPizzaScreen.Authentication) },
-                onGoToMenuClick = { navHostController.popBackStack<LazyPizzaScreen.MainProductCatalog>(false)}
-            )
+                onGoToMenuClick = {
+                    Logger.e("onGoToMenuClick")
+                    navHostController.navigate(LazyPizzaScreen.MainProductCatalog) {
+                        popUpTo(0)
+                    }
+                })
         }
 
         composable<LazyPizzaScreen.Authentication> {
@@ -84,10 +89,15 @@ fun AppNavigation(
         }
 
         composable<LazyPizzaScreen.Cart> {
-            CartRootScreen(onBackToMenuClick = {
-                navHostController.navigate(LazyPizzaScreen.MainProductCatalog)
+            CartRootScreen(
+                onBackToMenuClick = {
+                    navHostController.navigate(LazyPizzaScreen.MainProductCatalog)
 
-            }, mainProductCatalogViewModel = mainProductCatalogViewModel, viewModel = cartViewModel)
+                },
+                mainProductCatalogViewModel = mainProductCatalogViewModel,
+                viewModel = cartViewModel,
+                orderViewModel = orderViewModel
+            )
         }
     }
 }

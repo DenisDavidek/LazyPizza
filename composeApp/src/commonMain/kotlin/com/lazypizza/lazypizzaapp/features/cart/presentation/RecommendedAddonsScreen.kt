@@ -28,7 +28,8 @@ fun RecommendedAddonsScreen(
     modifier: Modifier,
     products: List<Product>,
     totalPrice: Double,
-    onProductAddClick: (Product) -> Unit
+    onProductAddClick: (Product) -> Unit,
+    onProceedToCheckoutClick: () -> Unit
 ) {
 
     Column(
@@ -59,7 +60,7 @@ fun RecommendedAddonsScreen(
             }
         }
         GradientButton(
-            onClick = {},
+            onClick = onProceedToCheckoutClick,
             modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 12.dp),
             buttonText = "Proceed to Checkout ($${totalPrice.toPrice()})",
             colors = listOf(

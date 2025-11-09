@@ -22,6 +22,8 @@ import co.touchlab.kermit.Logger
 import com.lazypizza.lazypizzaapp.core.domain.model.DefaultInfoItem
 import com.lazypizza.lazypizzaapp.core.utils.countOverallPrice
 import com.lazypizza.lazypizzaapp.design_systems.components.DefaultInfo
+import com.lazypizza.lazypizzaapp.features.order_history.presentation.OrderAction
+import com.lazypizza.lazypizzaapp.features.order_history.presentation.OrderViewModel
 import com.lazypizza.lazypizzaapp.features.product_catalog.presentation.MainProductCatalogAction
 import com.lazypizza.lazypizzaapp.features.product_catalog.presentation.MainProductCatalogViewModel
 import lazypizza.composeapp.generated.resources.Res
@@ -34,6 +36,7 @@ import org.jetbrains.compose.resources.stringResource
 fun CartRootScreen(
     onBackToMenuClick: () -> Unit,
     mainProductCatalogViewModel: MainProductCatalogViewModel,
+    orderViewModel: OrderViewModel,
     viewModel: CartViewModel,
 ) {
 
@@ -79,18 +82,28 @@ fun CartRootScreen(
                         state = state,
                         modifier = Modifier.fillMaxSize().weight(1f),
                         onAction = { action -> viewModel.onAction(action) },
-                        onMainProductCatalogAction = {action ->
+                        onMainProductCatalogAction = { action ->
                             mainProductCatalogViewModel.onAction(action)
                         })
 
                     RecommendedAddonsScreen(
-                        modifier = Modifier.fillMaxWidth().wrapContentHeight().weight(1f).background(MaterialTheme.colorScheme.surface,
-                            RoundedCornerShape(16.dp)),
+                        modifier = Modifier.fillMaxWidth().wrapContentHeight().weight(1f)
+                            .background(
+                                MaterialTheme.colorScheme.surface,
+                                RoundedCornerShape(16.dp)
+                            ),
                         products = recommendedAddons,
                         totalPrice = state.items.countOverallPrice(),
                         onProductAddClick = { product ->
                             viewModel.onAction(CartAction.OnAddToCart(product))
-                            mainProductCatalogViewModel.onAction(MainProductCatalogAction.OnRemoveRecommendedAddon(product))
+                            mainProductCatalogViewModel.onAction(
+                                MainProductCatalogAction.OnRemoveRecommendedAddon(
+                                    product
+                                )
+                            )
+                        },
+                        onProceedToCheckoutClick = {
+                            orderViewModel.onAction(OrderAction.OnCreateOrder(shoppingCartItems = state.items))
                         }
                     )
                 }
@@ -103,7 +116,7 @@ fun CartRootScreen(
                         state = state,
                         modifier = Modifier.fillMaxSize().weight(0.75f),
                         onAction = { action -> viewModel.onAction(action) },
-                        onMainProductCatalogAction = {action ->
+                        onMainProductCatalogAction = { action ->
                             mainProductCatalogViewModel.onAction(action)
                         })
 
@@ -113,8 +126,15 @@ fun CartRootScreen(
                         totalPrice = state.items.countOverallPrice(),
                         onProductAddClick = { product ->
                             viewModel.onAction(CartAction.OnAddToCart(product))
-                            mainProductCatalogViewModel.onAction(MainProductCatalogAction.OnRemoveRecommendedAddon(product))
+                            mainProductCatalogViewModel.onAction(
+                                MainProductCatalogAction.OnRemoveRecommendedAddon(
+                                    product
+                                )
+                            )
 
+                        },
+                        onProceedToCheckoutClick = {
+                            orderViewModel.onAction(OrderAction.OnCreateOrder(shoppingCartItems = state.items))
                         }
                     )
 
