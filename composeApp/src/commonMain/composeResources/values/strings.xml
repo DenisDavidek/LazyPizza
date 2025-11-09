@@ -29,6 +29,10 @@
     <string name="no_orders_yet">No Orders Yet</string>
     <string name="your_orders_will_appear_here_after_your_first_purchase">Your orders will appear here after your first purchase.</string>
     <string name="go_to_menu">Go to menu</string>
+    <string name="order_state_in_progress">In Progress</string>
+    <string name="order_state_completed">Completed</string>
+    <string name="order_grid">Order #</string>
+    <string name="total_amount">Total amount:</string>
 
 
     <!--CartScreen-->

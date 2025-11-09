@@ -73,6 +73,7 @@ kotlin {
             implementation(libs.firebase.auth)
             implementation(libs.uuid)
 
+            implementation(libs.kotlinx.datetime)
 
             implementation(libs.room.runtime)
             implementation(libs.sqlite.bundled)
