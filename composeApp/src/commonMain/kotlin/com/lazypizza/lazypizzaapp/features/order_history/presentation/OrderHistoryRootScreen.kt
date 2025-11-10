@@ -11,11 +11,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.window.core.layout.WindowSizeClass
 import com.lazypizza.lazypizzaapp.core.domain.model.DefaultInfoItem
 import com.lazypizza.lazypizzaapp.core.presentation.locals.LocalUser
+import com.lazypizza.lazypizzaapp.core.utils.isPortrait
 import com.lazypizza.lazypizzaapp.design_systems.components.DefaultInfo
 import lazypizza.composeapp.generated.resources.Res
 import lazypizza.composeapp.generated.resources.go_to_menu
@@ -27,12 +27,19 @@ import lazypizza.composeapp.generated.resources.your_orders_will_appear_here_aft
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
-fun OrderHistoryRootScreen(orderViewModel: OrderViewModel,onSignInClick: () -> Unit, onGoToMenuClick: () -> Unit){
+fun OrderHistoryRootScreen(
+    orderViewModel: OrderViewModel,
+    onSignInClick: () -> Unit,
+    onGoToMenuClick: () -> Unit
+) {
 
     val adaptiveWindow = currentWindowAdaptiveInfo()
 
     val isExpanded = adaptiveWindow.windowSizeClass
         .isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND)
+
+    val isPortrait = isPortrait()
+
 
     val user = LocalUser.current
     val isUserLoggedIn = user != null
@@ -65,15 +72,16 @@ fun OrderHistoryRootScreen(orderViewModel: OrderViewModel,onSignInClick: () -> U
             )
         } else {
 
-            if (isExpanded){
-                Box(modifier = Modifier.fillMaxSize().background(Color.Cyan)) {
-                }
-            } else {
-                OrderHistoryScreen(state = orderState, modifier = Modifier.fillMaxSize())
-            }
+            OrderHistoryScreen(
+                state = orderState,
+                isExpanded = isExpanded,
+                isPortrait = isPortrait,
+                modifier = Modifier.fillMaxSize()
+            )
+
 
         }
 
     }
 
-    }
+}

@@ -87,6 +87,15 @@ class CartViewModel(private val cartRepository: CartRepository) : ViewModel() {
             }
         }
     }
+
+    fun countNewBadgeValue(): String?{
+        val totalQuantity = _cartState.value.items.sumOf { it.quantity }
+      return if (totalQuantity > 0) {
+            totalQuantity.toString()
+        } else {
+            null
+        }
+    }
 }
 
 

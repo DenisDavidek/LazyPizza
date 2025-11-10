@@ -77,6 +77,8 @@ kotlin {
 
             implementation(libs.room.runtime)
             implementation(libs.sqlite.bundled)
+            implementation(libs.material3.window.size.class1)
+
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

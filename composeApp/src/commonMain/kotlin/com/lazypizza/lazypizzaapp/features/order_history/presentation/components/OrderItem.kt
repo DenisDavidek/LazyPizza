@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import com.lazypizza.lazypizzaapp.core.utils.getFormattedCurrentDateTime
 import com.lazypizza.lazypizzaapp.core.utils.toDisplayColor
 import com.lazypizza.lazypizzaapp.core.utils.toDisplayText
+import com.lazypizza.lazypizzaapp.core.utils.toPrice
 import com.lazypizza.lazypizzaapp.design_systems.TextBlack
 import com.lazypizza.lazypizzaapp.features.order_history.domain.Order
 import lazypizza.composeapp.generated.resources.Res
@@ -126,7 +127,7 @@ fun OrderItem(orderItem: Order, modifier: Modifier = Modifier) {
                 )
 
                 Text(
-                    text = "$${orderItem.getOverallPrice()}",
+                    text = "$${orderItem.getOverallPrice().toPrice()}",
                     style = MaterialTheme.typography.titleLarge,
                     color = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier.fillMaxWidth(),

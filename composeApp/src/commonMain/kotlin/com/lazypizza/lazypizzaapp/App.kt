@@ -94,13 +94,7 @@ fun App() {
     LaunchedEffect(cartState.items.sumOf { it.quantity }) {
         val cartItemIndex = navItems.indexOfFirst { it.screen == LazyPizzaScreen.Cart }
         if (cartItemIndex != -1) {
-            val totalQuantity = cartState.items.sumOf { it.quantity }
-            val newBadgeValue = if (totalQuantity > 0) {
-                totalQuantity.toString()
-            } else {
-                null
-            }
-            navItems[cartItemIndex] = navItems[cartItemIndex].copy(badge = newBadgeValue)
+            navItems[cartItemIndex] = navItems[cartItemIndex].copy(badge = cartViewModel.countNewBadgeValue())
         }
     }
 
