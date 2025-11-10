@@ -2,7 +2,6 @@ package com.lazypizza.lazypizzaapp.features.order_history.presentation
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
@@ -27,11 +26,10 @@ fun OrderHistoryScreen(
     if (isExpanded && !isPortrait) {
 
         LazyVerticalStaggeredGrid(
-            columns = StaggeredGridCells.Adaptive(minSize = 400.dp),
+            columns = StaggeredGridCells.Fixed(2),
             modifier = Modifier.background(MaterialTheme.colorScheme.background),
-            contentPadding = PaddingValues(16.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-            verticalItemSpacing = 16.dp
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalItemSpacing = 8.dp
         ){
 
             items(state.orders, key = { order -> order.id}, itemContent = { order ->

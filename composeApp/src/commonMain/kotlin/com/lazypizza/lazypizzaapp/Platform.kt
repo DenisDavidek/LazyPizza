@@ -4,6 +4,12 @@ import androidx.compose.runtime.Composable
 import com.lazypizza.lazypizzaapp.core.domain.model.User
 import com.lazypizza.lazypizzaapp.features.authentication.model.service.PhoneAuthService
 
+interface Platform {
+    val name: String
+}
+
+expect fun getPlatform(): Platform
+
 @Composable
 expect fun onBackClick(action: () -> Unit)
 

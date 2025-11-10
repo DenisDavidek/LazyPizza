@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -36,7 +37,7 @@ import org.jetbrains.compose.resources.stringResource
 fun OrderItem(orderItem: Order, modifier: Modifier = Modifier) {
     Column(
         modifier = modifier
-            .fillMaxWidth().padding(horizontal = 8.dp, vertical = 8.dp)
+            .fillMaxWidth().padding(horizontal = 16.dp, vertical = 12.dp)
             .clip(RoundedCornerShape(12.dp))
             .dropShadow(
                 shape = RoundedCornerShape(size = 12.dp),
@@ -55,33 +56,37 @@ fun OrderItem(orderItem: Order, modifier: Modifier = Modifier) {
     ) {
 
         Column(
-            modifier = Modifier.fillMaxWidth().wrapContentHeight().padding(vertical = 4.dp),
+            modifier = Modifier.fillMaxWidth().wrapContentHeight().padding(horizontal = 16.dp, vertical = 12.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
 
             Row(
-                modifier = Modifier.fillMaxWidth().wrapContentHeight()
-                    .padding(vertical = 4.dp, horizontal = 8.dp),
+                modifier = Modifier.fillMaxWidth().wrapContentHeight(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
                     text = stringResource(Res.string.order_grid) + orderItem.id.toString(),
                     style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier.weight(1.4f)
                 )
 
-                Text(
-                    text = orderItem.orderState.toDisplayText(),
-                    style = MaterialTheme.typography.displayMedium,
-                    color = MaterialTheme.colorScheme.onPrimary,
-                    fontWeight = FontWeight.SemiBold,
-                    modifier = Modifier.weight(0.6f).background(
-                        orderItem.orderState.toDisplayColor(), RoundedCornerShape(16.dp)
-                    ).padding(vertical = 4.dp),
-                    textAlign = TextAlign.Center
-                )
+
+                Row(modifier = Modifier.weight(0.6f), horizontalArrangement = Arrangement.End){
+
+                    Text(
+                        text = orderItem.orderState.toDisplayText(),
+                        style = MaterialTheme.typography.displayMedium,
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        fontWeight = FontWeight.SemiBold,
+                        modifier = Modifier.wrapContentSize().background(
+                            orderItem.orderState.toDisplayColor(), RoundedCornerShape(16.dp)
+                        ).padding(vertical = 4.dp, horizontal = 8.dp)
+                    )
+                }
+
 
             }
 
@@ -89,7 +94,7 @@ fun OrderItem(orderItem: Order, modifier: Modifier = Modifier) {
                 text = getFormattedCurrentDateTime(),
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.fillMaxWidth().padding(start = 8.dp),
+                modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Start
 
             )
@@ -98,7 +103,7 @@ fun OrderItem(orderItem: Order, modifier: Modifier = Modifier) {
 
         Row(
             modifier = Modifier.fillMaxWidth().wrapContentHeight()
-                .padding(vertical = 4.dp, horizontal = 8.dp),
+                .padding(vertical = 12.dp, horizontal = 16.dp),
             verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.End
         ) {
 
@@ -122,16 +127,17 @@ fun OrderItem(orderItem: Order, modifier: Modifier = Modifier) {
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.fillMaxWidth(),
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.End
 
                 )
 
                 Text(
                     text = "$${orderItem.getOverallPrice().toPrice()}",
-                    style = MaterialTheme.typography.titleLarge,
+                    style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurface,
+                    fontWeight = FontWeight.SemiBold,
                     modifier = Modifier.fillMaxWidth(),
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.End
                 )
             }
 

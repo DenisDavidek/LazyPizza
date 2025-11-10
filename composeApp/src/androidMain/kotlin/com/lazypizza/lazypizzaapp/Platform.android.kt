@@ -1,5 +1,6 @@
 package com.lazypizza.lazypizzaapp
 
+import android.os.Build
 import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -13,6 +14,11 @@ import com.google.firebase.auth.auth
 import com.lazypizza.lazypizzaapp.core.domain.model.User
 import com.lazypizza.lazypizzaapp.features.authentication.data.service.AndroidPhoneAuthService
 import com.lazypizza.lazypizzaapp.features.authentication.model.service.PhoneAuthService
+
+
+class AndroidPlatform : Platform {
+    override val name: String = "Android ${Build.VERSION.SDK_INT}"
+}
 
 @Composable
 actual fun onBackClick(action: () -> Unit) {
@@ -54,3 +60,5 @@ actual fun rememberUser(): User? {
 actual fun logoutUser() {
     Firebase.auth.signOut()
 }
+
+actual fun getPlatform(): Platform = AndroidPlatform()
