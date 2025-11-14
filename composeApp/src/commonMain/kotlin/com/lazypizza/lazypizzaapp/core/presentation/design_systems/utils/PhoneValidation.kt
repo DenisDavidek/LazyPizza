@@ -1,4 +1,4 @@
-package com.lazypizza.lazypizzaapp.design_systems.utils
+package com.lazypizza.lazypizzaapp.core.presentation.design_systems.utils
 
 // Regex patterns for phone validation
 object PhoneValidation {

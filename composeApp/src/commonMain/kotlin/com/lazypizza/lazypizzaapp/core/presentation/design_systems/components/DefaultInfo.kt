@@ -1,4 +1,4 @@
-package com.lazypizza.lazypizzaapp.design_systems.components
+package com.lazypizza.lazypizzaapp.core.presentation.design_systems.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -12,8 +12,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.lazypizza.lazypizzaapp.core.domain.model.DefaultInfoItem
-import com.lazypizza.lazypizzaapp.design_systems.PrimaryGradientEnd
-import com.lazypizza.lazypizzaapp.design_systems.PrimaryGradientStart
+import com.lazypizza.lazypizzaapp.core.presentation.design_systems.PrimaryGradientEnd
+import com.lazypizza.lazypizzaapp.core.presentation.design_systems.PrimaryGradientStart
 
 @Composable
 fun DefaultInfo(modifier: Modifier, defaultInfoItem: DefaultInfoItem, onClick: () -> Unit){

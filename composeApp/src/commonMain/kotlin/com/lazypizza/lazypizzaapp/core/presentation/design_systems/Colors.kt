@@ -1,4 +1,4 @@
-package com.lazypizza.lazypizzaapp.design_systems
+package com.lazypizza.lazypizzaapp.core.presentation.design_systems
 
 import androidx.compose.ui.graphics.Color
 

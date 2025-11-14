@@ -1,7 +1,7 @@
 package com.lazypizza.lazypizzaapp.features.cart.data.db
 
 import androidx.room.TypeConverter
-import com.lazypizza.lazypizzaapp.core.utils.JsonProvider
+import com.lazypizza.lazypizzaapp.core.data.utils.JsonProvider
 import com.lazypizza.lazypizzaapp.features.product_catalog.domain.Product
 
 

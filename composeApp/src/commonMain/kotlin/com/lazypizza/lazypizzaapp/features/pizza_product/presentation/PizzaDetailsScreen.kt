@@ -15,7 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil3.compose.SubcomposeAsyncImage
-import com.lazypizza.lazypizzaapp.design_systems.AppTheme
+import com.lazypizza.lazypizzaapp.core.presentation.design_systems.AppTheme
 import com.lazypizza.lazypizzaapp.features.product_catalog.domain.Product
 import org.jetbrains.compose.ui.tooling.preview.Preview
 

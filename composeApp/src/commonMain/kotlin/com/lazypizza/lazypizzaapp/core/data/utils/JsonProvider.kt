@@ -1,4 +1,4 @@
-package com.lazypizza.lazypizzaapp.core.utils
+package com.lazypizza.lazypizzaapp.core.data.utils
 
 import com.lazypizza.lazypizzaapp.features.product_catalog.domain.Product
 import kotlinx.serialization.json.Json

@@ -7,7 +7,7 @@ import com.google.firebase.auth.PhoneAuthCredential
 import com.google.firebase.auth.PhoneAuthOptions
 import com.google.firebase.auth.PhoneAuthProvider
 import com.lazypizza.lazypizzaapp.app.ActivityProvider
-import com.lazypizza.lazypizzaapp.features.authentication.model.service.PhoneAuthService
+import com.lazypizza.lazypizzaapp.features.authentication.domain.service.PhoneAuthService
 import kotlinx.coroutines.tasks.await
 import java.util.concurrent.TimeUnit
 import kotlin.coroutines.resume

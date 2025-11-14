@@ -1,4 +1,4 @@
-package com.lazypizza.lazypizzaapp.core.utils
+package com.lazypizza.lazypizzaapp.core.presentation.utils
 
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime

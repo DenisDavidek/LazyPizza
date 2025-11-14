@@ -1,4 +1,4 @@
-package com.lazypizza.lazypizzaapp.design_systems.utils
+package com.lazypizza.lazypizzaapp.core.presentation.design_systems.utils
 
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.OffsetMapping

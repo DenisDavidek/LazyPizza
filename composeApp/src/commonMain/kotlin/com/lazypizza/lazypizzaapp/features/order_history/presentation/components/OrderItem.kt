@@ -22,11 +22,11 @@ import androidx.compose.ui.graphics.shadow.Shadow
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.lazypizza.lazypizzaapp.core.utils.getFormattedCurrentDateTime
-import com.lazypizza.lazypizzaapp.core.utils.toDisplayColor
-import com.lazypizza.lazypizzaapp.core.utils.toDisplayText
-import com.lazypizza.lazypizzaapp.core.utils.toPrice
-import com.lazypizza.lazypizzaapp.design_systems.TextBlack
+import com.lazypizza.lazypizzaapp.core.presentation.utils.getFormattedCurrentDateTime
+import com.lazypizza.lazypizzaapp.features.order_history.presentation.utils.toDisplayColor
+import com.lazypizza.lazypizzaapp.features.order_history.presentation.utils.toDisplayText
+import com.lazypizza.lazypizzaapp.core.presentation.utils.toPrice
+import com.lazypizza.lazypizzaapp.core.presentation.design_systems.TextBlack
 import com.lazypizza.lazypizzaapp.features.order_history.domain.Order
 import lazypizza.composeapp.generated.resources.Res
 import lazypizza.composeapp.generated.resources.order_grid

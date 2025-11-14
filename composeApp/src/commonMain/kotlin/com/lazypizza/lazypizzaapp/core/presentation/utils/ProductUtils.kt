@@ -1,7 +1,12 @@
-package com.lazypizza.lazypizzaapp.core.utils
+package com.lazypizza.lazypizzaapp.core.presentation.utils
 
 import com.lazypizza.lazypizzaapp.features.cart.domain.ShoppingCartItem
 import com.lazypizza.lazypizzaapp.features.product_catalog.domain.Product
+
+/*
+    These utils placed here because they can be used anywhere in project
+    including catalog or cart feature
+ */
 
 fun List<Product>.countOverallPriceOld(): Double{
 
