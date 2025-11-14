@@ -7,10 +7,13 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -42,7 +45,9 @@ import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -111,6 +116,9 @@ fun AuthenticationScreen(
     state: AuthenticationState,
     onAction: (AuthenticationAction) -> Unit,
 ) {
+    val windowSize = LocalWindowInfo.current.containerSize
+    val density = LocalDensity.current
+    val windowWidth = with(density) { windowSize.width.toDp() }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -137,248 +145,262 @@ fun AuthenticationScreen(
 
         Spacer(Modifier.height(20.dp))
 
-        TextField(
-            value = state.phoneNumber,
-            onValueChange = { value ->
-                onAction(AuthenticationAction.OnPhoneNumberChange(value))
-            },
-            colors = TextFieldDefaults.colors(
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent,
-                focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
-                unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
-            ),
-            textStyle = MaterialTheme.typography.bodySmall.copy(
-                color = MaterialTheme.colorScheme.onSurface
-            ),
-            placeholder = {
-                Text(
-                    text = "1 000 000 0000",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            },
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Phone
-            ),
-            prefix = {
-                Text(
-                    text = "+",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            },
-            visualTransformation = PhoneVisualTransformation(),
-            shape = CircleShape,
-            modifier = Modifier.fillMaxWidth()
-        )
+        Column (
+            modifier = Modifier
+                .then(if (windowWidth > 840.dp) {
+                    Modifier.widthIn(max = 400.dp)
+                } else Modifier)
+        ) {
+            TextField(
+                value = state.phoneNumber,
+                onValueChange = { value ->
+                    onAction(AuthenticationAction.OnPhoneNumberChange(value))
+                },
+                colors = TextFieldDefaults.colors(
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                    unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                ),
+                textStyle = MaterialTheme.typography.bodySmall.copy(
+                    color = MaterialTheme.colorScheme.onSurface
+                ),
+                placeholder = {
+                    Text(
+                        text = "1 000 000 0000",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                },
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Phone
+                ),
+                prefix = {
+                    Text(
+                        text = "+",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                },
+                visualTransformation = PhoneVisualTransformation(),
+                shape = CircleShape,
+                modifier = Modifier.fillMaxWidth()
+            )
 
-        if (state.currentStage == AuthStage.Verification) {
-            Spacer(Modifier.height(12.dp))
+            if (state.currentStage == AuthStage.Verification) {
+                Spacer(Modifier.height(12.dp))
 
-            val focusRequesters =
-                remember { List(state.verificationDigits.size) { FocusRequester() } }
-            val focusManager = LocalFocusManager.current
+                val focusRequesters =
+                    remember { List(state.verificationDigits.size) { FocusRequester() } }
+                val focusManager = LocalFocusManager.current
 
-            LaunchedEffect(state.currentStage) {
-                if (state.currentStage == AuthStage.Verification) {
-                    focusRequesters.firstOrNull()?.requestFocus()
+                LaunchedEffect(state.currentStage) {
+                    if (state.currentStage == AuthStage.Verification) {
+                        focusRequesters.firstOrNull()?.requestFocus()
+                    }
                 }
-            }
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                state.verificationDigits.forEachIndexed { index, digit ->
-                    TextField(
-                        value = digit,
-                        onValueChange = { value ->
-                            when {
-                                // Handle paste (multiple digits)
-                                value.length > 1 && value.all(Char::isDigit) -> {
-                                    val digits = value.take(state.verificationDigits.size - index)
-                                    digits.forEachIndexed { offset, char ->
-                                        val targetIndex = index + offset
-                                        if (targetIndex < state.verificationDigits.size) {
-                                            onAction(
-                                                AuthenticationAction.OnCodeDigitEnter(
-                                                    targetIndex,
-                                                    char.toString()
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    state.verificationDigits.forEachIndexed { index, digit ->
+                        TextField(
+                            value = digit,
+                            onValueChange = { value ->
+                                when {
+                                    // Handle paste (multiple digits)
+                                    value.length > 1 && value.all(Char::isDigit) -> {
+                                        val digits =
+                                            value.take(state.verificationDigits.size - index)
+                                        digits.forEachIndexed { offset, char ->
+                                            val targetIndex = index + offset
+                                            if (targetIndex < state.verificationDigits.size) {
+                                                onAction(
+                                                    AuthenticationAction.OnCodeDigitEnter(
+                                                        targetIndex,
+                                                        char.toString()
+                                                    )
                                                 )
-                                            )
+                                            }
+                                        }
+                                        val nextEmptyIndex =
+                                            state.verificationDigits.indexOfFirst { it.isEmpty() }
+                                        if (nextEmptyIndex != -1) {
+                                            focusRequesters[nextEmptyIndex].requestFocus()
+                                        } else {
+                                            focusManager.clearFocus()
                                         }
                                     }
-                                    val nextEmptyIndex =
-                                        state.verificationDigits.indexOfFirst { it.isEmpty() }
-                                    if (nextEmptyIndex != -1) {
-                                        focusRequesters[nextEmptyIndex].requestFocus()
-                                    } else {
-                                        focusManager.clearFocus()
-                                    }
-                                }
 
-                                value.length == 1 && value.all(Char::isDigit) -> {
-                                    onAction(AuthenticationAction.OnCodeDigitEnter(index, value))
-                                    if (index < state.verificationDigits.size - 1) {
-                                        focusRequesters[index + 1].requestFocus()
-                                    } else {
-                                        focusManager.clearFocus()
+                                    value.length == 1 && value.all(Char::isDigit) -> {
+                                        onAction(
+                                            AuthenticationAction.OnCodeDigitEnter(
+                                                index,
+                                                value
+                                            )
+                                        )
+                                        if (index < state.verificationDigits.size - 1) {
+                                            focusRequesters[index + 1].requestFocus()
+                                        } else {
+                                            focusManager.clearFocus()
+                                        }
                                     }
-                                }
 
-                                value.isEmpty() && digit.isNotEmpty() -> {
-                                    onAction(AuthenticationAction.OnDeleteDigit(index))
-                                }
-                            }
-                        },
-                        colors = TextFieldDefaults.colors(
-                            focusedIndicatorColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent,
-                            focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
-                            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
-                        ),
-                        textStyle = MaterialTheme.typography.bodySmall.copy(
-                            color = MaterialTheme.colorScheme.onSurface,
-                            textAlign = TextAlign.Center
-                        ),
-                        placeholder = {
-                            Text(
-                                text = "0",
-                                style = MaterialTheme.typography.bodySmall.copy(
-                                    textAlign = TextAlign.Center
-                                ),
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                modifier = Modifier.fillMaxWidth()
-                            )
-                        },
-                        keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Number,
-                            imeAction = if (index == state.verificationDigits.size - 1) {
-                                ImeAction.Done
-                            } else ImeAction.Next
-                        ),
-                        keyboardActions = KeyboardActions(
-                            onNext = {
-                                if (index < state.verificationDigits.size - 1) {
-                                    focusRequesters[index + 1].requestFocus()
+                                    value.isEmpty() && digit.isNotEmpty() -> {
+                                        onAction(AuthenticationAction.OnDeleteDigit(index))
+                                    }
                                 }
                             },
-                            onDone = {
-                                focusManager.moveFocus(FocusDirection.Down)
-                            }
-                        ),
-                        singleLine = true,
-                        shape = CircleShape,
-                        modifier = Modifier
-                            .weight(1f)
-                            .focusRequester(focusRequesters[index])
-                            .onKeyEvent { event ->
-                                if (event.key == Key.Backspace &&
-                                    event.type == KeyEventType.KeyDown &&
-                                    digit.isEmpty() &&
-                                    index > 0
-                                ) {
-                                    onAction(AuthenticationAction.OnDeleteDigit(index - 1))
-                                    focusRequesters[index - 1].requestFocus()
-                                    true
-                                } else {
-                                    false
+                            colors = TextFieldDefaults.colors(
+                                focusedIndicatorColor = Color.Transparent,
+                                unfocusedIndicatorColor = Color.Transparent,
+                                focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                                unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                            ),
+                            textStyle = MaterialTheme.typography.bodySmall.copy(
+                                color = MaterialTheme.colorScheme.onSurface,
+                                textAlign = TextAlign.Center
+                            ),
+                            placeholder = {
+                                Text(
+                                    text = "0",
+                                    style = MaterialTheme.typography.bodySmall.copy(
+                                        textAlign = TextAlign.Center
+                                    ),
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    modifier = Modifier.fillMaxWidth()
+                                )
+                            },
+                            keyboardOptions = KeyboardOptions(
+                                keyboardType = KeyboardType.Number,
+                                imeAction = if (index == state.verificationDigits.size - 1) {
+                                    ImeAction.Done
+                                } else ImeAction.Next
+                            ),
+                            keyboardActions = KeyboardActions(
+                                onNext = {
+                                    if (index < state.verificationDigits.size - 1) {
+                                        focusRequesters[index + 1].requestFocus()
+                                    }
+                                },
+                                onDone = {
+                                    focusManager.moveFocus(FocusDirection.Down)
                                 }
-                            }
-                            .border(
-                                width = 1.dp,
-                                color = if (state.errors[AuthenticationState.ERROR_INCORRECT_CODE] != null) {
-                                    MaterialTheme.colorScheme.primary
-                                } else MaterialTheme.colorScheme.surfaceVariant,
-                                shape = CircleShape
-                            )
+                            ),
+                            singleLine = true,
+                            shape = CircleShape,
+                            modifier = Modifier
+                                .weight(1f)
+                                .focusRequester(focusRequesters[index])
+                                .onKeyEvent { event ->
+                                    if (event.key == Key.Backspace &&
+                                        event.type == KeyEventType.KeyDown &&
+                                        digit.isEmpty() &&
+                                        index > 0
+                                    ) {
+                                        onAction(AuthenticationAction.OnDeleteDigit(index - 1))
+                                        focusRequesters[index - 1].requestFocus()
+                                        true
+                                    } else {
+                                        false
+                                    }
+                                }
+                                .border(
+                                    width = 1.dp,
+                                    color = if (state.errors[AuthenticationState.ERROR_INCORRECT_CODE] != null) {
+                                        MaterialTheme.colorScheme.primary
+                                    } else MaterialTheme.colorScheme.surfaceVariant,
+                                    shape = CircleShape
+                                )
+                        )
+                    }
+                }
+
+                if (state.errors[AuthenticationState.ERROR_INCORRECT_CODE] != null) {
+                    Spacer(Modifier.height(12.dp))
+
+                    Text(
+                        text = "Incorrect code. Please try again",
+                        color = MaterialTheme.colorScheme.primary,
+                        style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Medium),
+                        modifier = Modifier.align(Alignment.Start)
                     )
                 }
             }
 
-            if (state.errors[AuthenticationState.ERROR_INCORRECT_CODE] != null) {
-                Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(16.dp))
 
-                Text(
-                    text = "Incorrect code. Please try again",
-                    color = MaterialTheme.colorScheme.primary,
-                    style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Medium),
-                    modifier = Modifier.align(Alignment.Start)
-                )
-            }
-        }
+            GradientButton(
+                onClick = {
+                    when (state.currentStage) {
+                        AuthStage.EnterPhone -> {
+                            onAction(AuthenticationAction.OnContinueClick)
+                        }
 
-        Spacer(Modifier.height(16.dp))
-
-        GradientButton(
-            onClick = {
-                when (state.currentStage) {
-                    AuthStage.EnterPhone -> {
-                        onAction(AuthenticationAction.OnContinueClick)
+                        AuthStage.Verification -> {
+                            onAction(AuthenticationAction.OnConfirmClick)
+                        }
                     }
-
-                    AuthStage.Verification -> {
-                        onAction(AuthenticationAction.OnConfirmClick)
-                    }
-                }
-            },
-            buttonText = state.currentStage.buttonText(),
-            colors = listOf(
-                Color(0xffF9966F),
-                Color(0xffF36B50),
-            ),
-            shadowColor = MaterialTheme.colorScheme.primary.copy(.25f),
-            modifier = Modifier.fillMaxWidth(),
-            enabled = when (state.currentStage) {
-                AuthStage.EnterPhone -> state.continueEnabled
-                AuthStage.Verification -> state.confirmEnabled
-            }
-        )
-
-        TextButton(
-            onClick = {
-                onAction(AuthenticationAction.OnContinueWithoutSigningClick)
-            },
-            colors = ButtonDefaults.textButtonColors(
-                contentColor = MaterialTheme.colorScheme.primary
-            )
-        ) {
-            Text(
-                text = "Continue without signing in",
-                style = MaterialTheme.typography.titleSmall,
+                },
+                buttonText = state.currentStage.buttonText(),
+                colors = listOf(
+                    Color(0xffF9966F),
+                    Color(0xffF36B50),
+                ),
+                shadowColor = MaterialTheme.colorScheme.primary.copy(.25f),
                 modifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.Center
+                enabled = when (state.currentStage) {
+                    AuthStage.EnterPhone -> state.continueEnabled
+                    AuthStage.Verification -> state.confirmEnabled
+                }
             )
-        }
 
-        if (state.currentStage == AuthStage.Verification) {
             TextButton(
                 onClick = {
-                    onAction(AuthenticationAction.OnResendCodeClick)
+                    onAction(AuthenticationAction.OnContinueWithoutSigningClick)
                 },
                 colors = ButtonDefaults.textButtonColors(
-                    contentColor = MaterialTheme.colorScheme.primary,
-                    disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant
-                ),
-                enabled = state.resendCodeState == ResendCodeState.Ready
+                    contentColor = MaterialTheme.colorScheme.primary
+                )
             ) {
                 Text(
-                    text = when (val resendCodeState = state.resendCodeState) {
-                        ResendCodeState.Ready -> "Resend code"
-                        is ResendCodeState.Reloading -> "You can request a new code in 00:${resendCodeState.remainingSeconds}"
-                    },
-                    style = when (state.resendCodeState) {
-                        ResendCodeState.Ready -> MaterialTheme.typography.titleSmall
-                        is ResendCodeState.Reloading -> MaterialTheme.typography.bodySmall
-                    },
+                    text = "Continue without signing in",
+                    style = MaterialTheme.typography.titleSmall,
                     modifier = Modifier.fillMaxWidth(),
                     textAlign = TextAlign.Center
                 )
             }
+
+            if (state.currentStage == AuthStage.Verification) {
+                TextButton(
+                    onClick = {
+                        onAction(AuthenticationAction.OnResendCodeClick)
+                    },
+                    colors = ButtonDefaults.textButtonColors(
+                        contentColor = MaterialTheme.colorScheme.primary,
+                        disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant
+                    ),
+                    enabled = state.resendCodeState == ResendCodeState.Ready
+                ) {
+                    Text(
+                        text = when (val resendCodeState = state.resendCodeState) {
+                            ResendCodeState.Ready -> "Resend code"
+                            is ResendCodeState.Reloading -> "You can request a new code in 00:${resendCodeState.remainingSeconds}"
+                        },
+                        style = when (state.resendCodeState) {
+                            ResendCodeState.Ready -> MaterialTheme.typography.titleSmall
+                            is ResendCodeState.Reloading -> MaterialTheme.typography.bodySmall
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Center
+                    )
+                }
+            }
         }
-    }
+        }
+
 
     if (state.isLoading) {
         Box(
