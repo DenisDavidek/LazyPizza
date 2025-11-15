@@ -53,7 +53,6 @@ fun RadioGroup(
                 Row(
                     Modifier
                         .fillMaxWidth()
-                        .height(48.dp)
                         .border(1.dp, MaterialTheme.colorScheme.outline, CircleShape)
                         .clip(CircleShape)
                         .selectable(
@@ -61,7 +60,7 @@ fun RadioGroup(
                             onClick = { onOptionSelected(index) },
                             role = Role.RadioButton
                         )
-                        .padding(horizontal = 16.dp),
+                        .padding(16.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     RadioButton(
@@ -87,7 +86,7 @@ private fun RadioGroupPreview() {
     var selectedIndex by remember { mutableStateOf(0) }
     AppTheme {
         RadioGroup(
-            options = listOf("Option 1", "Option 2", "Option 3"),
+            options = listOf("Option 1", "Option 2", "Option 3Option 3Option 3Option 3Option 3Option 3Option 3Option 3Option 3"),
             selectedOptionIndex = selectedIndex,
             onOptionSelected = { index -> selectedIndex = index }
         )
