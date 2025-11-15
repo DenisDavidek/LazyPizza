@@ -8,12 +8,13 @@ plugins {
     alias(libs.plugins.googleGmsGoogleServices)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.room)
 }
 
 kotlin {
     androidTarget {
         compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_11)
+            jvmTarget.set(JvmTarget.JVM_17)
         }
     }
     
@@ -26,7 +27,12 @@ kotlin {
             isStatic = true
         }
     }
-    
+
+    room{
+        schemaDirectory("${projectDir}/schemas")
+    }
+
+
     sourceSets {
         androidMain.dependencies {
             implementation(compose.preview)
@@ -35,6 +41,8 @@ kotlin {
             implementation(libs.koin.compose)
             implementation(libs.androidx.core.splashscreen)
             implementation(libs.ktor.client.okhttp)
+            implementation(project.dependencies.platform("com.google.firebase:firebase-bom:34.4.0"))
+            implementation(libs.firebase.database.google)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -47,6 +55,7 @@ kotlin {
             implementation(libs.androidx.lifecycle.runtimeCompose)
 
             implementation(libs.kermit)
+            implementation(libs.koin.core)
             implementation(libs.koin.compose)
             implementation(libs.koin.compose.viewmodel)
             implementation(libs.coil.compose)
@@ -58,12 +67,30 @@ kotlin {
             implementation(libs.kotlinx.serialization.json)
             implementation(libs.kotlinx.datetime)
             implementation(libs.adaptive)
-            implementation("dev.gitlive:firebase-storage:2.3.0")
+            implementation(libs.gitlive.firebase.storage)
+            implementation(libs.firebase.app)
+            implementation(libs.firebase.database)
+            implementation(libs.firebase.auth)
+            implementation(libs.uuid)
+
+//            implementation(libs.kotlinx.datetime)
+
+            implementation(libs.room.runtime)
+            implementation(libs.sqlite.bundled)
+            implementation(libs.material3.window.size.class1)
+
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
         }
+
     }
+}
+
+dependencies {
+    // KSP support for Room Compiler.
+    ksp(libs.room.compiler)
+
 }
 
 android {
@@ -88,13 +115,14 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 }
 
 dependencies {
     implementation(libs.firebase.storage)
     debugImplementation(compose.uiTooling)
+    ksp(libs.room.compiler)
 }
 

@@ -6,27 +6,49 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
+import co.touchlab.kermit.Logger
+import com.lazypizza.lazypizzaapp.features.authentication.presentation.AuthenticationRoot
+import com.lazypizza.lazypizzaapp.features.cart.presentation.CartRootScreen
+import com.lazypizza.lazypizzaapp.features.cart.presentation.CartViewModel
+import com.lazypizza.lazypizzaapp.features.order_history.presentation.OrderHistoryRootScreen
+import com.lazypizza.lazypizzaapp.features.order_history.presentation.OrderViewModel
+import com.lazypizza.lazypizzaapp.features.pizza_product.presentation.ProductDetailScreen
 import com.lazypizza.lazypizzaapp.features.product_catalog.domain.Product
 import com.lazypizza.lazypizzaapp.features.product_catalog.presentation.MainProductCatalogRoot
-import com.lazypizza.lazypizzaapp.pizza_product.presentation.ProductDetailScreen
+import com.lazypizza.lazypizzaapp.features.product_catalog.presentation.MainProductCatalogViewModel
 import kotlinx.serialization.json.Json
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun AppNavigation(
     navHostController: NavHostController,
     modifier: Modifier,
+    cartViewModel: CartViewModel,
+    orderViewModel: OrderViewModel,
+    onShowSnackBar: (product: Product) -> Unit,
 ) {
+
+    val mainProductCatalogViewModel: MainProductCatalogViewModel = koinViewModel()
+
+
     NavHost(
         navController = navHostController,
         startDestination = LazyPizzaScreen.MainProductCatalog,
         modifier = modifier
     ) {
+
+
         composable<LazyPizzaScreen.MainProductCatalog> {
             MainProductCatalogRoot(
                 onNavigateToProductDetails = { product ->
                     val productJson = Json.encodeToString(product)
 
                     navHostController.navigate(LazyPizzaScreen.ProductDetail(productJson))
+                },
+                viewModel = mainProductCatalogViewModel,
+                cartViewModel = cartViewModel,
+                onShowSnackBar = { product ->
+                    onShowSnackBar(product)
                 }
             )
         }
@@ -39,7 +61,42 @@ fun AppNavigation(
                 product = product,
                 onClick = {
                     navHostController.navigateUp()
+                }, viewModel = cartViewModel,
+                mainProductCatalogViewModel = mainProductCatalogViewModel
+            )
+        }
+
+        composable<LazyPizzaScreen.OrderHistory> {
+            OrderHistoryRootScreen(
+                orderViewModel = orderViewModel,
+                onSignInClick = { navHostController.navigate(LazyPizzaScreen.Authentication) },
+                onGoToMenuClick = {
+                    Logger.e("onGoToMenuClick")
+                    navHostController.navigate(LazyPizzaScreen.MainProductCatalog) {
+                        popUpTo(0)
+                    }
+                })
+        }
+
+        composable<LazyPizzaScreen.Authentication> {
+            AuthenticationRoot(
+                onNavigateToMain = {
+                    navHostController.navigate(LazyPizzaScreen.MainProductCatalog) {
+                        popUpTo(0)
+                    }
+                }
+            )
+        }
+
+        composable<LazyPizzaScreen.Cart> {
+            CartRootScreen(
+                onBackToMenuClick = {
+                    navHostController.navigate(LazyPizzaScreen.MainProductCatalog)
+
                 },
+                mainProductCatalogViewModel = mainProductCatalogViewModel,
+                viewModel = cartViewModel,
+                orderViewModel = orderViewModel
             )
         }
     }
