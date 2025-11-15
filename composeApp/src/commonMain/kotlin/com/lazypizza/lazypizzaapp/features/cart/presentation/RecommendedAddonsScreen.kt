@@ -13,7 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.lazypizza.lazypizzaapp.core.presentation.utils.toPrice
+import com.lazypizza.lazypizzaapp.core.utils.toPrice
 import com.lazypizza.lazypizzaapp.core.presentation.design_systems.PrimaryGradientEnd
 import com.lazypizza.lazypizzaapp.core.presentation.design_systems.PrimaryGradientStart
 import com.lazypizza.lazypizzaapp.core.presentation.design_systems.components.GradientButton

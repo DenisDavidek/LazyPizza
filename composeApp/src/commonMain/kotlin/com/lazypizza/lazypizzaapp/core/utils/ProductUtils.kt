@@ -1,4 +1,4 @@
-package com.lazypizza.lazypizzaapp.core.presentation.utils
+package com.lazypizza.lazypizzaapp.core.utils
 
 import com.lazypizza.lazypizzaapp.features.cart.domain.ShoppingCartItem
 import com.lazypizza.lazypizzaapp.features.product_catalog.domain.Product

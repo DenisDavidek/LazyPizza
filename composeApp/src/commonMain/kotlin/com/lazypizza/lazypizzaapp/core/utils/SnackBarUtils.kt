@@ -1,4 +1,4 @@
-package com.lazypizza.lazypizzaapp.core.presentation.utils
+package com.lazypizza.lazypizzaapp.core.utils
 
 import androidx.compose.material3.SnackbarHostState
 import kotlinx.coroutines.CoroutineScope

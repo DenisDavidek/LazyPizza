@@ -52,7 +52,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.lazypizza.lazypizzaapp.core.presentation.utils.ObserveAsEvents
+import com.lazypizza.lazypizzaapp.core.utils.ObserveAsEvents
 import com.lazypizza.lazypizzaapp.core.presentation.design_systems.AppTheme
 import com.lazypizza.lazypizzaapp.core.presentation.design_systems.components.GradientButton
 import com.lazypizza.lazypizzaapp.core.presentation.design_systems.utils.PhoneVisualTransformation

@@ -20,7 +20,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.window.core.layout.WindowSizeClass
 import co.touchlab.kermit.Logger
 import com.lazypizza.lazypizzaapp.core.domain.model.DefaultInfoItem
-import com.lazypizza.lazypizzaapp.core.presentation.utils.countOverallPrice
+import com.lazypizza.lazypizzaapp.core.utils.countOverallPrice
 import com.lazypizza.lazypizzaapp.core.presentation.design_systems.components.DefaultInfo
 import com.lazypizza.lazypizzaapp.features.order_history.presentation.OrderAction
 import com.lazypizza.lazypizzaapp.features.order_history.presentation.OrderViewModel

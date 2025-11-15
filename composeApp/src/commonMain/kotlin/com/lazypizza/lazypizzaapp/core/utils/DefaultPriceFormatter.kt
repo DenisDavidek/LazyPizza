@@ -1,4 +1,4 @@
-package com.lazypizza.lazypizzaapp.core.presentation.utils
+package com.lazypizza.lazypizzaapp.core.utils
 
 import kotlin.math.round
 
