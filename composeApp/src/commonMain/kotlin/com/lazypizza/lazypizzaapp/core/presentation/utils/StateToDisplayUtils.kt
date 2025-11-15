@@ -1,4 +1,4 @@
-package com.lazypizza.lazypizzaapp.features.order_history.presentation.utils
+package com.lazypizza.lazypizzaapp.core.presentation.utils
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
