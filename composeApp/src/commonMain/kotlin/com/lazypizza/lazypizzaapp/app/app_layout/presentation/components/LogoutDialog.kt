@@ -1,4 +1,4 @@
-package com.lazypizza.lazypizzaapp.core.presentation.components
+package com.lazypizza.lazypizzaapp.app.app_layout.presentation.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement

@@ -1,4 +1,4 @@
-package com.lazypizza.lazypizzaapp.core.presentation.components
+package com.lazypizza.lazypizzaapp.core.presentation.design_systems.components.topbars
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer

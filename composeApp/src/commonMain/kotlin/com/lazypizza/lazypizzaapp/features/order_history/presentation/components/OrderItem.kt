@@ -23,8 +23,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.lazypizza.lazypizzaapp.core.presentation.utils.getFormattedCurrentDateTime
-import com.lazypizza.lazypizzaapp.features.order_history.presentation.utils.toDisplayColor
-import com.lazypizza.lazypizzaapp.features.order_history.presentation.utils.toDisplayText
+import com.lazypizza.lazypizzaapp.core.presentation.utils.toDisplayColor
+import com.lazypizza.lazypizzaapp.core.presentation.utils.toDisplayText
 import com.lazypizza.lazypizzaapp.core.presentation.utils.toPrice
 import com.lazypizza.lazypizzaapp.core.presentation.design_systems.TextBlack
 import com.lazypizza.lazypizzaapp.features.order_history.domain.Order
