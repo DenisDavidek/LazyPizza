@@ -42,6 +42,9 @@
     <string name="back_to_menu">Back to Menu</string>
     <string name="cd_delete_from_cart">Delete from cart</string>
     <string name="product_added_to_cart">The %1$s has been successfully added into your cart</string>
+    <string name="datepicker_confirm_button_text">Ok</string>
+    <string name="datepicker_cancel_button_text">Cancel</string>
+    <string name="datepicker_title">SELECT DATE</string>
 
 
     <!--RecommendedAddonsScreen-->
