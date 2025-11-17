@@ -17,14 +17,18 @@ import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.lazypizza.lazypizzaapp.design_systems.AppTheme
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.format
@@ -41,6 +45,12 @@ import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
 
+val formatter = LocalDateTime.Format {
+    monthName(MonthNames.ENGLISH_FULL)
+    char(' ')
+    day()
+}
+
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalTime::class)
 @Composable
 fun AppDatePicker(
@@ -51,17 +61,14 @@ fun AppDatePicker(
 ) {
     val today = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
     val todayMillis = today.toEpochDays() * 24 * 60 * 60 * 1000L
-    var selectedDateMillis by remember {
+    var selectedDateMillis: Long by remember {
         mutableStateOf(
             value?.takeIf { it >= todayMillis } ?: todayMillis
         )
     }
 
-    val formatter = LocalDateTime.Format {
-        monthName(MonthNames.ENGLISH_FULL)
-        char(' ')
-        day()
-    }
+    var formattedDate = remember { derivedStateOf { formatSelectedDate(selectedDateMillis) } }
+
 
     val datePickerState = rememberDatePickerState(
         selectableDates = object : SelectableDates {
@@ -72,11 +79,12 @@ fun AppDatePicker(
         initialSelectedDateMillis = selectedDateMillis
     )
 
-    val formattedDate =
-        Instant
-            .fromEpochMilliseconds(selectedDateMillis)
-            .toLocalDateTime(TimeZone.currentSystemDefault())
-            .format(formatter)
+    LaunchedEffect(datePickerState) {
+        snapshotFlow { datePickerState.selectedDateMillis }.collectLatest { millis ->
+            millis?.let { selectedDateMillis = it }
+        }
+    }
+
 
     DatePickerDialog(
         onDismissRequest = onDismiss,
@@ -105,7 +113,7 @@ fun AppDatePicker(
         shape = RoundedCornerShape(12.dp),
         colors = DatePickerDefaults.colors(
             containerColor = MaterialTheme.colorScheme.surface,
-            )
+        )
     ) {
         Column {
             Spacer(modifier = Modifier.height(16.dp))
@@ -117,7 +125,7 @@ fun AppDatePicker(
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
-                text = formattedDate,
+                text = formattedDate.value,
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.padding(horizontal = 16.dp)
@@ -136,6 +144,14 @@ fun AppDatePicker(
             )
         }
     }
+}
+
+@OptIn(ExperimentalTime::class)
+fun formatSelectedDate(selectedDateMillis: Long): String {
+    return Instant
+        .fromEpochMilliseconds(selectedDateMillis)
+        .toLocalDateTime(TimeZone.currentSystemDefault())
+        .format(formatter)
 }
 
 @Preview
