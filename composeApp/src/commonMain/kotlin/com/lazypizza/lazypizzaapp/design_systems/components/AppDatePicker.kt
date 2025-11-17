@@ -79,7 +79,7 @@ fun AppDatePicker(
             .format(formatter)
 
     DatePickerDialog(
-        onDismissRequest = { },
+        onDismissRequest = onDismiss,
         confirmButton = {
             GradientButton(
                 onClick = {
