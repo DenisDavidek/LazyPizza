@@ -13,9 +13,12 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.KeyboardArrowDown
@@ -37,7 +40,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.dropShadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.shadow.Shadow
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -51,13 +57,24 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun OrderCheckoutRoot(
+    onNavigateBack: () -> Unit,
     viewModel: OrderCheckoutViewModel = viewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     OrderCheckoutScreen(
         state = state,
-        onAction = viewModel::onAction
+        onAction = { action ->
+            when (action) {
+                OrderCheckoutAction.OnBackClick -> {
+                    onNavigateBack()
+                }
+
+                else -> {
+                    viewModel.onAction(action)
+                }
+            }
+        }
     )
 }
 
@@ -80,7 +97,7 @@ fun OrderCheckoutScreen(
                 navigationIcon = {
                     IconButton(
                         onClick = {
-
+                            onAction(OrderCheckoutAction.OnBackClick)
                         },
                         colors = IconButtonDefaults.filledIconButtonColors(
                             containerColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(.08f),
@@ -142,6 +159,7 @@ fun OrderCheckoutScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(innerPadding)
+                .verticalScroll(rememberScrollState())
                 .padding(horizontal = 16.dp)
         ) {
             Text(
@@ -239,15 +257,27 @@ fun OrderCheckoutScreen(
 
             LazyRow(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                items(state.addOns) { addOn ->
+                items(
+                    items = state.addOns,
+                    key = { it.id }
+                ) { addOn ->
                     AddonItem(
                         product = addOn,
                         onProductAddClick = {
 
                         },
                         modifier = Modifier
+                            .width(160.dp)
+                            .dropShadow(
+                                RoundedCornerShape(12.dp),
+                                Shadow(
+                                    radius = 12.dp,
+                                    color = MaterialTheme.colorScheme.onSurface.copy(.06f),
+                                    spread = 0.dp,
+                                    offset = DpOffset(x = 0.dp, y = 4.dp)
+                                )
+                            )
                     )
                 }
             }
