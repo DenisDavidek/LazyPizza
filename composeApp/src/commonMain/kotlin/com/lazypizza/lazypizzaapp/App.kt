@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -47,7 +46,6 @@ import com.lazypizza.lazypizzaapp.navigation.AppNavigation
 import com.lazypizza.lazypizzaapp.navigation.LazyPizzaScreen
 import com.lazypizza.lazypizzaapp.navigation.model.NavItem
 import com.lazypizza.lazypizzaapp.navigation.nav_bars.BottomNavBar
-import com.lazypizza.lazypizzaapp.navigation.nav_bars.RailNavBar
 import lazypizza.composeapp.generated.resources.Res
 import lazypizza.composeapp.generated.resources.cart
 import lazypizza.composeapp.generated.resources.ic_cart
@@ -66,6 +64,9 @@ fun App() {
     val cartState by cartViewModel.cartState.collectAsStateWithLifecycle()
     val currentUser = rememberUser()
     var isLogoutVisible by rememberSaveable { mutableStateOf(false) }
+    val verticalPaddingNotAllowedScreens = remember {
+        listOf(LazyPizzaScreen.OrderCheckout)
+    }
 
     val navItems = remember {
         mutableStateListOf(
@@ -94,7 +95,8 @@ fun App() {
     LaunchedEffect(cartState.items.sumOf { it.quantity }) {
         val cartItemIndex = navItems.indexOfFirst { it.screen == LazyPizzaScreen.Cart }
         if (cartItemIndex != -1) {
-            navItems[cartItemIndex] = navItems[cartItemIndex].copy(badge = cartViewModel.countNewBadgeValue())
+            navItems[cartItemIndex] =
+                navItems[cartItemIndex].copy(badge = cartViewModel.countNewBadgeValue())
         }
     }
 
@@ -135,11 +137,14 @@ fun App() {
 
 
     val adaptiveWindow = currentWindowAdaptiveInfo()
-    val isExpanded = adaptiveWindow.windowSizeClass
+    val isScreenExpanded = adaptiveWindow.windowSizeClass
         .isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND)
 
     val isNavBarAllowed =
         navBarAllowedScreens.any { it::class.qualifiedName == backStackEntry.value?.destination?.route }
+
+    val isPaddingNotAllowed =
+        verticalPaddingNotAllowedScreens.any { it::class.qualifiedName == backStackEntry.value?.destination?.route }
 
     val snackBarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
@@ -173,27 +178,36 @@ fun App() {
                         }
                     },
                     bottomBar = {
-                        if (!isExpanded && isNavBarAllowed) {
+                        if (!isScreenExpanded && isNavBarAllowed) {
                             BottomNavBar(
                                 navHostController = navHostController
                             )
                         }
                     }
                 ) { innerPadding ->
-                    val padding = if (isExpanded && isNavBarAllowed) {
-                        val railWidth = 78.dp
-                        RailNavBar(
-                            modifier = Modifier.width(railWidth),
-                            navHostController = navHostController
-                        )
+                    val railWidth = 78.dp
 
-                        PaddingValues(
-                            top = innerPadding.calculateTopPadding(),
-                            bottom = innerPadding.calculateBottomPadding(),
-                            start = innerPadding.calculateStartPadding(LayoutDirection.Ltr) + railWidth,
-                            end = innerPadding.calculateEndPadding(LayoutDirection.Ltr),
-                        )
-                    } else innerPadding
+                    val padding = when {
+                        isScreenExpanded && isNavBarAllowed -> {
+                            PaddingValues(
+                                top = innerPadding.calculateTopPadding(),
+                                bottom = innerPadding.calculateBottomPadding(),
+                                start = innerPadding.calculateStartPadding(LayoutDirection.Ltr) + railWidth,
+                                end = innerPadding.calculateEndPadding(LayoutDirection.Ltr)
+                            )
+                        }
+
+                        isPaddingNotAllowed -> {
+                            PaddingValues(
+                                top = 0.dp,
+                                bottom = 0.dp,
+                                start = innerPadding.calculateStartPadding(LayoutDirection.Ltr),
+                                end = innerPadding.calculateEndPadding(LayoutDirection.Ltr)
+                            )
+                        }
+
+                        else -> innerPadding
+                    }
 
                     AppNavigation(
                         navHostController = navHostController,

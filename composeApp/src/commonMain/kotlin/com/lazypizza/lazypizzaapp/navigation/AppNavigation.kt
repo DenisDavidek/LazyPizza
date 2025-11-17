@@ -10,6 +10,7 @@ import co.touchlab.kermit.Logger
 import com.lazypizza.lazypizzaapp.features.authentication.presentation.AuthenticationRoot
 import com.lazypizza.lazypizzaapp.features.cart.presentation.CartRootScreen
 import com.lazypizza.lazypizzaapp.features.cart.presentation.CartViewModel
+import com.lazypizza.lazypizzaapp.features.order_checkout.presentation.OrderCheckoutRoot
 import com.lazypizza.lazypizzaapp.features.order_history.presentation.OrderHistoryRootScreen
 import com.lazypizza.lazypizzaapp.features.order_history.presentation.OrderViewModel
 import com.lazypizza.lazypizzaapp.features.pizza_product.presentation.ProductDetailScreen
@@ -92,11 +93,21 @@ fun AppNavigation(
             CartRootScreen(
                 onBackToMenuClick = {
                     navHostController.navigate(LazyPizzaScreen.MainProductCatalog)
-
+                },
+                onNavigateToCheckout = {
+                    navHostController.navigate(LazyPizzaScreen.OrderCheckout)
                 },
                 mainProductCatalogViewModel = mainProductCatalogViewModel,
                 viewModel = cartViewModel,
                 orderViewModel = orderViewModel
+            )
+        }
+
+        composable<LazyPizzaScreen.OrderCheckout> {
+            OrderCheckoutRoot(
+                onNavigateBack = {
+                    navHostController.navigateUp()
+                }
             )
         }
     }
