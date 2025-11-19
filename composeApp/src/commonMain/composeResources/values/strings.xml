@@ -55,6 +55,10 @@
     <string name="cd_add_addon_to_cart">Add addon to cart</string>
 
 
+    <!--Order Checkout Screen-->
+    <string name="order_summary_order_number_label">ORDER NUMBER:</string>
+    <string name="order_summary_pickup_time_label">PICKUP TIME:</string>
+
 
 
 </resources>

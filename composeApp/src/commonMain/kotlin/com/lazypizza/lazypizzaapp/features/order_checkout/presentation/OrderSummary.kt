@@ -15,6 +15,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.lazypizza.lazypizzaapp.design_systems.AppTheme
+import lazypizza.composeapp.generated.resources.Res
+import lazypizza.composeapp.generated.resources.order_summary_order_number_label
+import lazypizza.composeapp.generated.resources.order_summary_pickup_time_label
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
@@ -37,14 +41,14 @@ fun OrderSummary(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = "Order Number:",
+                text = stringResource(Res.string.order_summary_order_number_label),
                 style = MaterialTheme.typography.labelMedium.copy(
                     fontWeight = FontWeight.Medium
                 ),
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Text(
-                text = orderNumber,
+                text = "#$orderNumber",
                 style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.onSurface
             )
@@ -54,7 +58,7 @@ fun OrderSummary(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = "Pickup Time:",
+                text = stringResource(Res.string.order_summary_pickup_time_label),
                 style = MaterialTheme.typography.labelMedium.copy(
                     fontWeight = FontWeight.Medium
                 ),
@@ -75,7 +79,7 @@ private fun Preview() {
     AppTheme {
         OrderSummary(
             modifier = Modifier.width(380.dp),
-            orderNumber = "#12345",
+            orderNumber = "12345",
             pickupTime = "September 25, 12:15"
         )
     }
