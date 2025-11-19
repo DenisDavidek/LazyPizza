@@ -45,6 +45,9 @@
     <string name="datepicker_confirm_button_text">Ok</string>
     <string name="datepicker_cancel_button_text">Cancel</string>
     <string name="datepicker_title">SELECT DATE</string>
+    <string name="timepicker_confirm_button_text">Ok</string>
+    <string name="timepicker_cancel_button_text">Cancel</string>
+    <string name="timepicker_title">SELECT TIME</string>
 
 
     <!--RecommendedAddonsScreen-->
