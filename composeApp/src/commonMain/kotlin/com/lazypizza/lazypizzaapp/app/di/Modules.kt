@@ -7,6 +7,7 @@ import com.lazypizza.lazypizzaapp.features.authentication.presentation.Authentic
 import com.lazypizza.lazypizzaapp.features.cart.data.DefaultCartRepository
 import com.lazypizza.lazypizzaapp.features.cart.domain.CartRepository
 import com.lazypizza.lazypizzaapp.features.cart.presentation.CartViewModel
+import com.lazypizza.lazypizzaapp.features.order_checkout.presentation.OrderCheckoutViewModel
 import com.lazypizza.lazypizzaapp.features.order_history.presentation.OrderViewModel
 import com.lazypizza.lazypizzaapp.features.product_catalog.presentation.MainProductCatalogViewModel
 import com.lazypizza.lazypizzaapp.getPhoneAuthService
@@ -22,6 +23,7 @@ val appModule = module {
     viewModelOf(::CartViewModel)
     viewModel { AuthenticationViewModel(getPhoneAuthService()) }
     viewModelOf(::OrderViewModel)
+    viewModelOf(::OrderCheckoutViewModel)
 }
 
 expect val platformModule: Module

@@ -1,5 +1,6 @@
 package com.lazypizza.lazypizzaapp.features.order_checkout.presentation
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -14,16 +15,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -43,22 +45,25 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.dropShadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.shadow.Shadow
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.lazypizza.lazypizzaapp.core.utils.toPrice
 import com.lazypizza.lazypizzaapp.design_systems.AppTheme
 import com.lazypizza.lazypizzaapp.design_systems.components.GradientButton
 import com.lazypizza.lazypizzaapp.design_systems.components.RadioGroup
 import com.lazypizza.lazypizzaapp.features.cart.presentation.components.AddonItem
+import com.lazypizza.lazypizzaapp.features.cart.presentation.components.CartItem
 import com.lazypizza.lazypizzaapp.features.order_checkout.presentation.model.PickupTime
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun OrderCheckoutRoot(
     onNavigateBack: () -> Unit,
-    viewModel: OrderCheckoutViewModel = viewModel()
+    viewModel: OrderCheckoutViewModel = koinViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -84,12 +89,15 @@ fun OrderCheckoutScreen(
     state: OrderCheckoutState,
     onAction: (OrderCheckoutAction) -> Unit,
 ) {
+    val windowSize = LocalWindowInfo.current
+    val density = LocalDensity.current
+
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
                     Text(
-                        text = "Order history",
+                        text = "Order Checkout",
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurface
                     )
@@ -155,173 +163,210 @@ fun OrderCheckoutScreen(
         },
         contentWindowInsets = WindowInsets.safeDrawing
     ) { innerPadding ->
-        Column(
+        LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(innerPadding)
-                .verticalScroll(rememberScrollState())
                 .padding(horizontal = 16.dp)
         ) {
-            Text(
-                text = "PICKUP TIME",
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-
-            Spacer(Modifier.height(12.dp))
-
-            RadioGroup(
-                options = PickupTime.entries.map { it.title },
-                selectedOptionIndex = state.selectedOption.index,
-                onOptionSelected = { index ->
-                    onAction(OrderCheckoutAction.OnPickupTimeSelected(PickupTime.entries[index]))
-                }
-            )
-
-            Spacer(Modifier.height(12.dp))
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
+            item {
                 Text(
-                    text = "EARLIEST PICKUP TIME:".uppercase(),
+                    text = "PICKUP TIME",
                     style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
 
-                Text(
-                    text = state.earliestPickupTime,
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-            }
+                Spacer(Modifier.height(12.dp))
 
-            Spacer(Modifier.height(16.dp))
-
-            HorizontalDivider(
-                color = MaterialTheme.colorScheme.outline
-            )
-
-            Spacer(Modifier.height(16.dp))
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    text = "ORDER DETAILS",
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                RadioGroup(
+                    options = PickupTime.entries.map { it.title },
+                    selectedOptionIndex = state.selectedOption.index,
+                    onOptionSelected = { index ->
+                        onAction(OrderCheckoutAction.OnPickupTimeSelected(PickupTime.entries[index]))
+                    }
                 )
 
-                OutlinedIconButton(
-                    onClick = {
-                        onAction(OrderCheckoutAction.OnProductDetailsToggle)
-                    },
-                    border = BorderStroke(
-                        width = 1.dp, color = MaterialTheme.colorScheme.outlineVariant
-                    ),
-                    shape = RoundedCornerShape(8.dp),
-                    modifier = Modifier.size(24.dp)
+                Spacer(Modifier.height(12.dp))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Icon(
-                        imageVector = if (state.orderDetailsExpanded) {
-                            Icons.Default.KeyboardArrowUp
-                        } else Icons.Default.KeyboardArrowDown,
-                        contentDescription = if (state.orderDetailsExpanded) {
-                            "Collapse order details"
-                        } else "Expand order details",
-                        modifier = Modifier.size(18.dp)
-                    )
-                }
-            }
-
-            Spacer(Modifier.height(16.dp))
-
-            HorizontalDivider(
-                color = MaterialTheme.colorScheme.outline
-            )
-
-            Spacer(Modifier.height(16.dp))
-
-            Text(
-                text = "RECOMMENDED ADD-ONS",
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-
-            Spacer(Modifier.height(8.dp))
-
-            LazyRow(
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                items(
-                    items = state.addOns,
-                    key = { it.id }
-                ) { addOn ->
-                    AddonItem(
-                        product = addOn,
-                        onProductAddClick = {
-
-                        },
-                        modifier = Modifier
-                            .width(160.dp)
-                            .dropShadow(
-                                RoundedCornerShape(12.dp),
-                                Shadow(
-                                    radius = 12.dp,
-                                    color = MaterialTheme.colorScheme.onSurface.copy(.06f),
-                                    spread = 0.dp,
-                                    offset = DpOffset(x = 0.dp, y = 4.dp)
-                                )
-                            )
-                    )
-                }
-            }
-
-            Spacer(Modifier.height(16.dp))
-
-            HorizontalDivider(
-                color = MaterialTheme.colorScheme.outline
-            )
-
-            Spacer(Modifier.height(16.dp))
-
-            Text(
-                text = "COMMENTS",
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-
-            Spacer(Modifier.heightIn(min = 12.dp))
-
-            TextField(
-                value = state.comment,
-                onValueChange = { value ->
-
-                },
-                shape = RoundedCornerShape(24.dp),
-                colors = TextFieldDefaults.colors(
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent,
-                    focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
-                    unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
-                ),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .heightIn(min = 92.dp),
-                placeholder = {
                     Text(
-                        text = "Add Comment",
-                        style = MaterialTheme.typography.bodySmall,
+                        text = "EARLIEST PICKUP TIME:".uppercase(),
+                        style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
-                }
-            )
 
+                    Text(
+                        text = state.earliestPickupTime,
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                }
+
+                Spacer(Modifier.height(16.dp))
+
+                HorizontalDivider(
+                    color = MaterialTheme.colorScheme.outline
+                )
+
+                Spacer(Modifier.height(16.dp))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = "ORDER DETAILS",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+
+                    OutlinedIconButton(
+                        onClick = {
+                            onAction(OrderCheckoutAction.OnProductDetailsToggle)
+                        },
+                        border = BorderStroke(
+                            width = 1.dp, color = MaterialTheme.colorScheme.outlineVariant
+                        ),
+                        shape = RoundedCornerShape(8.dp),
+                        modifier = Modifier.size(24.dp)
+                    ) {
+                        Icon(
+                            imageVector = if (state.isOrderDetailsExpanded) {
+                                Icons.Default.KeyboardArrowUp
+                            } else Icons.Default.KeyboardArrowDown,
+                            contentDescription = if (state.isOrderDetailsExpanded) {
+                                "Collapse order details"
+                            } else "Expand order details",
+                            modifier = Modifier.size(18.dp)
+                        )
+                    }
+                }
+
+                Spacer(Modifier.height(12.dp))
+            }
+
+            if (state.isOrderDetailsExpanded) {
+                items(
+                    items = state.products,
+                    key = null,
+                ) { cartItem ->
+                    val widthDp = with(density) { windowSize.containerSize.width.toDp() }
+
+                    val gridCells = when {
+                        widthDp < 600.dp -> 1
+                        widthDp < 840.dp -> 2
+                        else -> 2
+                    }
+
+                    CartItem(
+                        modifier = Modifier.animateItem(),
+                        shoppingCartItem = cartItem,
+                        onCartItemDeleteClick = { shoppingCartItem ->
+                            onAction(
+                                OrderCheckoutAction.OnDeleteProductFromCart(
+                                    shoppingCartItem
+                                )
+                            )
+                        },
+                        onIncrement = { shoppingCartItem ->
+                            onAction(OrderCheckoutAction.OnIncreaseQuantity(shoppingCartItem))
+                        },
+                        onDecrement = { shoppingCartItem ->
+                            onAction(OrderCheckoutAction.OnDecreaseQuantity(shoppingCartItem))
+                        })
+                }
+            }
+
+            item {
+                Spacer(Modifier.height(16.dp))
+
+                HorizontalDivider(
+                    color = MaterialTheme.colorScheme.outline
+                )
+
+                Spacer(Modifier.height(16.dp))
+
+                Text(
+                    text = "RECOMMENDED ADD-ONS",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+
+                Spacer(Modifier.height(8.dp))
+
+                LazyRow(
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    items(
+                        items = state.addOns,
+                        key = { it.id }
+                    ) { addOn ->
+                        AddonItem(
+                            product = addOn,
+                            onProductAddClick = { product ->
+                                onAction(OrderCheckoutAction.OnAddOnPlusClick(product))
+                            },
+                            modifier = Modifier
+                                .width(160.dp)
+                                .dropShadow(
+                                    RoundedCornerShape(12.dp),
+                                    Shadow(
+                                        radius = 12.dp,
+                                        color = MaterialTheme.colorScheme.onSurface.copy(.06f),
+                                        spread = 0.dp,
+                                        offset = DpOffset(x = 0.dp, y = 4.dp)
+                                    )
+                                )
+                        )
+                    }
+                }
+
+                Spacer(Modifier.height(16.dp))
+
+                HorizontalDivider(
+                    color = MaterialTheme.colorScheme.outline
+                )
+
+                Spacer(Modifier.height(16.dp))
+
+                Text(
+                    text = "COMMENTS",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+
+                Spacer(Modifier.height(12.dp))
+
+                TextField(
+                    value = state.comment,
+                    onValueChange = { value ->
+                        onAction(OrderCheckoutAction.OnCommentChange(value))
+                    },
+                    shape = RoundedCornerShape(24.dp),
+                    colors = TextFieldDefaults.colors(
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                        focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(min = 92.dp),
+                    placeholder = {
+                        Text(
+                            text = "Add Comment",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                )
+
+            }
         }
     }
 }

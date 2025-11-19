@@ -5,15 +5,20 @@ package com.lazypizza.lazypizzaapp.features.order_checkout.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
-import com.lazypizza.lazypizzaapp.core.utils.getFormattedDateTime
+import com.lazypizza.lazypizzaapp.features.cart.domain.CartRepository
+import com.lazypizza.lazypizzaapp.features.cart.domain.ShoppingCartItem
+import com.lazypizza.lazypizzaapp.features.cart.domain.toDomain
+import com.lazypizza.lazypizzaapp.features.order_checkout.presentation.utils.getFormattedDateTime
 import com.lazypizza.lazypizzaapp.features.product_catalog.domain.Product
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.database.FirebaseDatabase
 import dev.gitlive.firebase.database.database
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -21,7 +26,9 @@ import kotlinx.coroutines.launch
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
-class OrderCheckoutViewModel : ViewModel() {
+class OrderCheckoutViewModel(
+    private val cartRepository: CartRepository
+) : ViewModel() {
 
     private var database: FirebaseDatabase =
         Firebase.database("https://lazypizza-1999a-default-rtdb.europe-west1.firebasedatabase.app/")
@@ -34,6 +41,7 @@ class OrderCheckoutViewModel : ViewModel() {
             if (!hasLoadedInitialData) {
                 loadAddOns()
                 getCurrentTime()
+                loadProductDetails()
 
                 hasLoadedInitialData = true
             }
@@ -54,6 +62,24 @@ class OrderCheckoutViewModel : ViewModel() {
                     )
                 )
             }
+        }
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private fun loadProductDetails() {
+        viewModelScope.launch {
+            cartRepository
+                .allCartItems
+                .mapLatest { items ->
+                    items.toDomain()
+                }
+                .collect { products ->
+                    _state.update {
+                        it.copy(
+                            products = products
+                        )
+                    }
+                }
         }
     }
 
@@ -92,16 +118,78 @@ class OrderCheckoutViewModel : ViewModel() {
 
 
     fun onAction(action: OrderCheckoutAction) {
-        when (action) {
-            is OrderCheckoutAction.OnPickupTimeSelected -> {
+        viewModelScope.launch {
+            when (action) {
+                is OrderCheckoutAction.OnPickupTimeSelected -> {
 
+                }
+
+                OrderCheckoutAction.OnProductDetailsToggle -> {
+                    _state.update {
+                        it.copy(
+                            isOrderDetailsExpanded = !it.isOrderDetailsExpanded
+                        )
+                    }
+                }
+
+                is OrderCheckoutAction.OnCommentChange -> {
+                    _state.update {
+                        it.copy(
+                            comment = it.comment
+                        )
+                    }
+                }
+
+                is OrderCheckoutAction.OnDeleteProductFromCart -> {
+                    cartRepository.deleteItem(action.item)
+                }
+
+                is OrderCheckoutAction.OnIncreaseQuantity -> {
+                    val itemToIncrease = action.item
+                    val updatedItem = itemToIncrease.copy(
+                        quantity = itemToIncrease.quantity + 1
+                    )
+
+                    cartRepository.upsertCartItem(updatedItem)
+                }
+
+                is OrderCheckoutAction.OnDecreaseQuantity -> {
+                    val itemToDecrease = action.item
+                    if (itemToDecrease.quantity > 1) {
+                        val updatedItem = itemToDecrease.copy(
+                            quantity = itemToDecrease.quantity - 1
+                        )
+                        cartRepository.upsertCartItem(updatedItem)
+                    } else {
+                        cartRepository.deleteItem(itemToDecrease)
+                    }
+                }
+
+
+                is OrderCheckoutAction.OnAddOnPlusClick -> {
+                    val productToAdd = action.product
+
+                    // Find if an identical product configuration already exists.
+                    val existingIdenticalItem = _state.value.products.find {
+                        it.product.id == productToAdd.id &&
+                                (it.product as? Product.Pizza)?.toppings == (productToAdd as? Product.Pizza)?.toppings
+                    }
+
+                    if (existingIdenticalItem == null) {
+
+                        val newCartItem = ShoppingCartItem(
+                            product = productToAdd,
+                            quantity = 1
+                        )
+                        cartRepository.upsertCartItem(newCartItem)
+                    } else {
+                        // If it exists, create a new item with the updated quantity and upsert it.
+                        val updatedItem = existingIdenticalItem.copy(quantity = existingIdenticalItem.quantity + 1)
+                        cartRepository.upsertCartItem(updatedItem)
+                    }
+                }
+                else -> {}
             }
-
-            OrderCheckoutAction.OnProductDetailsToggle -> {
-
-            }
-
-            else -> {}
         }
     }
 
