@@ -76,7 +76,10 @@ class OrderCheckoutViewModel(
                 .collect { products ->
                     _state.update {
                         it.copy(
-                            products = products
+                            products = products,
+                            orderTotal = products.sumOf { cartItem ->
+                                cartItem.product.price * cartItem.quantity
+                            }
                         )
                     }
                 }
@@ -135,7 +138,7 @@ class OrderCheckoutViewModel(
                 is OrderCheckoutAction.OnCommentChange -> {
                     _state.update {
                         it.copy(
-                            comment = it.comment
+                            comment = action.comment
                         )
                     }
                 }
@@ -184,10 +187,12 @@ class OrderCheckoutViewModel(
                         cartRepository.upsertCartItem(newCartItem)
                     } else {
                         // If it exists, create a new item with the updated quantity and upsert it.
-                        val updatedItem = existingIdenticalItem.copy(quantity = existingIdenticalItem.quantity + 1)
+                        val updatedItem =
+                            existingIdenticalItem.copy(quantity = existingIdenticalItem.quantity + 1)
                         cartRepository.upsertCartItem(updatedItem)
                     }
                 }
+
                 else -> {}
             }
         }
