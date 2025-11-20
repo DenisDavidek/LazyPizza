@@ -1,6 +1,5 @@
 package com.lazypizza.lazypizzaapp.features.order_checkout.presentation
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -50,13 +49,19 @@ import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import co.touchlab.kermit.Logger
 import com.lazypizza.lazypizzaapp.core.utils.toPrice
 import com.lazypizza.lazypizzaapp.design_systems.AppTheme
+import com.lazypizza.lazypizzaapp.design_systems.components.AppDatePicker
+import com.lazypizza.lazypizzaapp.design_systems.components.AppTimePicker
 import com.lazypizza.lazypizzaapp.design_systems.components.GradientButton
 import com.lazypizza.lazypizzaapp.design_systems.components.RadioGroup
 import com.lazypizza.lazypizzaapp.features.cart.presentation.components.AddonItem
 import com.lazypizza.lazypizzaapp.features.cart.presentation.components.CartItem
 import com.lazypizza.lazypizzaapp.features.order_checkout.presentation.model.PickupTime
+import dev.gitlive.firebase.Firebase
+import dev.gitlive.firebase.database.FirebaseDatabase
+import dev.gitlive.firebase.database.database
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -81,6 +86,34 @@ fun OrderCheckoutRoot(
             }
         }
     )
+
+    if (state.isPickDateDialogVisible) {
+        AppDatePicker(
+            value = null,
+            onConfirm = { dateMillis ->
+                Logger.d("Ordercheckout") { dateMillis.toString() }
+                viewModel.onAction(OrderCheckoutAction.OnDatePickerDateSelected(dateMillis ?: 0L))
+            },
+            onDismiss = {
+                viewModel.onAction(OrderCheckoutAction.OnDatePickerClose)
+            }
+        )
+
+    }
+
+    if (state.isPickTimeDialogVisible) {
+        AppTimePicker(
+            value = state.datePickerSelectedDateMillis,
+            onConfirm = { timeMillis ->
+                Logger.d("Ordercheckout") { timeMillis.toString() }
+                viewModel.onAction(OrderCheckoutAction.OnTimePickerDateSelected(timeMillis))
+            },
+            onDismiss = {
+                viewModel.onAction(OrderCheckoutAction.OnTimePickerClose)
+            },
+            error = state.pickTimeError
+        )
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -247,14 +280,10 @@ fun OrderCheckoutScreen(
                     }
                 }
 
-                Spacer(Modifier.height(12.dp))
             }
 
             if (state.isOrderDetailsExpanded) {
-                items(
-                    items = state.products,
-                    key = null,
-                ) { cartItem ->
+                item {
                     val widthDp = with(density) { windowSize.containerSize.width.toDp() }
 
                     val gridCells = when {
@@ -263,22 +292,37 @@ fun OrderCheckoutScreen(
                         else -> 2
                     }
 
-                    CartItem(
-                        modifier = Modifier.animateItem(),
-                        shoppingCartItem = cartItem,
-                        onCartItemDeleteClick = { shoppingCartItem ->
-                            onAction(
-                                OrderCheckoutAction.OnDeleteProductFromCart(
-                                    shoppingCartItem
-                                )
+                    LazyVerticalGrid(
+                        columns = GridCells.Fixed(gridCells),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .heightIn(max = 2000.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        items(
+                            items = state.products,
+                            key = { it.product.id }
+                        ) { cartItem ->
+                            CartItem(
+                                modifier = Modifier.animateItem(),
+                                shoppingCartItem = cartItem,
+                                onCartItemDeleteClick = { shoppingCartItem ->
+                                    onAction(
+                                        OrderCheckoutAction.OnDeleteProductFromCart(
+                                            shoppingCartItem
+                                        )
+                                    )
+                                },
+                                onIncrement = { shoppingCartItem ->
+                                    onAction(OrderCheckoutAction.OnIncreaseQuantity(shoppingCartItem))
+                                },
+                                onDecrement = { shoppingCartItem ->
+                                    onAction(OrderCheckoutAction.OnDecreaseQuantity(shoppingCartItem))
+                                }
                             )
-                        },
-                        onIncrement = { shoppingCartItem ->
-                            onAction(OrderCheckoutAction.OnIncreaseQuantity(shoppingCartItem))
-                        },
-                        onDecrement = { shoppingCartItem ->
-                            onAction(OrderCheckoutAction.OnDecreaseQuantity(shoppingCartItem))
-                        })
+                        }
+                    }
                 }
             }
 

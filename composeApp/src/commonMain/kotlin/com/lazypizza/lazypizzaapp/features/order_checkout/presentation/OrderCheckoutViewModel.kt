@@ -8,6 +8,7 @@ import co.touchlab.kermit.Logger
 import com.lazypizza.lazypizzaapp.features.cart.domain.CartRepository
 import com.lazypizza.lazypizzaapp.features.cart.domain.ShoppingCartItem
 import com.lazypizza.lazypizzaapp.features.cart.domain.toDomain
+import com.lazypizza.lazypizzaapp.features.order_checkout.presentation.model.PickupTime
 import com.lazypizza.lazypizzaapp.features.order_checkout.presentation.utils.getFormattedDateTime
 import com.lazypizza.lazypizzaapp.features.product_catalog.domain.Product
 import dev.gitlive.firebase.Firebase
@@ -23,8 +24,13 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toInstant
+import kotlinx.datetime.toLocalDateTime
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
+import kotlin.time.Instant
 
 class OrderCheckoutViewModel(
     private val cartRepository: CartRepository
@@ -124,7 +130,19 @@ class OrderCheckoutViewModel(
         viewModelScope.launch {
             when (action) {
                 is OrderCheckoutAction.OnPickupTimeSelected -> {
+                    _state.update {
+                        it.copy(
+                            selectedOption = action.pickupTime
+                        )
+                    }
 
+                    if (action.pickupTime == PickupTime.Schedule) {
+                        _state.update {
+                            it.copy(
+                                isPickDateDialogVisible = true
+                            )
+                        }
+                    }
                 }
 
                 OrderCheckoutAction.OnProductDetailsToggle -> {
@@ -172,7 +190,6 @@ class OrderCheckoutViewModel(
                 is OrderCheckoutAction.OnAddOnPlusClick -> {
                     val productToAdd = action.product
 
-                    // Find if an identical product configuration already exists.
                     val existingIdenticalItem = _state.value.products.find {
                         it.product.id == productToAdd.id &&
                                 (it.product as? Product.Pizza)?.toppings == (productToAdd as? Product.Pizza)?.toppings
@@ -186,10 +203,99 @@ class OrderCheckoutViewModel(
                         )
                         cartRepository.upsertCartItem(newCartItem)
                     } else {
-                        // If it exists, create a new item with the updated quantity and upsert it.
                         val updatedItem =
                             existingIdenticalItem.copy(quantity = existingIdenticalItem.quantity + 1)
                         cartRepository.upsertCartItem(updatedItem)
+                    }
+                }
+
+                is OrderCheckoutAction.OnDatePickerDateSelected -> {
+                    _state.update {
+                        it.copy(
+                            datePickerSelectedDateMillis = action.dateMillis,
+                            isPickDateDialogVisible = false,
+                            isPickTimeDialogVisible = true,
+                        )
+                    }
+                }
+
+                OrderCheckoutAction.OnDatePickerClose -> {
+                    _state.update {
+                        it.copy(
+                            isPickDateDialogVisible = false,
+                            selectedOption = PickupTime.EarlyAvailable
+                        )
+                    }
+                }
+
+                OrderCheckoutAction.OnTimePickerClose -> {
+                    _state.update {
+                        it.copy(
+                            isPickTimeDialogVisible = false,
+                            pickTimeError = null,
+                            selectedOption = PickupTime.EarlyAvailable
+                        )
+                    }
+                }
+
+                is OrderCheckoutAction.OnTimePickerDateSelected -> {
+                    _state.update {
+                        val selectedDateMillis = _state.value.datePickerSelectedDateMillis!!
+                        val localTz = TimeZone.currentSystemDefault()
+
+                        val dateInstant = Instant.fromEpochMilliseconds(selectedDateMillis)
+                        val dateLocal = dateInstant.toLocalDateTime(localTz)
+
+                        val timeMillis = action.timeMillis
+                        val hours = (timeMillis / (1000 * 60 * 60)) % 24
+                        val minutes = (timeMillis / (1000 * 60)) % 60
+
+                        val combined = LocalDateTime(
+                            year = dateLocal.year,
+                            monthNumber = dateLocal.monthNumber,
+                            dayOfMonth = dateLocal.dayOfMonth,
+                            hour = hours.toInt(),
+                            minute = minutes.toInt(),
+                            second = 0
+                        )
+
+                        val combinedMillis = combined.toInstant(localTz).toEpochMilliseconds()
+
+                        val now = Clock.System.now()
+                        val nowLocal = now.toLocalDateTime(localTz)
+                        val isToday = dateLocal.date == nowLocal.date
+
+                        val selectedTimeInMinutes = hours.toInt() * 60 + minutes.toInt()
+                        val storeOpenTime = 10 * 60 + 15
+                        val storeCloseTime = 21 * 60 + 45
+
+                        val error = when {
+                            selectedTimeInMinutes < storeOpenTime || selectedTimeInMinutes > storeCloseTime -> {
+                                "Pickup available between 10:15 and 21:45"
+                            }
+                            isToday -> {
+                                val nowInMinutes = nowLocal.hour * 60 + nowLocal.minute
+                                val minimumTime = nowInMinutes + 15
+
+                                if (selectedTimeInMinutes < minimumTime) {
+                                    "Pickup is possible at least 15 minutes from the current time"
+                                } else {
+                                    null
+                                }
+                            }
+
+                            else -> null
+                        }
+
+                        it.copy(
+                            earliestPickupTime = if (error == null) getFormattedDateTime(
+                                combinedMillis
+                            ) else it.earliestPickupTime,
+                            isPickTimeDialogVisible = error != null,
+                            pickTimeError = error,
+                            isPickupTimeValid = error == null,
+                            datePickerSelectedDateMillis = if (error == null) null else selectedDateMillis
+                        )
                     }
                 }
 

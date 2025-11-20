@@ -12,4 +12,9 @@ data class OrderCheckoutState(
     val products: List<ShoppingCartItem> = emptyList(),
     val comment: String = "",
     val orderTotal: Double = 0.0,
+    val isPickDateDialogVisible: Boolean = false,
+    val isPickTimeDialogVisible: Boolean = false,
+    val datePickerSelectedDateMillis: Long? = null,
+    val pickTimeError: String? = null,
+    val isPickupTimeValid: Boolean = true,
 )
