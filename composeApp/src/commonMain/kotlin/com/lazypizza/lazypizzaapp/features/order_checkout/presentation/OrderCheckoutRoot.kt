@@ -58,6 +58,7 @@ import com.lazypizza.lazypizzaapp.design_systems.components.GradientButton
 import com.lazypizza.lazypizzaapp.design_systems.components.RadioGroup
 import com.lazypizza.lazypizzaapp.features.cart.presentation.components.AddonItem
 import com.lazypizza.lazypizzaapp.features.cart.presentation.components.CartItem
+import com.lazypizza.lazypizzaapp.features.order_checkout.presentation.model.BottomBarOrientation
 import com.lazypizza.lazypizzaapp.features.order_checkout.presentation.model.PickupTime
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.database.FirebaseDatabase
@@ -124,6 +125,7 @@ fun OrderCheckoutScreen(
 ) {
     val windowSize = LocalWindowInfo.current
     val density = LocalDensity.current
+    val widthDp = with(density) { windowSize.containerSize.width.toDp() }
 
     Scaffold(
         topBar = {
@@ -154,44 +156,97 @@ fun OrderCheckoutScreen(
             )
         },
         bottomBar = {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .navigationBarsPadding()
-                    .padding(16.dp)
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text(
-                        text = "ORDER TOTAL:",
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
+            val bottomNavOrientation = when {
+                widthDp < 600.dp -> BottomBarOrientation.Vertical
+                widthDp < 840.dp -> BottomBarOrientation.Horizontal
+                else -> BottomBarOrientation.Horizontal
+            }
 
-                    Text(
-                        text = "$${state.orderTotal.toPrice()}",
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
+            when (bottomNavOrientation) {
+                BottomBarOrientation.Horizontal -> {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .navigationBarsPadding()
+                            .padding(16.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .weight(1f),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(4.dp)
+                        ) {
+                            Text(
+                                text = "ORDER TOTAL:",
+                                style = MaterialTheme.typography.labelMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+
+                            Text(
+                                text = "$${state.orderTotal.toPrice()}",
+                                style = MaterialTheme.typography.labelMedium,
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+                        }
+
+                        GradientButton(
+                            onClick = {
+
+                            },
+                            colors = listOf(
+                                Color(0xffF9966F),
+                                Color(0xffF36B50),
+                            ),
+                            buttonText = "Place Order",
+                            shadowColor = MaterialTheme.colorScheme.primary.copy(.25f),
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
                 }
 
-                Spacer(Modifier.height(12.dp))
+                BottomBarOrientation.Vertical -> {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .navigationBarsPadding()
+                            .padding(16.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Text(
+                                text = "ORDER TOTAL:",
+                                style = MaterialTheme.typography.labelMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
 
-                GradientButton(
-                    onClick = {
+                            Text(
+                                text = "$${state.orderTotal.toPrice()}",
+                                style = MaterialTheme.typography.labelMedium,
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+                        }
 
-                    },
-                    colors = listOf(
-                        Color(0xffF9966F),
-                        Color(0xffF36B50),
-                    ),
-                    buttonText = "Place Order",
-                    shadowColor = MaterialTheme.colorScheme.primary.copy(.25f),
-                    modifier = Modifier.fillMaxWidth()
-                )
+                        Spacer(Modifier.height(12.dp))
+
+                        GradientButton(
+                            onClick = {
+
+                            },
+                            colors = listOf(
+                                Color(0xffF9966F),
+                                Color(0xffF36B50),
+                            ),
+                            buttonText = "Place Order",
+                            shadowColor = MaterialTheme.colorScheme.primary.copy(.25f),
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
+                }
             }
         },
         contentWindowInsets = WindowInsets.safeDrawing
@@ -284,8 +339,6 @@ fun OrderCheckoutScreen(
 
             if (state.isOrderDetailsExpanded) {
                 item {
-                    val widthDp = with(density) { windowSize.containerSize.width.toDp() }
-
                     val gridCells = when {
                         widthDp < 600.dp -> 1
                         widthDp < 840.dp -> 2
