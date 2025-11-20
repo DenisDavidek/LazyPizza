@@ -107,6 +107,13 @@ fun AppNavigation(
             OrderCheckoutRoot(
                 onNavigateBack = {
                     navHostController.navigateUp()
+                },
+                onNavigateToMain = {
+                    navHostController.navigate(LazyPizzaScreen.MainProductCatalog) {
+                        popUpTo(10) {
+                            inclusive = true
+                        }
+                    }
                 }
             )
         }

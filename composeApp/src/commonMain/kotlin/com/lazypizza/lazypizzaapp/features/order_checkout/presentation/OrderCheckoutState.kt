@@ -17,4 +17,6 @@ data class OrderCheckoutState(
     val datePickerSelectedDateMillis: Long? = null,
     val pickTimeError: String? = null,
     val isPickupTimeValid: Boolean = true,
+    val isConfirmingOrder: Boolean = false,
+    val orderId: String = "#12345"
 )

@@ -273,6 +273,7 @@ class OrderCheckoutViewModel(
                             selectedTimeInMinutes < storeOpenTime || selectedTimeInMinutes > storeCloseTime -> {
                                 "Pickup available between 10:15 and 21:45"
                             }
+
                             isToday -> {
                                 val nowInMinutes = nowLocal.hour * 60 + nowLocal.minute
                                 val minimumTime = nowInMinutes + 15
@@ -295,6 +296,14 @@ class OrderCheckoutViewModel(
                             pickTimeError = error,
                             isPickupTimeValid = error == null,
                             datePickerSelectedDateMillis = if (error == null) null else selectedDateMillis
+                        )
+                    }
+                }
+
+                OrderCheckoutAction.OnPlaceOrderClick -> {
+                    _state.update {
+                        it.copy(
+                            isConfirmingOrder = true
                         )
                     }
                 }
