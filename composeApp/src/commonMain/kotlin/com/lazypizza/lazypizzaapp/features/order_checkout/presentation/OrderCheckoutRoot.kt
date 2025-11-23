@@ -40,7 +40,11 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.dropShadow
@@ -64,9 +68,10 @@ import com.lazypizza.lazypizzaapp.features.cart.presentation.components.AddonIte
 import com.lazypizza.lazypizzaapp.features.cart.presentation.components.CartItem
 import com.lazypizza.lazypizzaapp.features.order_checkout.presentation.model.BottomBarOrientation
 import com.lazypizza.lazypizzaapp.features.order_checkout.presentation.model.PickupTime
-import dev.gitlive.firebase.Firebase
-import dev.gitlive.firebase.database.FirebaseDatabase
-import dev.gitlive.firebase.database.database
+import com.lazypizza.lazypizzaapp.features.order_history.presentation.OrderAction
+import com.lazypizza.lazypizzaapp.features.order_history.presentation.OrderViewModel
+import com.lazypizza.lazypizzaapp.features.order_history.presentation.utils.generateOrderNumber
+import com.lazypizza.lazypizzaapp.rememberUser
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -74,7 +79,8 @@ import org.koin.compose.viewmodel.koinViewModel
 fun OrderCheckoutRoot(
     onNavigateBack: () -> Unit,
     onNavigateToMain: () -> Unit,
-    viewModel: OrderCheckoutViewModel = koinViewModel()
+    viewModel: OrderCheckoutViewModel = koinViewModel(),
+    orderViewModel: OrderViewModel = koinViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -94,6 +100,9 @@ fun OrderCheckoutRoot(
                     viewModel.onAction(action)
                 }
             }
+        },
+        onOrderAction = { action ->
+            orderViewModel.onAction(action)
         }
     )
 
@@ -114,7 +123,7 @@ fun OrderCheckoutRoot(
         AppTimePicker(
             value = state.datePickerSelectedDateMillis,
             onConfirm = { timeMillis ->
-                Logger.d("Ordercheckout") { timeMillis.toString() }
+                Logger.d("Order checkout") { timeMillis.toString() }
                 viewModel.onAction(OrderCheckoutAction.OnTimePickerDateSelected(timeMillis))
             },
             onDismiss = {
@@ -130,10 +139,20 @@ fun OrderCheckoutRoot(
 fun OrderCheckoutScreen(
     state: OrderCheckoutState,
     onAction: (OrderCheckoutAction) -> Unit,
+    onOrderAction: (OrderAction) -> Unit
 ) {
     val windowSize = LocalWindowInfo.current
     val density = LocalDensity.current
     val widthDp = with(density) { windowSize.containerSize.width.toDp() }
+
+    val currentUser = rememberUser()
+    var nextOrderId by remember {
+        mutableIntStateOf(-1)
+    }
+    LaunchedEffect(state.isConfirmingOrder){
+        if (state.isConfirmingOrder)
+            onOrderAction(OrderAction.OnCreateOrder(orderCheckoutState = state, currentUser = currentUser, nextOrderId = nextOrderId))
+    }
 
     Scaffold(
         topBar = {
@@ -202,7 +221,10 @@ fun OrderCheckoutScreen(
 
                             GradientButton(
                                 onClick = {
-                                    onAction(OrderCheckoutAction.OnPlaceOrderClick)
+                                    nextOrderId = generateOrderNumber()
+                                    onAction(OrderCheckoutAction.OnPlaceOrderClick(
+                                        nextOrderId
+                                    ))
                                 },
                                 colors = listOf(
                                     Color(0xffF9966F),
@@ -244,7 +266,8 @@ fun OrderCheckoutScreen(
 
                             GradientButton(
                                 onClick = {
-                                    onAction(OrderCheckoutAction.OnPlaceOrderClick)
+                                    nextOrderId = generateOrderNumber()
+                                    onAction(OrderCheckoutAction.OnPlaceOrderClick(generateOrderNumber()))
                                 },
                                 colors = listOf(
                                     Color(0xffF9966F),
@@ -580,7 +603,11 @@ private fun Preview() {
             state = OrderCheckoutState(
                 earliestPickupTime = "12:15"
             ),
-            onAction = {}
+            onAction = { _ ->
+
+            },
+            onOrderAction = { _ ->
+            }
         )
     }
 }

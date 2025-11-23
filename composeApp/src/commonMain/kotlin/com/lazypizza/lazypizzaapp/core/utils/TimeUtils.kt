@@ -18,3 +18,23 @@ fun getFormattedCurrentDateTime(): String {
 
     return "$monthName $day, $hour:$minute"
 }
+
+@OptIn(ExperimentalTime::class)
+fun getCurrentTimeStamp() : Long {
+    return Clock.System.now().toEpochMilliseconds()
+}
+
+@OptIn(ExperimentalTime::class)
+fun Long.toReadableDateTime(): String {
+
+    val instant = Instant.fromEpochMilliseconds(this)
+
+    val local = instant.toLocalDateTime(TimeZone.currentSystemDefault())
+
+    val monthName = local.month.name.lowercase().replaceFirstChar { it.titlecase() }
+    val day = local.day
+    val hour = local.hour.toString().padStart(2, '0')
+    val minute = local.minute.toString().padStart(2, '0')
+
+    return "$monthName $day, $hour:$minute"
+}

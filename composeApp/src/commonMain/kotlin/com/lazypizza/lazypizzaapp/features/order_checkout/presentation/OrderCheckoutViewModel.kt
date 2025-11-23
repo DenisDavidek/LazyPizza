@@ -300,10 +300,12 @@ class OrderCheckoutViewModel(
                     }
                 }
 
-                OrderCheckoutAction.OnPlaceOrderClick -> {
+                is OrderCheckoutAction.OnPlaceOrderClick -> {
+                    val nextOrderId = action.nextOrderId
                     _state.update {
                         it.copy(
-                            isConfirmingOrder = true
+                            isConfirmingOrder = true,
+                            orderId = "#$nextOrderId"
                         )
                     }
                 }

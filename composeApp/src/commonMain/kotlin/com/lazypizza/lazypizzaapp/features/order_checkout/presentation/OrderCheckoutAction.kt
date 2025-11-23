@@ -9,7 +9,7 @@ sealed interface OrderCheckoutAction {
     data object OnProductDetailsToggle : OrderCheckoutAction
     data object OnDatePickerClose : OrderCheckoutAction
     data object OnTimePickerClose : OrderCheckoutAction
-    data object OnPlaceOrderClick : OrderCheckoutAction
+    data class OnPlaceOrderClick(val nextOrderId: Int) : OrderCheckoutAction
     data object OnBackToMenuClick : OrderCheckoutAction
     data class OnAddOnPlusClick(
         val product: Product

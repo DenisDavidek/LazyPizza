@@ -8,9 +8,13 @@ import com.lazypizza.lazypizzaapp.features.cart.data.DefaultCartRepository
 import com.lazypizza.lazypizzaapp.features.cart.domain.CartRepository
 import com.lazypizza.lazypizzaapp.features.cart.presentation.CartViewModel
 import com.lazypizza.lazypizzaapp.features.order_checkout.presentation.OrderCheckoutViewModel
+import com.lazypizza.lazypizzaapp.features.order_history.data.DefaultOrderRepository
+import com.lazypizza.lazypizzaapp.features.order_history.domain.OrderRepository
 import com.lazypizza.lazypizzaapp.features.order_history.presentation.OrderViewModel
 import com.lazypizza.lazypizzaapp.features.product_catalog.presentation.MainProductCatalogViewModel
 import com.lazypizza.lazypizzaapp.getPhoneAuthService
+import dev.gitlive.firebase.Firebase
+import dev.gitlive.firebase.database.database
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModel
@@ -29,6 +33,11 @@ val appModule = module {
 expect val platformModule: Module
 
 val sharedModule = module {
+
+    single {
+        Firebase.database("https://lazypizza-1999a-default-rtdb.europe-west1.firebasedatabase.app/")
+    }
+
     single {
         get<DatabaseFactory>().create().setDriver(BundledSQLiteDriver()).fallbackToDestructiveMigration(true).build()
     }
@@ -36,4 +45,5 @@ val sharedModule = module {
         get<AppDatabase>().cartDao
     }
     singleOf(::DefaultCartRepository).bind<CartRepository>()
+    singleOf(::DefaultOrderRepository).bind<OrderRepository>()
 }
