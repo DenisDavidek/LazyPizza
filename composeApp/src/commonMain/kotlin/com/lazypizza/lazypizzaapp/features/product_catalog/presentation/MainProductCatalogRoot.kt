@@ -5,7 +5,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -47,9 +46,9 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.window.core.layout.WindowSizeClass
 import co.touchlab.kermit.Logger
-import com.lazypizza.lazypizzaapp.design_systems.AppShapes
-import com.lazypizza.lazypizzaapp.design_systems.AppTheme
-import com.lazypizza.lazypizzaapp.design_systems.components.PizzaSearchBar
+import com.lazypizza.lazypizzaapp.core.presentation.design_systems.AppShapes
+import com.lazypizza.lazypizzaapp.core.presentation.design_systems.AppTheme
+import com.lazypizza.lazypizzaapp.core.presentation.design_systems.components.PizzaSearchBar
 import com.lazypizza.lazypizzaapp.features.cart.presentation.CartAction
 import com.lazypizza.lazypizzaapp.features.cart.presentation.CartViewModel
 import com.lazypizza.lazypizzaapp.features.product_catalog.domain.Product

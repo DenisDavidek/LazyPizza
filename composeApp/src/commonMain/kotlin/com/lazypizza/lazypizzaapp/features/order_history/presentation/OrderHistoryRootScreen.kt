@@ -16,7 +16,7 @@ import androidx.window.core.layout.WindowSizeClass
 import com.lazypizza.lazypizzaapp.core.domain.model.DefaultInfoItem
 import com.lazypizza.lazypizzaapp.core.presentation.locals.LocalUser
 import com.lazypizza.lazypizzaapp.core.utils.isPortrait
-import com.lazypizza.lazypizzaapp.design_systems.components.DefaultInfo
+import com.lazypizza.lazypizzaapp.core.presentation.design_systems.components.DefaultInfo
 import lazypizza.composeapp.generated.resources.Res
 import lazypizza.composeapp.generated.resources.go_to_menu
 import lazypizza.composeapp.generated.resources.no_orders_yet

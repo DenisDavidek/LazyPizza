@@ -1,4 +1,4 @@
-package com.lazypizza.lazypizzaapp.core.presentation.components
+package com.lazypizza.lazypizzaapp.app.app_layout.presentation.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -23,7 +23,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
-import com.lazypizza.lazypizzaapp.design_systems.components.GradientButton
+import com.lazypizza.lazypizzaapp.core.presentation.design_systems.components.GradientButton
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

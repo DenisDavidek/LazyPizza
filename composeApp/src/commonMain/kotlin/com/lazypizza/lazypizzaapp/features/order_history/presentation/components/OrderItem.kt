@@ -27,6 +27,7 @@ import com.lazypizza.lazypizzaapp.core.utils.toDisplayText
 import com.lazypizza.lazypizzaapp.core.utils.toPrice
 import com.lazypizza.lazypizzaapp.core.utils.toReadableDateTime
 import com.lazypizza.lazypizzaapp.design_systems.TextBlack
+import com.lazypizza.lazypizzaapp.core.presentation.design_systems.TextBlack
 import com.lazypizza.lazypizzaapp.features.order_history.domain.Order
 import lazypizza.composeapp.generated.resources.Res
 import lazypizza.composeapp.generated.resources.order_grid

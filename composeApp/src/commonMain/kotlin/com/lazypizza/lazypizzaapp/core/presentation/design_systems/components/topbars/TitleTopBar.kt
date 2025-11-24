@@ -1,4 +1,4 @@
-package com.lazypizza.lazypizzaapp.core.presentation.components
+package com.lazypizza.lazypizzaapp.core.presentation.design_systems.components.topbars
 
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api

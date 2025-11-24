@@ -1,4 +1,4 @@
-package com.lazypizza.lazypizzaapp.features.authentication.model.service
+package com.lazypizza.lazypizzaapp.features.authentication.domain.service
 
 interface PhoneAuthService {
     suspend fun sendVerificationCode(

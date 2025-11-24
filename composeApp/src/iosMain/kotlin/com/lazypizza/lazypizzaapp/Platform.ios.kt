@@ -2,7 +2,7 @@ package com.lazypizza.lazypizzaapp
 
 import androidx.compose.runtime.Composable
 import com.lazypizza.lazypizzaapp.core.domain.model.User
-import com.lazypizza.lazypizzaapp.features.authentication.model.service.PhoneAuthService
+import com.lazypizza.lazypizzaapp.features.authentication.domain.service.PhoneAuthService
 import platform.UIKit.UIDevice
 
 class IOSPlatform: Platform {

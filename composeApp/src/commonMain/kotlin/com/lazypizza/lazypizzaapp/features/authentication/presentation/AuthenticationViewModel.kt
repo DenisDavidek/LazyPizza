@@ -3,8 +3,8 @@ package com.lazypizza.lazypizzaapp.features.authentication.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
-import com.lazypizza.lazypizzaapp.design_systems.utils.PhoneValidation
-import com.lazypizza.lazypizzaapp.features.authentication.model.service.PhoneAuthService
+import com.lazypizza.lazypizzaapp.core.presentation.design_systems.utils.PhoneValidation
+import com.lazypizza.lazypizzaapp.features.authentication.domain.service.PhoneAuthService
 import com.lazypizza.lazypizzaapp.features.authentication.presentation.model.AuthStage
 import com.lazypizza.lazypizzaapp.features.authentication.presentation.model.ResendCodeState
 import kotlinx.coroutines.Job

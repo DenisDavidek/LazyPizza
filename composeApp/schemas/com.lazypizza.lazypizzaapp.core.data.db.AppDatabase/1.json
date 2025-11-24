@@ -1,0 +1,43 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "ef3795aa9ca59311fd5316f751b1f0fc",
+    "entities": [
+      {
+        "tableName": "shopping_cart_items",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`cartItemId` TEXT NOT NULL, `quantity` INTEGER NOT NULL, `product` TEXT NOT NULL, PRIMARY KEY(`cartItemId`))",
+        "fields": [
+          {
+            "fieldPath": "cartItemId",
+            "columnName": "cartItemId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "quantity",
+            "columnName": "quantity",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "product",
+            "columnName": "product",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "cartItemId"
+          ]
+        }
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'ef3795aa9ca59311fd5316f751b1f0fc')"
+    ]
+  }
+}

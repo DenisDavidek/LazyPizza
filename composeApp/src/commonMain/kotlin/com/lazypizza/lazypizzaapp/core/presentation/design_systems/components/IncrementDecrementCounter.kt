@@ -1,4 +1,4 @@
-package com.lazypizza.lazypizzaapp.design_systems.components
+package com.lazypizza.lazypizzaapp.core.presentation.design_systems.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement

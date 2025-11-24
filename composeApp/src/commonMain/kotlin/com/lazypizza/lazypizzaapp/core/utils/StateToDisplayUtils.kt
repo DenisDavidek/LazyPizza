@@ -2,8 +2,8 @@ package com.lazypizza.lazypizzaapp.core.utils
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
-import com.lazypizza.lazypizzaapp.design_systems.Success
-import com.lazypizza.lazypizzaapp.design_systems.Warning
+import com.lazypizza.lazypizzaapp.core.presentation.design_systems.Success
+import com.lazypizza.lazypizzaapp.core.presentation.design_systems.Warning
 import com.lazypizza.lazypizzaapp.features.order_history.domain.OrderState
 import lazypizza.composeapp.generated.resources.Res
 import lazypizza.composeapp.generated.resources.order_state_completed

@@ -13,7 +13,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 import com.lazypizza.lazypizzaapp.core.domain.model.User
 import com.lazypizza.lazypizzaapp.features.authentication.data.service.AndroidPhoneAuthService
-import com.lazypizza.lazypizzaapp.features.authentication.model.service.PhoneAuthService
+import com.lazypizza.lazypizzaapp.features.authentication.domain.service.PhoneAuthService
 
 
 class AndroidPlatform : Platform {
