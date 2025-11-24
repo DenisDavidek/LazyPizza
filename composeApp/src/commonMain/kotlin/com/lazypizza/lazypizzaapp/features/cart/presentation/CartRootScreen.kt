@@ -35,6 +35,7 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun CartRootScreen(
     onBackToMenuClick: () -> Unit,
+    onNavigateToCheckout: () -> Unit,
     mainProductCatalogViewModel: MainProductCatalogViewModel,
     orderViewModel: OrderViewModel,
     viewModel: CartViewModel,
@@ -103,7 +104,7 @@ fun CartRootScreen(
                             )
                         },
                         onProceedToCheckoutClick = {
-                            orderViewModel.onAction(OrderAction.OnCreateOrder(shoppingCartItems = state.items))
+                            onBackToMenuClick()
                         }
                     )
                 }
@@ -134,7 +135,9 @@ fun CartRootScreen(
 
                         },
                         onProceedToCheckoutClick = {
-                            orderViewModel.onAction(OrderAction.OnCreateOrder(shoppingCartItems = state.items))
+//                            orderViewModel.onAction(OrderAction.OnCreateOrder(shoppingCartItems = state.items))
+
+                            onNavigateToCheckout()
                         }
                     )
 

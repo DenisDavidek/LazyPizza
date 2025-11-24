@@ -25,28 +25,32 @@ private val LightColors = lightColorScheme(
     outline = Outline
 )
 
+
+
 @Composable
 fun appTypography(): Typography {
-    val regularFontFamily = FontFamily(Font(Res.font.instrumentsans_regular))
-    val mediumFontFamily = FontFamily(Font(Res.font.instrumentsans_medium))
-    val semiBoldFontFamily = FontFamily(Font(Res.font.instrumentsans_semibold))
+    val instrumentSansFontFamily = FontFamily(
+        Font(Res.font.instrumentsans_regular, FontWeight.Normal),
+        Font(Res.font.instrumentsans_medium, FontWeight.Medium),
+        Font(Res.font.instrumentsans_semibold, FontWeight.SemiBold)
+    )
 
     return Typography(
         // Titles
         titleLarge = TextStyle(
-            fontFamily = semiBoldFontFamily,
+            fontFamily = instrumentSansFontFamily,
             fontWeight = FontWeight.SemiBold,
             fontSize = 24.sp,
             lineHeight = 28.sp
         ),
         titleMedium = TextStyle(
-            fontFamily = semiBoldFontFamily,
+            fontFamily = instrumentSansFontFamily,
             fontWeight = FontWeight.SemiBold,
             fontSize = 20.sp,
             lineHeight = 24.sp
         ),
         titleSmall = TextStyle(
-            fontFamily = semiBoldFontFamily,
+            fontFamily = instrumentSansFontFamily,
             fontWeight = FontWeight.SemiBold,
             fontSize = 15.sp,
             lineHeight = 22.sp
@@ -54,7 +58,7 @@ fun appTypography(): Typography {
 
         // Labels
         labelMedium = TextStyle(
-            fontFamily = semiBoldFontFamily,
+            fontFamily = instrumentSansFontFamily,
             fontWeight = FontWeight.SemiBold,
             fontSize = 12.sp,
             lineHeight = 16.sp
@@ -62,19 +66,19 @@ fun appTypography(): Typography {
 
         // Body
         bodyLarge = TextStyle(
-            fontFamily = regularFontFamily,
+            fontFamily = instrumentSansFontFamily,
             fontWeight = FontWeight.Normal,
             fontSize = 16.sp,
             lineHeight = 22.sp
         ),
         bodyMedium = TextStyle(
-            fontFamily = mediumFontFamily,
+            fontFamily = instrumentSansFontFamily,
             fontWeight = FontWeight.Medium,
             fontSize = 16.sp,
             lineHeight = 22.sp
         ),
         bodySmall = TextStyle(
-            fontFamily = regularFontFamily,
+            fontFamily = instrumentSansFontFamily,
             fontWeight = FontWeight.Normal,
             fontSize = 14.sp,
             lineHeight = 18.sp
@@ -87,20 +91,20 @@ fun appTypography(): Typography {
             lineHeight = 18.sp
         )*/
         labelSmall = TextStyle(
-            fontFamily = regularFontFamily,
+            fontFamily = instrumentSansFontFamily,
             fontWeight = FontWeight.Normal,
             fontSize = 12.sp,
             lineHeight = 16.sp
         ),
 
         displayMedium = TextStyle(
-            fontFamily = mediumFontFamily,
+            fontFamily = instrumentSansFontFamily,
             fontWeight = FontWeight.Medium,
             fontSize = 10.sp,
             lineHeight = 16.sp
         ),
         displaySmall = TextStyle(
-            fontFamily = semiBoldFontFamily,
+            fontFamily = instrumentSansFontFamily,
             fontWeight = FontWeight.Medium,
             fontSize = 11.sp,
             lineHeight = 16.sp
