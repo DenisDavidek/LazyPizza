@@ -14,7 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.lazypizza.lazypizzaapp.design_systems.AppTheme
+import com.lazypizza.lazypizzaapp.core.presentation.design_systems.AppTheme
 import lazypizza.composeapp.generated.resources.Res
 import lazypizza.composeapp.generated.resources.order_summary_order_number_label
 import lazypizza.composeapp.generated.resources.order_summary_pickup_time_label

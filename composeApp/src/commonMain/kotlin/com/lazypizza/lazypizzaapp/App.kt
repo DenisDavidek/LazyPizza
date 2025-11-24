@@ -32,13 +32,13 @@ import coil3.ImageLoader
 import coil3.PlatformContext
 import coil3.compose.setSingletonImageLoaderFactory
 import coil3.network.ktor3.KtorNetworkFetcherFactory
-import com.lazypizza.lazypizzaapp.core.presentation.components.LogoutDialog
-import com.lazypizza.lazypizzaapp.core.presentation.components.MainProductCatalogTopBar
-import com.lazypizza.lazypizzaapp.core.presentation.components.TitleTopBar
+import com.lazypizza.lazypizzaapp.app.app_layout.presentation.components.LogoutDialog
+import com.lazypizza.lazypizzaapp.core.presentation.design_systems.AppTheme
+import com.lazypizza.lazypizzaapp.core.presentation.design_systems.components.topbars.MainProductCatalogTopBar
+import com.lazypizza.lazypizzaapp.core.presentation.design_systems.components.topbars.TitleTopBar
 import com.lazypizza.lazypizzaapp.core.presentation.locals.LocalLazyPizzaNavItems
 import com.lazypizza.lazypizzaapp.core.presentation.locals.LocalUser
 import com.lazypizza.lazypizzaapp.core.utils.showSnackBar
-import com.lazypizza.lazypizzaapp.design_systems.AppTheme
 import com.lazypizza.lazypizzaapp.features.cart.presentation.CartAction
 import com.lazypizza.lazypizzaapp.features.cart.presentation.CartViewModel
 import com.lazypizza.lazypizzaapp.features.order_history.presentation.OrderViewModel

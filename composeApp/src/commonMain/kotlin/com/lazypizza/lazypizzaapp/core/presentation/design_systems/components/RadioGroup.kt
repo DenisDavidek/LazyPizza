@@ -1,11 +1,10 @@
-package com.lazypizza.lazypizzaapp.design_systems.components
+package com.lazypizza.lazypizzaapp.core.presentation.design_systems.components
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
@@ -27,7 +26,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.lazypizza.lazypizzaapp.design_systems.AppTheme
+import com.lazypizza.lazypizzaapp.core.presentation.design_systems.AppTheme
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable

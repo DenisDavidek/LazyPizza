@@ -1,4 +1,4 @@
-package com.lazypizza.lazypizzaapp.design_systems.components
+package com.lazypizza.lazypizzaapp.core.presentation.design_systems.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -25,7 +25,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
-import com.lazypizza.lazypizzaapp.design_systems.AppTheme
+import com.lazypizza.lazypizzaapp.core.presentation.design_systems.AppTheme
 import lazypizza.composeapp.generated.resources.Res
 import lazypizza.composeapp.generated.resources.timepicker_cancel_button_text
 import lazypizza.composeapp.generated.resources.timepicker_confirm_button_text
