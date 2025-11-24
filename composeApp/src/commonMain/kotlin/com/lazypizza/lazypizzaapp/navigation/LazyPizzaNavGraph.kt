@@ -13,5 +13,13 @@ sealed interface LazyPizzaScreen {
         val productJson: String,
     ) : LazyPizzaScreen
 
+    @Serializable
+    object OrderHistory : LazyPizzaScreen
+
+    @Serializable
+    object Cart : LazyPizzaScreen
+
+    @Serializable
+    object Authentication : LazyPizzaScreen
 
 }

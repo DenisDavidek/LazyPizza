@@ -23,3 +23,8 @@ val Primary = Color(0xFFF36B50)
 val Primary8 = Color(0x14F36B50) // 8% opacity
 
 val OrangeSelected = Color(0xFFF6907C)
+val Warning = Color(0xFFF9A825)
+val Success = Color(0xFFF2E7D32)
+
+val TextBlack = Color(0xFF101C28)
+

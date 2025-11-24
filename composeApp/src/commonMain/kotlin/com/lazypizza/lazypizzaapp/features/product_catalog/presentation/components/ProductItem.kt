@@ -24,6 +24,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedIconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -36,7 +37,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.shadow.Shadow
 import androidx.compose.ui.unit.dp
 import coil3.compose.SubcomposeAsyncImage
-import com.lazypizza.lazypizzaapp.core.presentation.utils.toPrice
+import com.lazypizza.lazypizzaapp.core.utils.toPrice
 import com.lazypizza.lazypizzaapp.features.product_catalog.domain.Product
 import lazypizza.composeapp.generated.resources.Res
 import lazypizza.composeapp.generated.resources.trash
@@ -47,12 +48,19 @@ fun ProductItem(
     product: Product,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    onAddToCartClick: () -> Unit
 ) {
     var isAddedToCart by rememberSaveable {
         mutableStateOf(false)
     }
     var cartCount by rememberSaveable {
         mutableStateOf(1)
+    }
+
+    LaunchedEffect(isAddedToCart){
+        if (isAddedToCart){
+            onAddToCartClick()
+        }
     }
 
     Row(
@@ -224,6 +232,7 @@ fun ProductItem(
                         }
                     )
                 }
+                else -> {}
             }
         }
     }

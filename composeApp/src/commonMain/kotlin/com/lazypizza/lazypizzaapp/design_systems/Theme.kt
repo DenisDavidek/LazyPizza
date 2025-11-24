@@ -92,6 +92,19 @@ fun appTypography(): Typography {
             fontSize = 12.sp,
             lineHeight = 16.sp
         ),
+
+        displayMedium = TextStyle(
+            fontFamily = mediumFontFamily,
+            fontWeight = FontWeight.Medium,
+            fontSize = 10.sp,
+            lineHeight = 16.sp
+        ),
+        displaySmall = TextStyle(
+            fontFamily = semiBoldFontFamily,
+            fontWeight = FontWeight.Medium,
+            fontSize = 11.sp,
+            lineHeight = 16.sp
+        ),
     )
 }
 

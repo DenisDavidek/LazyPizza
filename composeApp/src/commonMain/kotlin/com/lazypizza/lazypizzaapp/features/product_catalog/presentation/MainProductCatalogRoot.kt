@@ -5,6 +5,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -42,17 +43,21 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.window.core.layout.WindowSizeClass
+import co.touchlab.kermit.Logger
 import com.lazypizza.lazypizzaapp.design_systems.AppShapes
 import com.lazypizza.lazypizzaapp.design_systems.AppTheme
 import com.lazypizza.lazypizzaapp.design_systems.components.PizzaSearchBar
+import com.lazypizza.lazypizzaapp.features.cart.presentation.CartAction
+import com.lazypizza.lazypizzaapp.features.cart.presentation.CartViewModel
 import com.lazypizza.lazypizzaapp.features.product_catalog.domain.Product
 import com.lazypizza.lazypizzaapp.features.product_catalog.domain.ProductCategory
 import com.lazypizza.lazypizzaapp.features.product_catalog.presentation.components.ProductItem
 import lazypizza.composeapp.generated.resources.Res
 import lazypizza.composeapp.generated.resources.cd_main_pizza_background
+import lazypizza.composeapp.generated.resources.no_query_results
 import lazypizza.composeapp.generated.resources.pizza
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -61,9 +66,16 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 @Composable
 fun MainProductCatalogRoot(
     onNavigateToProductDetails: (product: Product) -> Unit,
-    viewModel: MainProductCatalogViewModel = viewModel(),
+    viewModel: MainProductCatalogViewModel,
+    cartViewModel: CartViewModel,
+    onShowSnackBar: (product: Product) -> Unit,
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    LaunchedEffect(lifecycleOwner){
+        viewModel.clearSelectedToppings()
+    }
 
     MainProductCatalogScreen(
         state = state,
@@ -75,6 +87,13 @@ fun MainProductCatalogRoot(
 
                 else -> viewModel.onAction(action)
             }
+        },
+        onCartAction = { cartAction ->
+            cartViewModel.onAction(cartAction)
+            Logger.e("cartAction $cartAction")
+            if (cartAction is CartAction.OnAddToCart) {
+                onShowSnackBar(cartAction.product)
+            }
         }
     )
 }
@@ -83,6 +102,7 @@ fun MainProductCatalogRoot(
 fun MainProductCatalogScreen(
     state: MainProductCatalogState,
     onAction: (MainProductCatalogAction) -> Unit,
+    onCartAction: (CartAction) -> Unit
 ) {
     val adaptiveWindow = currentWindowAdaptiveInfo()
     val isExpanded = adaptiveWindow.windowSizeClass
@@ -171,7 +191,8 @@ fun MainProductCatalogScreen(
                 ) {
                     productCatalogGridContent(
                         products = state.products,
-                        onAction = onAction
+                        onAction = onAction,
+                        onCartAction = onCartAction
                     )
                 }
             } else {
@@ -182,7 +203,8 @@ fun MainProductCatalogScreen(
                 ) {
                     productCatalogListContent(
                         products = state.products,
-                        onAction = onAction
+                        onAction = onAction,
+                        onCartAction = onCartAction
                     )
                 }
             }
@@ -214,7 +236,7 @@ fun EmptyBox() {
         )
 
         Text(
-            text = "No results found for your query",
+            text = stringResource(Res.string.no_query_results),
             style = MaterialTheme.typography.titleLarge,
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.onSurface
@@ -225,6 +247,7 @@ fun EmptyBox() {
 fun LazyListScope.productCatalogListContent(
     products: List<Product>,
     onAction: (MainProductCatalogAction) -> Unit,
+    onCartAction: (CartAction) -> Unit
 ) {
     products.groupBy { it.category }.entries.forEach { (category, products) ->
         item {
@@ -239,14 +262,17 @@ fun LazyListScope.productCatalogListContent(
 
         items(
             items = products,
-            key = { it.id }
+            key = { it -> it.id }
         ) { product ->
             ProductItem(
                 product = product,
                 onClick = {
                     onAction(MainProductCatalogAction.OnProductClick(product))
                 },
-                modifier = Modifier.animateItem()
+                modifier = Modifier.animateItem(),
+                onAddToCartClick = {
+                    onCartAction(CartAction.OnAddToCart(product))
+                }
             )
         }
     }
@@ -256,6 +282,7 @@ fun LazyListScope.productCatalogListContent(
 fun LazyGridScope.productCatalogGridContent(
     products: List<Product>,
     onAction: (MainProductCatalogAction) -> Unit,
+    onCartAction: (CartAction) -> Unit
 ) {
     products.groupBy { it.category }.entries.forEach { (category, products) ->
         item(span = { GridItemSpan(maxLineSpan) }) {
@@ -270,14 +297,17 @@ fun LazyGridScope.productCatalogGridContent(
 
         items(
             items = products,
-            key = { it.id }
+            key = { it -> it.id }
         ) { product ->
             ProductItem(
                 product = product,
                 onClick = {
                     onAction(MainProductCatalogAction.OnProductClick(product))
                 },
-                modifier = Modifier.animateItem()
+                modifier = Modifier.animateItem(),
+                onAddToCartClick = {
+                    onCartAction(CartAction.OnAddToCart(product))
+                }
             )
         }
     }
@@ -289,7 +319,8 @@ private fun Preview() {
     AppTheme {
         MainProductCatalogScreen(
             state = MainProductCatalogState(),
-            onAction = {}
+            onAction = {},
+            onCartAction = {}
         )
     }
 }
